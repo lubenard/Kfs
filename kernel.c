@@ -9,7 +9,7 @@
  
 /* This tutorial will only work for the 32-bit ix86 targets. */
 #if !defined(__i386__)
-#error "This tutorial needs to be compiled with a ix86-elf compiler"
+#error "This tutorial needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
 
 /* Hardware text mode color constants. */
@@ -32,6 +32,8 @@ enum vga_color {
 	VGA_COLOR_WHITE = 15,
 };
 
+// BY default, this is the size of VGA screen for x86.
+// This screen size is now deprecated, but is supported by any x86 computer
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
 
@@ -63,7 +65,9 @@ void terminal_initialize(void)
 	terminal_row = 0;
 	terminal_column = 0;
 	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
+	// The first adress of the VGA buffer is 0xB8000.
 	terminal_buffer = (uint16_t*) 0xB8000;
+	// We write ' ' on each character for the buffer size
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			const size_t index = y * VGA_WIDTH + x;
@@ -83,6 +87,16 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
+void move_screen_up()
+{
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			const size_t index = y * VGA_WIDTH + x;
+			terminal_buffer[index] = terminal_buffer[y + 1 * VGA_WIDTH + x];
+		}
+	}
+}
+
 void terminal_putchar(char c) 
 {
 	if (c == '\n') {
@@ -93,7 +107,7 @@ void terminal_putchar(char c)
 		if (++terminal_column == VGA_WIDTH) {
 			terminal_column = 0;
 			if (++terminal_row == VGA_HEIGHT)
-				terminal_row = 0;
+				move_screen_up();
 		}
 	}
 }
@@ -109,7 +123,7 @@ void kernel_main(void)
 {
 	/* Initialize terminal interface */
 	terminal_initialize();
- 
-	/* Newline support is left as an exercise. */
-	terminal_writestr("Hello, kernel World!\nTest Newline");
+
+	/* Write 42 as required by the subject */
+	terminal_writestr("42");
 }
