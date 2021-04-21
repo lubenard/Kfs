@@ -1,16 +1,21 @@
-NAME = kfs-1.bin
-ISO_NAME = kfs-1.iso
-
-SRC_ASM = boot.s
-SRC_C = kernel.c
-INCLUDE_SRC = ./include/
-
-OBJ_ASM = $(SRC_ASM:.s=.o)
-OBJ_C = $(SRC_C:.c=.o)
-
 #Using clang because it cross compile by default, no need to compile own toolchain
 CC_C = clang
 CC_ASM = nasm
+
+NAME = kfs-1.bin
+ISO_NAME = kfs-1.iso
+
+SRCDIR = srcs
+INCLUDE_SRC = ./include/
+
+SRC_FILES_ASM = boot.s
+SRC_FILES_C = kernel.c
+
+SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
+SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
+
+OBJ_C = $(SRCS_C:.c=.o)
+OBJ_ASM = $(SRCS_ASM:.s=.o)
 
 CFLAGS = -Wall -Wextra -Werror -g3 \
 		 -m32 --target=i686-elf-clang \
