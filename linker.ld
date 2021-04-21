@@ -19,6 +19,11 @@ SECTIONS
 		*(.text)
 	}
 
+	.idt BLOCK(0x1000): ALIGN(0x1000)
+	{
+		idt = .;
+	}
+
 	/* Read-only data. */
 	.rodata BLOCK(4K) : ALIGN(4K)
 	{
