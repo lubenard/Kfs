@@ -6,14 +6,15 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/20 18:02:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/21 23:49:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
- 
+#include "io/io.h"
+
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 #error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -23,6 +24,15 @@
 #if !defined(__i386__)
 #error "This tutorial needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
+
+/* Les ports d'E/S */
+#define TT_PORT_COMMANDE        0x3D4
+#define TT_PORT_DATA            0x3D5
+
+/* Les commandes du port d'E/S */
+#define TT_COMMANDE_OCTET_SUP    14
+#define TT_COMMANDE_OCTET_INF    15
+
 
 /* Hardware text mode color constants. */
 enum vga_color {
@@ -53,6 +63,14 @@ size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer;
+
+void tt_deplace_curseur(unsigned short pos)
+{
+    outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_SUP);
+    outb(TT_PORT_DATA,    ((pos >> 8) & 0x00FF));
+    outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_INF);
+    outb(TT_PORT_DATA,    pos & 0x00FF);
+}
 
 static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) 
 {
@@ -97,6 +115,7 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 {
 	const size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
+	tt_deplace_curseur(index + 1);
 }
 
 void move_screen_up()
@@ -109,7 +128,7 @@ void move_screen_up()
 	}
 }
 
-void terminal_putchar(char c) 
+void terminal_putchar(char c)
 {
 	if (c == '\n') {
 		terminal_row++;

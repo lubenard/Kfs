@@ -8,8 +8,10 @@ ISO_NAME = kfs-1.iso
 SRCDIR = srcs
 INCLUDE_SRC = ./include/
 
-SRC_FILES_ASM = boot.s
-SRC_FILES_C = kernel.c
+SRC_FILES_ASM = boot.s \
+
+SRC_FILES_C = kernel.c \
+			  io/io.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
