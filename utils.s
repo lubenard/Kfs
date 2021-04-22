@@ -1,0 +1,2 @@
+enterProtectedMode:
+	cli

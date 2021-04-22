@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 14:24:56 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/21 17:57:18 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/22 17:29:07 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,15 @@ struct GDTEntry {
 } __attribute__((packed));
 
 struct GDT {
-	struct GDTEntry null;
-	struct GDTEntry kernelCode;
-	struct GDTEntry kernelData;
+	struct GDTEntry null; //0x00
+	struct GDTEntry kernelCode; //0x08
+	struct GDTEntry kernelData; // 0x10
 	struct GDTEntry userNull;
 	struct GDTEntry userCode;
 	struct GDTEntry userData;
 } __attribute__((packed))
   __attribute__((aligned(0x1000)));
 
- extern struct GDT DefaultGDT;
+extern struct GDT defaultGDT;
+
+extern void LoadGDT(struct GDTDescriptor *gdtDescriptor);
