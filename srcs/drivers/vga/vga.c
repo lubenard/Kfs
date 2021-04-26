@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/22 00:13:20 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/26 18:35:52 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,10 @@ void terminal_initialize(void)
 	// The first adress of the VGA buffer is 0xB8000.
 	terminal_buffer = (uint16_t*) 0xB8000;
 	// We write ' ' on each character for the buffer size
+	size_t index;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			const size_t index = y * VGA_WIDTH + x;
+			index = y * VGA_WIDTH + x;
 			terminal_buffer[index] = vga_entry(' ', terminal_color);
 		}
 	}
@@ -94,7 +95,7 @@ void terminal_setcolor(uint8_t color)
 
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
 {
-	const size_t index = y * VGA_WIDTH + x;
+	size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
 	move_cusor(index + 1);
 }
@@ -103,7 +104,7 @@ void move_screen_up()
 {
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			const size_t index = y * VGA_WIDTH + x;
+			size_t index = y * VGA_WIDTH + x;
 			terminal_buffer[index] = terminal_buffer[y + 1 * VGA_WIDTH + x];
 		}
 	}
