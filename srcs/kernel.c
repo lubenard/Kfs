@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/22 17:04:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/26 00:34:33 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,12 @@
 
 void k_main(void)
 {
-	struct GDTDescriptor gdtDescriptor;
-	gdtDescriptor.size = sizeof(struct GDT) - 1;
-	struct GDT defaultGDT;
-	gdtDescriptor.offset = (uint64_t)&defaultGDT;
-	//LoadGDT(&gdtDescriptor);
-
 	/* Initialize terminal interface */
 	terminal_initialize();
 
+	/* Initialize GDT (Global descriptor table) */
+	init_gdt();
+
 	/* Write 42 as required by the subject */
-	terminal_writestr("42");
+	terminal_writestr("42\n");
 }
