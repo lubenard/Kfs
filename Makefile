@@ -13,8 +13,18 @@ SRC_FILES_ASM = boot.s \
 
 SRC_FILES_C = kernel.c \
 			  drivers/vga/vga.c \
-			  lib/lib.c \
 			  io/gdt/gdt.c \
+			  lib/lib.c \
+			  lib/printk/printk.c \
+			  lib/printk/parse.c \
+			  lib/printk/fill_buffer.c \
+			  lib/printk/flags/flag_c.c \
+			  lib/printk/flags/flag_di.c \
+			  lib/printk/flags/flag_s.c \
+			  lib/printk/flags/flag_u.c \
+			  lib/printk/flags/flag_o.c \
+			  lib/printk/flags/flag_x.c \
+			  lib/printk/flags/flag_p.c \
 			  io/io.c \
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))

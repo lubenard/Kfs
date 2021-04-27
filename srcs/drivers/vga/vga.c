@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/26 18:35:52 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/27 16:30:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include "../../lib/lib.h"
 #include "../../io/io.h"
+#include "vga.h"
 
 /* Les ports d'E/S */
 #define TT_PORT_COMMANDE        0x3D4
@@ -22,26 +23,6 @@
 /* Les commandes du port d'E/S */
 #define TT_COMMANDE_OCTET_SUP    14
 #define TT_COMMANDE_OCTET_INF    15
-
-/* Hardware text mode color constants. */
-enum vga_color {
-	VGA_COLOR_BLACK = 0,
-	VGA_COLOR_BLUE = 1,
-	VGA_COLOR_GREEN = 2,
-	VGA_COLOR_CYAN = 3,
-	VGA_COLOR_RED = 4,
-	VGA_COLOR_MAGENTA = 5,
-	VGA_COLOR_BROWN = 6,
-	VGA_COLOR_LIGHT_GREY = 7,
-	VGA_COLOR_DARK_GREY = 8,
-	VGA_COLOR_LIGHT_BLUE = 9,
-	VGA_COLOR_LIGHT_GREEN = 10,
-	VGA_COLOR_LIGHT_CYAN = 11,
-	VGA_COLOR_LIGHT_RED = 12,
-	VGA_COLOR_LIGHT_MAGENTA = 13,
-	VGA_COLOR_LIGHT_BROWN = 14,
-	VGA_COLOR_WHITE = 15,
-};
 
 // BY default, this is the size of VGA screen for x86.
 // This screen size is now deprecated, but is supported by any x86 computer
@@ -53,9 +34,12 @@ size_t terminal_column;
 uint8_t terminal_color;
 uint16_t *terminal_buffer;
 
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) 
+static int fg_color;
+static int bg_color;
+
+static inline uint8_t vga_entry_color(int fg_color, int bg_color)
 {
-	return fg | bg << 4;
+	return fg_color | bg_color << 4;
 }
 
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
@@ -75,7 +59,10 @@ void terminal_initialize(void)
 {
 	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_CYAN, VGA_COLOR_BLACK);
+	// default coloration for the terminal
+	fg_color = VGA_COLOR_LIGHT_GREY;
+	bg_color = VGA_COLOR_BLACK;
+	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	// The first adress of the VGA buffer is 0xB8000.
 	terminal_buffer = (uint16_t*) 0xB8000;
 	// We write ' ' on each character for the buffer size
@@ -88,9 +75,16 @@ void terminal_initialize(void)
 	}
 }
 
-void terminal_setcolor(uint8_t color)
+void terminal_set_fg_color(int new_fg_color)
 {
-	terminal_color = color;
+	fg_color = new_fg_color;
+	terminal_color = vga_entry_color(fg_color, bg_color);
+}
+
+void terminal_set_bg_color(int new_bg_color)
+{
+	bg_color = new_bg_color;
+	terminal_color = vga_entry_color(fg_color, bg_color);
 }
 
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
@@ -124,7 +118,7 @@ void terminal_putchar(char c)
 		}
 	}
 }
- 
+
 void terminal_writestr(const char *data)
 {
 	size_t size = strlen(data);

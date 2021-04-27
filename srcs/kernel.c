@@ -6,12 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/26 00:34:33 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/27 19:13:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "drivers/vga/vga.h"
 #include "io/gdt/gdt.h"
+#include "lib/lib.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -31,6 +32,6 @@ void k_main(void)
 	/* Initialize GDT (Global descriptor table) */
 	init_gdt();
 
-	/* Write 42 as required by the subject */
+	/* Write 42 on the terminal */
 	terminal_writestr("42\n");
 }

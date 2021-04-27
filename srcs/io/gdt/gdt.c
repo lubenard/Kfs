@@ -6,12 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/26 17:45:28 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/04/27 18:36:58 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "gdt.h"
-#include "../../drivers/vga/vga.h"
+#include "../../lib/lib.h"
 
 GDTEntry_t gdt_entries[5];
 GDTDescriptor_t   gdt_ptr;
@@ -61,5 +61,5 @@ void init_gdt()
 	// Load new created GDT
 	gdt_flush((uint32_t)&gdt_ptr);
 
-	terminal_writestr("GDT initialised\n");
+	printk(KERN_INFO, "GDT has been initialised at %p", (uint32_t)&gdt_ptr);
 }

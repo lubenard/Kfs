@@ -1,24 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lib.h                                              :+:      :+:    :+:   */
+/*   flag_s.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/22 00:11:13 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:24:22 by lubenard         ###   ########.fr       */
+/*   Created: 2021/04/27 17:43:48 by lubenard          #+#    #+#             */
+/*   Updated: 2021/04/27 18:18:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "../include/printk.h"
 
-#define KERN_INFO 0
-#define KERN_ERROR 1
+void	flag_s(const char *str, int *i, va_list ap, t_output *output)
+{
+	char	*arg;
 
-size_t	strlen(const char *str);
-int		isalpha(int c);
-size_t	strchri(const char *s, int c);
-void	bzero(void *s, size_t n);
-int		isprint(int c);
-char	*strupper(char *str);
-void	printk(int info_type, const char *str, ...);
+	(void)str;
+	arg = va_arg(ap, char *);
+	if (arg == NULL)
+		arg = "(null)";
+	fill_buffer_str(output, arg);
+	(*i)++;
+}
