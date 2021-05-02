@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lib.h                                              :+:      :+:    :+:   */
+/*   isr.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/22 00:11:13 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/02 14:49:05 by lubenard         ###   ########.fr       */
+/*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
+/*   Updated: 2021/05/02 16:44:40 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include <stdint.h>
 
-#define KERN_INFO 0
-#define KERN_ERROR 1
-
-size_t	strlen(const char *str);
-int		isalpha(int c);
-size_t	strchri(const char *s, int c);
-void	bzero(void *s, size_t n);
-int		isprint(int c);
-char	*strupper(char *str);
-void	*memset(void *s, int c, size_t n);
-void	printk(int info_type, const char *str, ...);
+typedef struct registers
+{
+   int32_t ds; // Data segment selector
+   int32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha.
+   int32_t int_no, err_code; // Interrupt number and error code (if applicable)
+   int32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically
+} registers_t;

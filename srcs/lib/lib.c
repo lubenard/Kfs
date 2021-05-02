@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:28 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:24:30 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/02 14:48:38 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,4 +73,16 @@ char	*strupper(char *str)
 		i++;
 	}
 	return (str);
+}
+
+void	*memset(void *s, int c, size_t n)
+{
+	char	*t;
+	int		i;
+
+	t = (char *)s;
+	i = 0;
+	while (i != (int)n)
+		t[i++] = c;
+	return (t);
 }

@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lib.h                                              :+:      :+:    :+:   */
+/*   isr.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/22 00:11:13 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/02 14:49:05 by lubenard         ###   ########.fr       */
+/*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
+/*   Updated: 2021/05/02 16:45:02 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "isr.h"
+#include "../../lib/lib.h"
 
-#define KERN_INFO 0
-#define KERN_ERROR 1
-
-size_t	strlen(const char *str);
-int		isalpha(int c);
-size_t	strchri(const char *s, int c);
-void	bzero(void *s, size_t n);
-int		isprint(int c);
-char	*strupper(char *str);
-void	*memset(void *s, int c, size_t n);
-void	printk(int info_type, const char *str, ...);
+// This gets called from our ASM interrupt handler.
+void isr_handler(registers_t regs)
+{
+   printk(KERN_ERROR, "recieved interrupt: %d", regs.int_no);
+}

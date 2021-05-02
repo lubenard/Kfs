@@ -9,11 +9,15 @@ SRCDIR = srcs
 INCLUDE_SRC = ./include/
 
 SRC_FILES_ASM = boot.s \
-				io/gdt/gdt_asm.s
+				io/gdt/gdt_asm.s \
+				io/idt/idt_asm.s \
+				io/isr/isr_asm.s
 
 SRC_FILES_C = kernel.c \
 			  drivers/vga/vga.c \
 			  io/gdt/gdt.c \
+			  io/idt/idt.c \
+			  io/isr/isr.c \
 			  lib/lib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
