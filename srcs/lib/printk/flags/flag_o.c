@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:57:08 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:33:46 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 15:15:35 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ char	*convert_into_octal(unsigned long long value)
 	return (ft_itoa_ulong(octal_num));
 }
 
-void	flag_o(const char *str, int *i, va_list ap, t_output *output)
+void	flag_o(const char *str, int *i, va_list *ap, t_output *output)
 {
 	char	*arg;
 	short	len_arg;
 
 	(void)str;
-	arg = convert_into_octal(va_arg(ap, unsigned int));
+	arg = convert_into_octal(va_arg(*ap, unsigned int));
 	len_arg = strlen(arg);
 	fill_buffer_str(output, arg);
 	(*i)++;

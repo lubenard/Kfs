@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:10:18 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 19:07:01 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 15:11:07 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void fill_buffer(t_output *output, char fill, int *i)
 	if (output->j == PRINTF_BUFF_SIZE)
 	{
 		terminal_writestr(output->buffer);
-		//write(output->fd, output->buffer, output->j);
 		bzero(output->buffer, PRINTF_BUFF_SIZE);
 		output->size_string += PRINTF_BUFF_SIZE;
 		output->j = 0;

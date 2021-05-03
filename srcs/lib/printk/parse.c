@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:44:02 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 16:53:02 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 15:14:04 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int find_flag(const char *str, int i)
 	return (i);
 }
 
-int replace(const char *str, int *i, va_list ap, t_output *output)
+int replace(const char *str, int *i, va_list *ap, t_output *output)
 {
 	int j;
 
@@ -32,7 +32,7 @@ int replace(const char *str, int *i, va_list ap, t_output *output)
 	return (0);
 }
 
-int parsing(const char *str, va_list ap)
+int parsing(const char *str, va_list *ap)
 {
 	t_output	output;
 	int			i;

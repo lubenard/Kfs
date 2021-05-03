@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:46:27 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:34:23 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 15:15:57 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,24 +36,24 @@ void	convert_into_hexa(unsigned long value, char ret[17])
 	}
 }
 
-void	flag_x(const char *str, int *i, va_list ap, t_output *output)
+void	flag_x(const char *str, int *i, va_list *ap, t_output *output)
 {
 	char	arg[17];
 
 	(void)str;
 	bzero(arg, 17);
-	convert_into_hexa(va_arg(ap, unsigned int), arg);
+	convert_into_hexa(va_arg(*ap, unsigned int), arg);
 	fill_buffer_rev(output, arg);
 	(*i)++;
 }
 
-void	flag_maj_x(const char *str, int *i, va_list ap, t_output *output)
+void	flag_maj_x(const char *str, int *i, va_list *ap, t_output *output)
 {
 	char	arg[17];
 
 	(void)str;
 	bzero(arg, 17);
-	convert_into_hexa(va_arg(ap, unsigned int), arg);
+	convert_into_hexa(va_arg(*ap, unsigned int), arg);
 	strupper(arg);
 	fill_buffer_rev(output, arg);
 	(*i)++;

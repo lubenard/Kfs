@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:49:30 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:34:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 15:15:40 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 ** Then add 0x before
 */
 
-void	flag_p(const char *str, int *i, va_list ap, t_output *output)
+void	flag_p(const char *str, int *i, va_list *ap, t_output *output)
 {
 	char	arg[19];
 	short	len_arg;
 
 	(void)str;
 	bzero(arg, 19);
-	convert_into_hexa(va_arg(ap, unsigned long), arg);
+	convert_into_hexa(va_arg(*ap, unsigned long), arg);
 	len_arg = strlen(arg);
 	arg[len_arg] = 'x';
 	arg[len_arg + 1] = '0';
