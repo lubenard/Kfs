@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/04 18:42:38 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/04 20:55:40 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "lib/lib.h"
 #include "io/io.h"
 #include "drivers/PS2_keyboard/PS2_keyboard.h"
-#include "io/timer/timer.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -44,9 +43,8 @@ void k_main(void)
 
 	asm volatile ("sti");
 
-	init_timer(50);
-	//init_kbd();
-	//terminal_writestr("> ");
+	init_kbd();
+	terminal_writestr(">");
 
 	for(;;) {
 		asm("hlt");
