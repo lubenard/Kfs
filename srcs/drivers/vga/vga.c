@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 16:30:30 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/03 12:27:49 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,10 @@ void move_screen_up()
 			terminal_buffer[index] = terminal_buffer[y + 1 * VGA_WIDTH + x];
 		}
 	}
+	//terminal_row = 0;
 }
 
-void terminal_putchar(char c)
+void terminal_writec(const char c)
 {
 	if (c == '\n') {
 		terminal_row++;
@@ -123,6 +124,6 @@ void terminal_writestr(const char *data)
 {
 	size_t size = strlen(data);
 	for (size_t i = 0; i < size; i++)
-		terminal_putchar(data[i]);
+		terminal_writec(data[i]);
 }
 

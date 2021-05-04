@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/27 18:36:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/04 16:28:29 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ void init_gdt()
 	// Size is 5 because we have 5 entries
 	gdt_ptr.size = (sizeof(GDTEntry_t) * 5) - 1;
 	// Offset if the adress of the first entry;
-	gdt_ptr.offset  = (uint32_t)&gdt_entries;
+	//gdt_ptr.offset = 0x00000800;
+	gdt_ptr.offset = (uint32_t)&gdt_entries;
 
 	// Null Segment is mandatory. Everything is null in this segment
 	gdt_set_gate(0, 0, 0, 0, 0);                // Null segment

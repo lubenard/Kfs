@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 22:31:29 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/22 00:49:49 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/04 18:17:54 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 
 uint8_t	inb(uint16_t port)
 {
-    uint8_t ret;
-    __asm__ volatile ("inb %1, %0" : "=a"(ret) : "Nd"(port));
-    return (ret);
+	uint8_t ret;
+	asm volatile ("inb %1, %0" : "=a"(ret) : "Nd"(port));
+	return (ret);
 }
 
-void	outb(size_t port, unsigned char byte)
+void	outb(uint16_t port, uint8_t byte)
 {
-	__asm__ volatile ("outb %0, %w1;" : : "a" (byte), "Nd" (port));
-} 
+	asm volatile ("outb %1, %0" : : "dN"(port), "a"(byte));
+}

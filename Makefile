@@ -15,6 +15,7 @@ SRC_FILES_ASM = boot.s \
 
 SRC_FILES_C = kernel.c \
 			  drivers/vga/vga.c \
+			  drivers/PS2_keyboard/PS2_keyboard.c \
 			  io/gdt/gdt.c \
 			  io/idt/idt.c \
 			  io/isr/isr.c \
@@ -30,6 +31,7 @@ SRC_FILES_C = kernel.c \
 			  lib/printk/flags/flag_x.c \
 			  lib/printk/flags/flag_p.c \
 			  io/io.c \
+			  io/timer/timer.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
@@ -37,7 +39,9 @@ SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
 OBJ_C = $(SRCS_C:.c=.o)
 OBJ_ASM = $(SRCS_ASM:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror -g3 \
+# 
+
+CFLAGS = -Wall -Wextra -Werror \
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
 		 -fno-exceptions \

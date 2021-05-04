@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:05:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/26 19:39:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/02 17:08:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@
 
 void terminal_initialize(void);
 void terminal_writestr(const char *data);
+void terminal_writec(const char c);
 void terminal_set_fg_color(int new_color);
 void terminal_set_bg_color(int new_color);
