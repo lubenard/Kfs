@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/04 19:29:50 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/05 16:26:55 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,23 @@ static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
-void move_cusor(unsigned short pos)
+void move_cursor(unsigned short pos)
 {
 	outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_SUP);
 	outb(TT_PORT_DATA, ((pos >> 8) & 0x00FF));
 	outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_INF);
 	outb(TT_PORT_DATA, pos & 0x00FF);
+}
+
+void clear_terminal() {
+	// We write ' ' on each character for the buffer size
+	size_t index;
+	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			index = y * VGA_WIDTH + x;
+			terminal_buffer[index] = vga_entry(' ', terminal_color);
+		}
+	}
 }
 
 void terminal_initialize(void)
@@ -65,14 +76,7 @@ void terminal_initialize(void)
 	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	// The first adress of the VGA buffer is 0xB8000.
 	terminal_buffer = (uint16_t*) 0xB8000;
-	// We write ' ' on each character for the buffer size
-	size_t index;
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
-		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = vga_entry(' ', terminal_color);
-		}
-	}
+	clear_terminal();
 }
 
 void terminal_set_fg_color(int new_fg_color)
@@ -87,22 +91,53 @@ void terminal_set_bg_color(int new_bg_color)
 	terminal_color = vga_entry_color(fg_color, bg_color);
 }
 
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 {
 	size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
-	move_cusor(index + 1);
+	move_cursor(index + 1);
+}
+
+/*
+ * The color of the character is contained in it's 8 highest bytes.
+ * We need to extract them to restore the color when moving a character up
+ * The color is contained as 4 first bytes for background color, and 4 bytes for
+ * fg_color.
+ *
+ * How it works:
+ * The character 'a' in cyan on blue background
+ * 0001 0011 0110 0001
+ *  |    |    |    |
+ *  |    |    --------- 97 in decimal ('a' in ascii table)
+ *  |    -------------- 3 in decimal (color for cyan foreground)
+ *  ------------------- 1 in decimal (color for blue background)
+ * More infos here: https://wiki.osdev.org/Printing_To_Screen
+ */
+void set_character_color(uint16_t character)
+{
+	int character_color = ((1 << 4) - 1) & (character >> 8);
+	terminal_color = character_color;
 }
 
 void move_screen_up()
 {
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+	// Move all character by one line up
+	for (size_t y = 1; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			size_t index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = terminal_buffer[y + 1 * VGA_WIDTH + x];
+			terminal_buffer[index - VGA_WIDTH] = terminal_buffer[index];
 		}
 	}
-	//terminal_row = 0;
+	// Fill the last line with space
+	// We are forced to restore with terminal_color, or it broke the cursor
+	// (It become black, and invisible (black on black background))
+	for (size_t i = 0; i < VGA_WIDTH; i++) {
+		terminal_buffer[(VGA_HEIGHT - 1) * VGA_WIDTH + i] = vga_entry(' ', terminal_color);
+	}
+	// Set cursor position to first character of last line
+	terminal_row = VGA_HEIGHT - 1;
+	terminal_column = 0;
+	move_cursor((VGA_HEIGHT - 1) * VGA_WIDTH);
 }
 
 void terminal_writec(const char c)
@@ -110,6 +145,9 @@ void terminal_writec(const char c)
 	if (c == '\n') {
 		terminal_row++;
 		terminal_column = 0;
+		move_cursor(terminal_row * VGA_WIDTH + terminal_column);
+		if (terminal_row >= VGA_HEIGHT)
+			move_screen_up();
 	} else {
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 		if (++terminal_column == VGA_WIDTH) {
