@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/04 16:28:29 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/06 00:05:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 #include "../../lib/lib.h"
 
 GDTEntry_t gdt_entries[5];
-GDTDescriptor_t   gdt_ptr;
+
+#define GDT_BASE 0x00000800
 
 /* Set the value of one GDT entry.
  * @param num the entry we fill (between 0 and 4)
@@ -38,11 +39,12 @@ static void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t ac
 
 void init_gdt()
 {
+	GDTDescriptor_t gdt_ptr;
+
 	// Size is 5 because we have 5 entries
 	gdt_ptr.size = (sizeof(GDTEntry_t) * 5) - 1;
 	// Offset if the adress of the first entry;
-	//gdt_ptr.offset = 0x00000800;
-	gdt_ptr.offset = (uint32_t)&gdt_entries;
+	gdt_ptr.offset = (uint32_t)GDT_BASE;
 
 	// Null Segment is mandatory. Everything is null in this segment
 	gdt_set_gate(0, 0, 0, 0, 0);                // Null segment
@@ -59,8 +61,10 @@ void init_gdt()
 	// 0xF2 -> 1111 0010 in binary: -> Ring 3, (11 in binary), Data segment
 	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User data segment
 
+	memcpy((char *)gdt_ptr.offset, (char *)gdt_entries, sizeof(GDTEntry_t) * 5);
+
 	// Load new created GDT
 	gdt_flush((uint32_t)&gdt_ptr);
 
-	printk(KERN_INFO, "GDT has been initialised at %p", (uint32_t)&gdt_ptr);
+	printk(KERN_INFO, "GDT has been initialised at %p", gdt_ptr.offset);
 }
