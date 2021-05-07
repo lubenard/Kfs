@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:28 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/02 14:48:38 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/05 23:20:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,21 @@ void	*memset(void *s, int c, size_t n)
 	while (i != (int)n)
 		t[i++] = c;
 	return (t);
+}
+
+void	*memcpy(void *s1, void const *s2, size_t n)
+{
+	int		i;
+	char	*t1;
+	char	*t2;
+
+	i = 0;
+	t1 = (char *)s1;
+	t2 = (char *)s2;
+	while (i != (int)n)
+	{
+		t1[i] = t2[i];
+		i++;
+	}
+	return (t1);
 }
