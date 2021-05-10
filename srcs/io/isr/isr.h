@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/03 23:27:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/10 19:02:06 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,5 +37,7 @@ typedef struct registers
    int32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically
 } registers_t;
 
-void register_interrupt_handler(int8_t n, void (*handler)(struct registers *r));
+typedef void (*isr_t)(registers_t);
+void register_interrupt_handler(int8_t n, isr_t handler);
+//void register_interrupt_handler(int8_t n, void (*handler)(struct registers *r));
 

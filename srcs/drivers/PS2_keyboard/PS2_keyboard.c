@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/05 22:22:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/10 19:03:35 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int is_special_key(unsigned char scancode)
 	return 0;
 }
 
-void get_key(registers_t *regs)
+void get_key(registers_t regs)
 {
 	(void)regs;
 
@@ -127,9 +127,9 @@ void get_key(registers_t *regs)
 
 void init_kbd()
 {
-	register_interrupt_handler(1, get_key);
+	register_interrupt_handler(IRQ1, &get_key);
 
-	printk(KERN_INFO, "Keyboard has been registered in IRQ");
+	//printk(KERN_INFO, "Keyboard has been registered in IRQ");
 	// Set default settings to the keyboard
 	//outb(0x60, 0xF6);
 
