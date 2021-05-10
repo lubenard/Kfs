@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/05 16:26:55 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/07 18:08:12 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,9 @@ void move_cursor(unsigned short pos)
 	outb(TT_PORT_DATA, pos & 0x00FF);
 }
 
+/*
+ * Erase all the content of the terminal
+ */
 void clear_terminal() {
 	// We write ' ' on each character for the buffer size
 	size_t index;
@@ -64,19 +67,6 @@ void clear_terminal() {
 			terminal_buffer[index] = vga_entry(' ', terminal_color);
 		}
 	}
-}
-
-void terminal_initialize(void)
-{
-	terminal_row = 0;
-	terminal_column = 0;
-	// default coloration for the terminal
-	fg_color = VGA_COLOR_LIGHT_GREY;
-	bg_color = VGA_COLOR_BLACK;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	// The first adress of the VGA buffer is 0xB8000.
-	terminal_buffer = (uint16_t*) 0xB8000;
-	clear_terminal();
 }
 
 void terminal_set_fg_color(int new_fg_color)
@@ -89,13 +79,6 @@ void terminal_set_bg_color(int new_bg_color)
 {
 	bg_color = new_bg_color;
 	terminal_color = vga_entry_color(fg_color, bg_color);
-}
-
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
-{
-	size_t index = y * VGA_WIDTH + x;
-	terminal_buffer[index] = vga_entry(c, color);
-	move_cursor(index + 1);
 }
 
 /*
@@ -140,6 +123,17 @@ void move_screen_up()
 	move_cursor((VGA_HEIGHT - 1) * VGA_WIDTH);
 }
 
+void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
+{
+	size_t index = y * VGA_WIDTH + x;
+	terminal_buffer[index] = vga_entry(c, color);
+	move_cursor(index + 1);
+}
+
+/*
+ * Print a string on the terminal
+ * @param c The character to print
+ */
 void terminal_writec(const char c)
 {
 	if (c == '\n') {
@@ -158,10 +152,27 @@ void terminal_writec(const char c)
 	}
 }
 
+/*
+ * Print a string on the terminal
+ * @param data The string to print
+ */
 void terminal_writestr(const char *data)
 {
 	size_t size = strlen(data);
 	for (size_t i = 0; i < size; i++)
 		terminal_writec(data[i]);
+}
+
+void terminal_initialize(void)
+{
+	terminal_row = 0;
+	terminal_column = 0;
+	// default coloration for the terminal
+	fg_color = VGA_COLOR_LIGHT_GREY;
+	bg_color = VGA_COLOR_BLACK;
+	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
+	// The first adress of the VGA buffer is 0xB8000.
+	terminal_buffer = (uint16_t*) 0xB8000;
+	clear_terminal();
 }
 

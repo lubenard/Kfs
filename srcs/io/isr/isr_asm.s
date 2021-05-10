@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/02 16:43:24 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/04 16:24:12 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/05/07 18:03:46 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -31,6 +31,14 @@
     jmp isr_common_stub
 %endmacro
 
+%macro IRQ 2                    ; We need 2 parameters for our macro
+  global irq%1                  ; First declare the name (irq0, irq1 etc...) as global
+  irq%1:                        ; Declare our function with the name (irq0, irq1 etc...)
+    cli                         ; Disable interrupts
+    push byte 0                 ; push 0 on the stack
+    push byte %2                ; Push irqcode into the stack (second parameter)
+    jmp irq_common_stub         ; call irq_common_stub function
+%endmacro
 
 ISR_NOERRCODE 0
 ISR_NOERRCODE 1
@@ -64,174 +72,61 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
+IRQ 0, 32
+IRQ 1, 33
+IRQ 2, 34
+IRQ 3, 35
+IRQ 4, 36
+IRQ 5, 37
+IRQ 6, 38
+IRQ 7, 39
+IRQ 8, 40
+IRQ 9, 41
+IRQ 10,42
+IRQ 11,43
+IRQ 12,44
+IRQ 13,45
+IRQ 14,46
+IRQ 15,47
 
-global irq0
-global irq1
-global irq2
-global irq3
-global irq4
-global irq5
-global irq6
-global irq7
-global irq8
-global irq9
-global irq10
-global irq11
-global irq12
-global irq13
-global irq14
-global irq15
-
-; 32: IRQ0
-irq0:
-    cli
-    push byte 0
-    push byte 32
-    jmp irq_common_stub
-
-; 33: IRQ1
-irq1:
-    cli
-    push byte 0
-    push byte 33
-    jmp irq_common_stub
-
-; 34: IRQ2
-irq2:
-    cli
-    push byte 0
-    push byte 34
-    jmp irq_common_stub
-
-; 35: IRQ3
-irq3:
-    cli
-    push byte 0
-    push byte 35
-    jmp irq_common_stub
-
-; 36: IRQ4
-irq4:
-    cli
-    push byte 0
-    push byte 36
-    jmp irq_common_stub
-
-; 37: IRQ5
-irq5:
-    cli
-    push byte 0
-    push byte 37
-    jmp irq_common_stub
-
-; 38: IRQ6
-irq6:
-    cli
-    push byte 0
-    push byte 38
-    jmp irq_common_stub
-
-; 39: IRQ7
-irq7:
-    cli
-    push byte 0
-    push byte 39
-    jmp irq_common_stub
-
-; 40: IRQ8
-irq8:
-    cli
-    push byte 0
-    push byte 40
-    jmp irq_common_stub
-
-; 41: IRQ9
-irq9:
-    cli
-    push byte 0
-    push byte 41
-    jmp irq_common_stub
-
-; 42: IRQ10
-irq10:
-    cli
-    push byte 0
-    push byte 42
-    jmp irq_common_stub
-
-; 43: IRQ11
-irq11:
-    cli
-    push byte 0
-    push byte 43
-    jmp irq_common_stub
-
-; 44: IRQ12
-irq12:
-    cli
-    push byte 0
-    push byte 44
-    jmp irq_common_stub
-
-; 45: IRQ13
-irq13:
-    cli
-    push byte 0
-    push byte 45
-    jmp irq_common_stub
-
-; 46: IRQ14
-irq14:
-    cli
-    push byte 0
-    push byte 46
-    jmp irq_common_stub
-
-; 47: IRQ15
-irq15:
-    cli
-    push byte 0
-    push byte 47
-    jmp irq_common_stub
-
-
-; Export isr_handler for isr.c
+; Import isr_handler for isr.c
 extern isr_handler
 
 ; This is our common ISR stub. It saves the processor state, sets
 ; up for kernel mode segments, calls the C-level fault handler,
 ; and finally restores the stack frame.
 isr_common_stub:
-    pusha
-    push ds
-    push es
-    push fs
-    push gs
-    mov ax, 0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov eax, esp
-    push eax
-    mov eax, isr_handler
-    call eax
-    pop eax
-    pop gs
-    pop fs
-    pop es
-    pop ds
-    popa
-    add esp, 8
-    iret
+   pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
 
- ; In isr.c
-[EXTERN irq_handler]
+   mov ax, ds               ; Lower 16-bits of eax = ds.
+   push eax                 ; save the data segment descriptor
+
+   mov ax, 0x10  ; load the kernel data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   call isr_handler
+
+   pop eax        ; reload the original data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   popa                     ; Pops edi,esi,ebp...
+   add esp, 8     ; Cleans up the pushed error code and pushed ISR number
+   sti
+   iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and esp
+
+; In isr.c
+extern irq_handler
 
 ; This is a stub that we have created for IRQ based ISRs. This calls
 ; 'irq_handler' in our C code. We need to create this in an 'irq.c'
 irq_common_stub:
-    pusha
+    pusha           ; push everything on the stack
     push ds
     push es
     push fs

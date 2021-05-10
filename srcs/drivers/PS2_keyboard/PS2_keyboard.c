@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/04 23:11:16 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/05 22:22:56 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ static const char qwertAsciiTable[] = {
 	'-', '=', 0, '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[',
 	']', '\n', 0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'',
 	'`', 0, '\\', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0, '*',
-	0, ' '
+	0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7', '8', '9', '-', '4', '5',
+	'6', '+', '1', '2', '3', '0', '.'
 };
 
 static const char azertAsciiTable[] = {
@@ -29,7 +30,8 @@ static const char azertAsciiTable[] = {
 	'-', '=', 0, '\t', 'a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '^',
 	'$', '\n', 0, 'q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', '%',
 	0, 0, '*', 'w', 'x', 'c', 'v', 'b', 'n', ',', ';', ':', '!', 0, '*',
-	0, ' '
+	0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7', '8', '9', '-', '4', '5',
+	'6', '+', '1', '2', '3', '0', '.'
 };
 
 static const char *kbd_languages[] = {
@@ -48,7 +50,7 @@ void set_language(int language)
 char translateKey(uint8_t scancode) {
 	char keycode;
 
-	if (scancode > 58)
+	if (scancode > 0x58)
 		return 0;
 	keycode = kbd_languages[kbd_language][scancode];
 	if (shift_status)
@@ -100,31 +102,26 @@ void get_key(registers_t *regs)
 {
 	(void)regs;
 
+	printk(KERN_INFO, "data received");
 	/* Read from the keyboard's data buffer */
-    unsigned char scancode = inb(0x60);
+    uint16_t scancode = inb(0x60);
 
-    /* If the top bit of the byte we read from the keyboard is
-    *  set, that means that a key has just been released */
-	if (scancode & 0x80) {
-		if (is_special_key(scancode))
+	/* If the top bit of the byte we read from the keyboard is
+	 *  set, that means that a key has just been released
+	 */
+	if (is_special_key(scancode)) {
+		if (scancode & 0x80)
 			handle_special_key(scancode, 1);
-	} else {
-        /* Here, a key was just pressed. Please note that if you
-        *  hold a key down, you will get repeated key press
-        *  interrupts. */
-
-        /* Just to show you how this works, we simply translate
-        *  the keyboard scancode into an ASCII value, and then
-        *  display it to the screen. You can get creative and
-        *  use some flags to see if a shift is pressed and use a
-        *  different layout, or you can add another 128 entries
-        *  to the above layout to correspond to 'shift' being
-        *  held. If shift is held using the larger lookup table,
-        *  you would add 128 to the scancode when you look for it */
-		if (is_special_key(scancode))
-			handle_special_key(scancode, 0);
 		else
+			handle_special_key(scancode, 0);
+	} else {
+		//printk(KERN_INFO, "Received %d from kbd", scancode);
+		if (scancode & 0x80)
+			return ;
+		else {
+			printk(KERN_INFO, "Received %d from kbd", scancode);
 			terminal_writec(translateKey(scancode));
+		}
 	}
 }
 
@@ -132,8 +129,9 @@ void init_kbd()
 {
 	register_interrupt_handler(1, get_key);
 
+	printk(KERN_INFO, "Keyboard has been registered in IRQ");
 	// Set default settings to the keyboard
-	outb(0x60, 0xF6);
+	//outb(0x60, 0xF6);
 
-	set_language(1);
+	set_language(0);
 }

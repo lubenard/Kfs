@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/04 14:06:24 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/05 22:39:08 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,11 @@ static void idt_set_gate(int8_t num, int32_t base, int16_t sel, int8_t flags)
 	idt_entries[num].base_mid = (base >> 16) & 0xFFFF;
 
 	idt_entries[num].selector = sel;
+	// Must always be 0
 	idt_entries[num].zero = 0;
 	// We must uncomment the OR below when we get to using user-mode.
 	// It sets the interrupt gate's privilege level to 3.
-	idt_entries[num].flags   = flags /* | 0x60 */;
+	idt_entries[num].flags = flags /* | 0x60 */;
 }
 
 void init_idt()
@@ -100,7 +101,6 @@ void init_idt()
 	idt_set_gate(46, (int32_t)irq14, 0x08, 0x8E);
 	idt_set_gate(47, (int32_t)irq15, 0x08, 0x8E);
 
-	// Tell our bios to load our new IDT
-	printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
+	//printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
 }
 
