@@ -30,6 +30,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/printk/flags/flag_x.c \
 			  lib/printk/flags/flag_p.c \
 			  io/io.c \
+			  io/shell/shell.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))

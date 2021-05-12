@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:28 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/05 23:20:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/13 00:14:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,4 +102,16 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 		i++;
 	}
 	return (t1);
+}
+
+int		strcmp(char const *s1, char const *s2)
+{
+	int i;
+
+	i = 0;
+	if (!s1 || !s2)
+		return (-1);
+	while (s1[i] == s2[i] && s1[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }

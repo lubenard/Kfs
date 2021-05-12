@@ -6,3 +6,5 @@ typedef struct terminals {
 	int fg_color;
 	int bg_color;
 }				terminals_t;
+
+void init_shell();

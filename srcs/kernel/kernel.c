@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 19:21:17 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 23:28:53 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../lib/lib.h"
 #include "../io/io.h"
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
+#include "../io/shell/shell.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -26,6 +27,10 @@
 #if !defined(__i386__)
 # error "This kernel needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
+
+void display_boot_message() {
+	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
+}
 
 void k_main(void)
 {
@@ -38,10 +43,11 @@ void k_main(void)
 	/* Initialize IDT (Interruptor descriptor table) */
 	init_idt();
 
-	/* Write 42 on the terminal */
-	terminal_writestr("42\n");
-
 	init_kbd();
+
+	display_boot_message();
+
+	init_shell();
 
 	for(;;) {
 		asm("hlt");

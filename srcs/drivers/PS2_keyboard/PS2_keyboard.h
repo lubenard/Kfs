@@ -6,8 +6,9 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 22:00:50 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 22:16:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+void get_last_typed_key(unsigned char *key);
 void init_kbd();

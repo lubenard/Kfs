@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 21:59:07 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 23:03:25 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ static const char *kbd_languages_up[] = {
 
 int kbd_language;
 int shift_status = 0;
+unsigned char last_typed_key = 0;
 
 void set_language(int language)
 {
@@ -99,11 +100,11 @@ char translateKey(uint8_t scancode) {
 
 void handle_special_key(unsigned char scancode, int is_released)
 {
-	/*if (scancode == 0x01) // Escape character
+	if (scancode == 0x01) // Escape character
 		terminal_writestr("ESC");
 	else if (scancode == 0x0E) // Delete character
 		terminal_dellastchar();
-	else*/ if (scancode == 0x2A || scancode == 0xAA) // Left shift
+	else if (scancode == 0x2A || scancode == 0xAA) // Left shift
 		shift_status = !is_released;
 	else if (scancode == 0x3A) { // Caps lock
 		shift_status = !shift_status;
@@ -125,6 +126,12 @@ int is_special_key(unsigned char scancode)
 	return 0;
 }
 
+void get_last_typed_key(unsigned char *key)
+{
+	*key = last_typed_key;
+	last_typed_key = 0;
+}
+
 void get_key(registers_t regs)
 {
 	(void)regs;
@@ -144,7 +151,8 @@ void get_key(registers_t regs)
 		if (scancode & 0x80)
 			return ;
 		else {
-			terminal_writec(translateKey(scancode));
+			last_typed_key = translateKey(scancode);
+			//terminal_writec(translateKey(scancode));
 		}
 	}
 }
