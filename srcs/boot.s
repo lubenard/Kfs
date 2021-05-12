@@ -39,6 +39,14 @@ stack_top:
 section .text
 global _start:function (_start.end - _start)
 _start:
+	
+	mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
+	and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
+	or ax, 0x2          ; set coprocessor monitoring  CR0.MP
+	mov cr0, eax
+	mov eax, cr4        ; cr4 too cannot be manipulated directly
+	or ax, 3 << 9       ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	mov cr4, eax
 	; The bootloader has loaded us into 32-bit protected mode on a x86
 	; machine. Interrupts are disabled. Paging is disabled. The processor
 	; state is as defined in the multiboot standard. The kernel has full

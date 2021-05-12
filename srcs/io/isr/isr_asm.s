@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/02 16:43:24 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/07 18:03:46 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/05/12 11:40:45 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -91,6 +91,7 @@ IRQ 15,47
 
 ; Import isr_handler for isr.c
 extern isr_handler
+extern irq_handler
 
 ; This is our common ISR stub. It saves the processor state, sets
 ; up for kernel mode segments, calls the C-level fault handler,
@@ -120,8 +121,6 @@ isr_common_stub:
    sti
    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and esp
 
-; In isr.c
-extern irq_handler
 
 ; This is a stub that we have created for IRQ based ISRs. This calls
 ; 'irq_handler' in our C code. We need to create this in an 'irq.c'

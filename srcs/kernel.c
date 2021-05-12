@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/07 18:36:28 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 15:27:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void k_main(void)
 	/* Write 42 on the terminal */
 	//terminal_writestr("42\n");
 
-	asm volatile ("sti");
 	init_kbd();
 	//terminal_writec('a');
 	//terminal_writestr("a");

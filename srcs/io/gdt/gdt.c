@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/10 12:53:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 15:57:29 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,5 @@ void init_gdt()
 	// Load new created GDT
 	gdt_flush((uint32_t)&gdt_ptr);
 
-	//printk(KERN_INFO, "GDT has been initialised at %p", gdt_ptr.offset);
+	printk(KERN_INFO, "GDT has been initialised at %p", gdt_ptr.offset);
 }

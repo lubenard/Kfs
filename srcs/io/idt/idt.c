@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/05 22:39:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 15:57:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,6 @@ void init_idt()
 	idt_set_gate(46, (int32_t)irq14, 0x08, 0x8E);
 	idt_set_gate(47, (int32_t)irq15, 0x08, 0x8E);
 
-	//printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
+	printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
 }
 

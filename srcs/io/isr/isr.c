@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/10 21:58:24 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 15:54:52 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,35 +35,33 @@ void isr_handler(registers_t regs)
 	while (1){}
 }
 
-isr_t interrupt_handlers[256];
+void *irq_routines[16] = {
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0
+};
 
 void register_interrupt_handler(int8_t n, isr_t handler)
 {
-	printk(KERN_INFO, "Set entry at %d, with pointer %p", n, handler);
-	interrupt_handlers[n] = handler;
+	//printk(KERN_INFO, "Set entry at %d, with pointer %p", n, handler);
+	irq_routines[n] = handler;
 }
 
 // This gets called from our ASM interrupt handler stub.
 void irq_handler(registers_t regs)
 {
-	//printk(KERN_INFO, "This function is launched, received %d from regs", regs.int_no);
+	//printk(KERN_INFO, "This function is launched, received %d from regs", regs.int_no - 32);
 
-	if (interrupt_handlers[regs.int_no] != 0) {
-		printk(KERN_INFO, "Found entry for %d -> %p", regs.int_no, interrupt_handlers[regs.int_no]);
-		interrupt_handlers[regs.int_no](regs);
-	}
+	void (*handler)(registers_t r);
 
-	//printk(KERN_INFO, "Searching for entry @ int_no %d", regs->int_no - 32);
-//	if (irq_routines[regs->int_no] != 0) {
-		//printk(KERN_INFO, "Found entry @ int_no %d -> %p", regs->int_no, irq_routines[regs->int_no]);
-//		void (*handler)(struct registers *r) = irq_routines[regs->int_no];
-//		handler(regs);
-//	} //else
-		//printk(KERN_ERROR, "No entry here @ int_no %d", regs->int_no);
+	if (irq_routines[regs.int_no - 32] != 0) {
+		handler = irq_routines[regs.int_no - 32];
+		handler(regs);
+	}/* else
+		printk(KERN_ERROR, "No entry here @ int_no %d", regs.int_no);*/
 
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
-	if (regs.int_no >= 40) {
+	if (regs.int_no - 32 >= 8) {
 		// Send reset signal to slave.
 		outb(0xA0, 0x20);
 	}

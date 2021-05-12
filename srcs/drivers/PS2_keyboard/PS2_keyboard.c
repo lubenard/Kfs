@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/10 19:03:35 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 15:57:16 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void get_key(registers_t regs)
 {
 	(void)regs;
 
-	printk(KERN_INFO, "data received");
+	//printk(KERN_INFO, "data received");
 	/* Read from the keyboard's data buffer */
     uint16_t scancode = inb(0x60);
 
@@ -119,7 +119,7 @@ void get_key(registers_t regs)
 		if (scancode & 0x80)
 			return ;
 		else {
-			printk(KERN_INFO, "Received %d from kbd", scancode);
+			//printk(KERN_INFO, "Received %d from kbd", scancode);
 			terminal_writec(translateKey(scancode));
 		}
 	}
@@ -127,11 +127,11 @@ void get_key(registers_t regs)
 
 void init_kbd()
 {
-	register_interrupt_handler(IRQ1, &get_key);
+	register_interrupt_handler(1, &get_key);
 
 	//printk(KERN_INFO, "Keyboard has been registered in IRQ");
 	// Set default settings to the keyboard
 	//outb(0x60, 0xF6);
 
-	set_language(0);
+	set_language(1);
 }
