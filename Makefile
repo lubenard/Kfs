@@ -6,19 +6,18 @@ NAME = kfs-1.bin
 ISO_NAME = kfs-1.iso
 
 SRCDIR = srcs
-INCLUDE_SRC = ./include/
 
-SRC_FILES_ASM = boot.s \
-				io/gdt/gdt_asm.s \
-				io/idt/idt_asm.s \
-				io/isr/isr_asm.s
+SRC_FILES_ASM = kernel/boot.s \
+				kernel/gdt/gdt_asm.s \
+				kernel/idt/idt_asm.s \
+				kernel/isr/isr_asm.s
 
-SRC_FILES_C = kernel.c \
+SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \
 			  drivers/PS2_keyboard/PS2_keyboard.c \
-			  io/gdt/gdt.c \
-			  io/idt/idt.c \
-			  io/isr/isr.c \
+			  kernel/gdt/gdt.c \
+			  kernel/idt/idt.c \
+			  kernel/isr/isr.c \
 			  lib/lib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
@@ -65,7 +64,7 @@ $(NAME): $(OBJ_C) $(OBJ_ASM)
 
 %.o : %.c
 	@printf "\033[36mCompilation de $<...\033[0m"
-	@$(CC_C) -c $(CFLAGS) -I$(INCLUDE_SRC) $< -o $@
+	@$(CC_C) -c $(CFLAGS) $< -o $@
 	@printf "\033[32m[✓]\033[0m\n"
 
 clean:

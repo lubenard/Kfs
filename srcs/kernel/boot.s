@@ -39,7 +39,7 @@ stack_top:
 section .text
 global _start:function (_start.end - _start)
 _start:
-	
+
 	mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
 	and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
 	or ax, 0x2          ; set coprocessor monitoring  CR0.MP

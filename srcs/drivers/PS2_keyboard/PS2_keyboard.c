@@ -6,15 +6,15 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 18:08:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 21:59:07 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
-#include "../../io/io.h"
-#include "../../drivers/vga/vga.h"
-#include "../../io/isr/isr.h"
+#include "../../kernel/isr/isr.h"
 #include "../../lib/lib.h"
+#include "../../drivers/vga/vga.h"
+#include "../../io/io.h"
 
 static const char qwertAsciiTable[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -99,11 +99,11 @@ char translateKey(uint8_t scancode) {
 
 void handle_special_key(unsigned char scancode, int is_released)
 {
-	if (scancode == 0x01) // Escape character
+	/*if (scancode == 0x01) // Escape character
 		terminal_writestr("ESC");
 	else if (scancode == 0x0E) // Delete character
 		terminal_dellastchar();
-	else if (scancode == 0x2A || scancode == 0xAA) // Left shift
+	else*/ if (scancode == 0x2A || scancode == 0xAA) // Left shift
 		shift_status = !is_released;
 	else if (scancode == 0x3A) { // Caps lock
 		shift_status = !shift_status;
@@ -143,18 +143,14 @@ void get_key(registers_t regs)
 	} else {
 		if (scancode & 0x80)
 			return ;
-		else
+		else {
 			terminal_writec(translateKey(scancode));
+		}
 	}
 }
 
 void init_kbd()
 {
-	register_interrupt_handler(1, &get_key);
-
-	//printk(KERN_INFO, "Keyboard has been registered in IRQ");
-	// Set default settings to the keyboard
-	//outb(0x60, 0xF6);
-
 	set_language(1);
+	register_interrupt_handler(1, &get_key);
 }

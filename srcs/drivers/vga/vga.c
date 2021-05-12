@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 17:10:29 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 19:47:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,6 @@
 #define TT_COMMANDE_OCTET_SUP    14
 #define TT_COMMANDE_OCTET_INF    15
 
-// BY default, this is the size of VGA screen for x86.
-// This screen size is now deprecated, but is supported by any x86 computer
-static const size_t VGA_WIDTH = 80;
-static const size_t VGA_HEIGHT = 25;
 
 size_t terminal_row;
 size_t terminal_column;
@@ -58,7 +54,7 @@ void move_cursor(unsigned short pos)
 /*
  * Erase all the content of the terminal
  */
-void clear_terminal() {
+void terminal_clear() {
 	// We write ' ' on each character for the buffer size
 	size_t index;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
@@ -183,6 +179,6 @@ void terminal_initialize(void)
 	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
 	// The first adress of the VGA buffer is 0xB8000.
 	terminal_buffer = (uint16_t*) 0xB8000;
-	clear_terminal();
+	terminal_clear();
 }
 

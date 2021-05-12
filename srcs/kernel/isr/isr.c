@@ -6,13 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 15:54:52 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 19:22:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "isr.h"
 #include "../../lib/lib.h"
-#include "../io.h"
+#include "../../io/io.h"
 
 static const char *interrupt_message[] = {
 	"Division by 0", "Debug exception", "Non maskable interrupt",
