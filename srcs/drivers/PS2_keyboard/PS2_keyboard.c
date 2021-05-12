@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 15:57:16 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 18:08:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,19 +25,45 @@ static const char qwertAsciiTable[] = {
 	'6', '+', '1', '2', '3', '0', '.'
 };
 
+static const char qwertAsciiTableUp[] = {
+	0, 0, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', 0,
+	'\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
+	0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~',
+	0, '|', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?',
+	0, '*', 0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	'7', '8', '9', '-', '4', '5', '6', '+', '1', '2', '3',
+	'0', '.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
+
 static const char azertAsciiTable[] = {
-	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
-	'-', '=', 0, '\t', 'a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '^',
-	'$', '\n', 0, 'q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', '%',
-	0, 0, '*', 'w', 'x', 'c', 'v', 'b', 'n', ',', ';', ':', '!', 0, '*',
+	0, 0, '&', '~', '"', '\'', '(', '-', '`', '_', '^', '@', ')', '=', 0,
+	'\t', 'a', 'z', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '^', '$', '\n',
+	0, 'q', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', '%', 0, 0, '*',
+	'w', 'x', 'c', 'v', 'b', 'n', ',', ';', ':', '!', 0, '*',
 	0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, '7', '8', '9', '-', '4', '5',
 	'6', '+', '1', '2', '3', '0', '.'
+};
+
+static const char azertAsciiTableUp[] = {
+	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', ']', '+', 0,
+	'\t', 'A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '^', '$', '\n',
+	0, 'Q', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', '%', '*',
+	0, '>', 'W', 'X', 'C', 'V', 'B', 'N', '?', '.', '/', '!',
+	0, '*', 0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	'7', '8', '9', '-', '4', '5', '6', '+', '1', '2', '3',
+	'0', '.', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 static const char *kbd_languages[] = {
 	qwertAsciiTable,
 	azertAsciiTable
 };
+
+static const char *kbd_languages_up[] = {
+	qwertAsciiTableUp,
+	azertAsciiTableUp
+};
+
 
 int kbd_language;
 int shift_status = 0;
@@ -52,9 +78,10 @@ char translateKey(uint8_t scancode) {
 
 	if (scancode > 0x58)
 		return 0;
-	keycode = kbd_languages[kbd_language][scancode];
 	if (shift_status)
-		keycode -= 32;
+		keycode = kbd_languages_up[kbd_language][scancode];
+	else
+		keycode = kbd_languages[kbd_language][scancode];
 	return (keycode);
 }
 
@@ -72,14 +99,14 @@ char translateKey(uint8_t scancode) {
 
 void handle_special_key(unsigned char scancode, int is_released)
 {
-	if (scancode == 0x01)
+	if (scancode == 0x01) // Escape character
 		terminal_writestr("ESC");
-	else if (scancode == 0x0E)
-		terminal_writestr("DEL");
-	else if (scancode == 0x2A || scancode == 0xAA)
+	else if (scancode == 0x0E) // Delete character
+		terminal_dellastchar();
+	else if (scancode == 0x2A || scancode == 0xAA) // Left shift
 		shift_status = !is_released;
-	else if (scancode == 0x3A || scancode == 0xBA) {
-		shift_status = !is_released;
+	else if (scancode == 0x3A) { // Caps lock
+		shift_status = !shift_status;
 		// If caps lock is enabled, set caps lock led, else disable it
 		outb(0x60, 0xED);
 		if (!shift_status)
@@ -102,7 +129,6 @@ void get_key(registers_t regs)
 {
 	(void)regs;
 
-	//printk(KERN_INFO, "data received");
 	/* Read from the keyboard's data buffer */
     uint16_t scancode = inb(0x60);
 
@@ -115,13 +141,10 @@ void get_key(registers_t regs)
 		else
 			handle_special_key(scancode, 0);
 	} else {
-		//printk(KERN_INFO, "Received %d from kbd", scancode);
 		if (scancode & 0x80)
 			return ;
-		else {
-			//printk(KERN_INFO, "Received %d from kbd", scancode);
+		else
 			terminal_writec(translateKey(scancode));
-		}
 	}
 }
 

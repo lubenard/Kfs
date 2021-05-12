@@ -38,8 +38,6 @@ SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
 OBJ_C = $(SRCS_C:.c=.o)
 OBJ_ASM = $(SRCS_ASM:.s=.o)
 
-# 
-
 CFLAGS = -Wall -Wextra -Werror \
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
@@ -87,7 +85,6 @@ re: fclean all
 
 launch: all
 	qemu-system-x86_64 -cdrom $(ISO_NAME)
-
 
 .SILENT:
 

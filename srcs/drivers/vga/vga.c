@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/07 18:08:12 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/12 17:10:29 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,6 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 {
 	size_t index = y * VGA_WIDTH + x;
 	terminal_buffer[index] = vga_entry(c, color);
-	move_cursor(index + 1);
 }
 
 /*
@@ -144,12 +143,23 @@ void terminal_writec(const char c)
 			move_screen_up();
 	} else {
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
+		move_cursor(terminal_row * VGA_WIDTH + terminal_column + 1);
 		if (++terminal_column == VGA_WIDTH) {
 			terminal_column = 0;
 			if (++terminal_row == VGA_HEIGHT)
 				move_screen_up();
 		}
 	}
+}
+
+void terminal_dellastchar() {
+	if (terminal_column == 0) {
+		terminal_row--;
+		terminal_column = VGA_WIDTH;
+	} else
+		terminal_column--;
+	terminal_putentryat(' ', terminal_color, terminal_column, terminal_row);
+	move_cursor(terminal_row * VGA_WIDTH + terminal_column);
 }
 
 /*
