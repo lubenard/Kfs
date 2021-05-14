@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 16:25:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 16:46:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,9 @@ void terminal_clear() {
 			terminal_buffer[index] = vga_entry(' ', vga_screen.terminal_color);
 		}
 	}
+	vga_screen.terminal_row = 0;
+	vga_screen.terminal_column = 0;
+	vga_screen.cursor_pos = 0;
 }
 
 void terminal_set_fg_color(int new_fg_color)

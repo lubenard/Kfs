@@ -16,6 +16,7 @@ void print_help() {
 	terminal_writestr("Commands available:\n");
 	terminal_writestr("\thelp - print this help\n");
 	terminal_writestr("\tkbd language - set kbd map: 1 for QWERT, 2 for AZERTY\n");
+	terminal_writestr("\tclear - clear the screen\n");
 }
 
 void	handle_input() {
@@ -31,7 +32,9 @@ void	handle_input() {
 			else
 				printk(KERN_INFO, "Invalid option: 1 for QWERTY map, 2 for AZERTY map");
 		}
-	} else {
+	} else if (strcmp(input_buffer, "clear") == 0)
+		terminal_clear();
+	else {
 		printk(KERN_ERROR, "Command not found");
 		print_help();
 	}
