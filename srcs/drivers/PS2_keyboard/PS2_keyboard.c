@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 23:03:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 16:14:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "../../lib/lib.h"
 #include "../../drivers/vga/vga.h"
 #include "../../io/io.h"
+#include "PS2_keyboard.h"
 
 static const char qwertAsciiTable[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -64,14 +65,20 @@ static const char *kbd_languages_up[] = {
 	azertAsciiTableUp
 };
 
+static char *locale_code_kbd[] = {
+	"QWERTY",
+	"AZERTY"
+};
 
 int kbd_language;
 int shift_status = 0;
-unsigned char last_typed_key = 0;
+kbd_event_t last_typed_key;
+unsigned short is_key_multiple;
 
-void set_language(int language)
+char *set_language(int language)
 {
-	kbd_language = language;
+	kbd_language = language - 1;
+	return (locale_code_kbd[kbd_language]);
 }
 
 char translateKey(uint8_t scancode) {
@@ -84,6 +91,14 @@ char translateKey(uint8_t scancode) {
 	else
 		keycode = kbd_languages[kbd_language][scancode];
 	return (keycode);
+}
+
+void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
+						short is_key_special) {
+	last_typed_key.key_typed = translateKey(scancode);
+	last_typed_key.key_typed_raw = scancode;
+	last_typed_key.key_typed_raw_two = scancode_two;
+	last_typed_key.is_key_special = is_key_special;
 }
 
 /*
@@ -100,11 +115,9 @@ char translateKey(uint8_t scancode) {
 
 void handle_special_key(unsigned char scancode, int is_released)
 {
-	if (scancode == 0x01) // Escape character
-		terminal_writestr("ESC");
-	else if (scancode == 0x0E) // Delete character
-		terminal_dellastchar();
-	else if (scancode == 0x2A || scancode == 0xAA) // Left shift
+	unsigned int second_scancode = 0;
+
+	if (scancode == 0x2A || scancode == 0xAA) // Left shift
 		shift_status = !is_released;
 	else if (scancode == 0x3A) { // Caps lock
 		shift_status = !shift_status;
@@ -114,6 +127,19 @@ void handle_special_key(unsigned char scancode, int is_released)
 			outb(0x60, 4);
 		else
 			outb(0x60, 0);
+	} else if (scancode == 0xE0) {
+			//printk(KERN_INFO, "Multiple key detected");
+			is_key_multiple = 1;
+			second_scancode = inb(0x60);
+			if (second_scancode > 0x6c)
+				is_released = 1;
+	}
+	if (is_released == 0)
+		set_last_key_typed(scancode, second_scancode, 1);
+	//printk(KERN_INFO, "Is released is %d", is_released);
+	if (is_key_multiple == 1 && is_released) {
+		//printk(KERN_INFO, "Is key multiple released");
+		is_key_multiple = 0;
 	}
 }
 
@@ -121,15 +147,20 @@ int is_special_key(unsigned char scancode)
 {
 	if (scancode == 0x01 || scancode == 0x0E || scancode == 0x1D
 		|| scancode == 0x2A || scancode == 0xAA || scancode == 0x36
-		|| scancode == 0x38 || scancode == 0x3A || scancode == 0xBA)
+		|| scancode == 0x38 || scancode == 0x3A || scancode == 0xBA
+		|| scancode == 0xE0)
 		return 1;
 	return 0;
 }
 
-void get_last_typed_key(unsigned char *key)
+void get_last_typed_key(kbd_event_t *key)
 {
 	*key = last_typed_key;
-	last_typed_key = 0;
+	// Reset last typed key
+	last_typed_key.key_typed = 0;
+	last_typed_key.key_typed_raw = 0;
+	last_typed_key.key_typed_raw_two = 0;
+	last_typed_key.is_key_special = 0;
 }
 
 void get_key(registers_t regs)
@@ -143,22 +174,21 @@ void get_key(registers_t regs)
 	 *  set, that means that a key has just been released
 	 */
 	if (is_special_key(scancode)) {
-		if (scancode & 0x80)
+		if (scancode & 0x80 && scancode <= 0xD8)
 			handle_special_key(scancode, 1);
 		else
 			handle_special_key(scancode, 0);
-	} else {
+	} else if (!is_key_multiple) {
 		if (scancode & 0x80)
 			return ;
-		else {
-			last_typed_key = translateKey(scancode);
-			//terminal_writec(translateKey(scancode));
-		}
+		else
+			set_last_key_typed(scancode, 0, 0);
 	}
 }
 
 void init_kbd()
 {
-	set_language(1);
+	is_key_multiple = 0;
+	set_language(2);
 	register_interrupt_handler(1, &get_key);
 }

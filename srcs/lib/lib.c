@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:28 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/13 00:14:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 15:11:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,4 +114,43 @@ int		strcmp(char const *s1, char const *s2)
 	while (s1[i] == s2[i] && s1[i])
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+int		strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	if (!s1 || !s2)
+		return (-1);
+	if (n == 0)
+		return (0);
+	while (s1[i] == s2[i] && s1[i] && s2[i] && i < n - 1)
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+int		atoi(char const *str)
+{
+	size_t	output;
+	int		i;
+	int		mult;
+
+	output = 0;
+	i = 0;
+	mult = 1;
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\v' \
+			|| str[i] == '\n' || str[i] == '\r' || str[i] == '\f')
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		mult = (str[i] == '-') ? -1 : 1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		output = output * 10 + str[i] - 48;
+		i++;
+	}
+	return (output * mult);
 }

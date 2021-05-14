@@ -6,9 +6,11 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:05:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 19:48:40 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 15:05:35 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include <stddef.h>
 
 /* Hardware text mode color constants. */
 #define VGA_COLOR_BLACK 0
@@ -33,6 +35,13 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
+typedef struct vga_screen {
+	size_t terminal_row;
+	size_t terminal_column;
+	uint8_t terminal_color;
+	unsigned short cursor_pos;
+}				vga_screen_t;
+
 void terminal_initialize(void);
 void terminal_writestr(const char *data);
 void terminal_writec(const char c);
@@ -40,3 +49,4 @@ void terminal_dellastchar();
 void terminal_clear();
 void terminal_set_fg_color(int new_color);
 void terminal_set_bg_color(int new_color);
+void move_cursor(unsigned short rel_pos);
