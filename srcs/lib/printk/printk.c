@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 19:26:18 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/05 22:21:32 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/15 14:20:51 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ void printk(int info_type, const char *str, ...) {
 		parsing(str, &ap);
 		va_end(ap);
 	}
-	terminal_writec('\n');
-	terminal_set_fg_color(VGA_COLOR_LIGHT_GREY);
+	if (info_type != KERN_NORMAL) {
+		terminal_writec('\n');
+		terminal_set_fg_color(VGA_COLOR_LIGHT_GREY);
+	}
 }
