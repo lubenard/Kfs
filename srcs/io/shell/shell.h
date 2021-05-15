@@ -1,10 +1,16 @@
-typedef struct terminals {
-	unsigned char buffer[VGA_WIDTH * VGA_HEIGHT];
-	size_t terminal_row;
-	size_t terminal_column;
-	unsigned int cursor_pos;
-	int fg_color;
-	int bg_color;
-}				terminals_t;
+typedef struct shell {
+	uint16_t buffer[2000];
+	unsigned short start_cmd_line;
+	unsigned short cmd_size;
+	unsigned short cursor_pos;
+	unsigned short is_shell_init;
+}				shell_t;
+
+typedef struct terminal {
+			shell_t *first;
+			shell_t *second;
+			shell_t *third;
+			unsigned short active_shell;
+}				terminal_t;
 
 void init_shell();

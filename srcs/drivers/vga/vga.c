@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 16:46:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 23:44:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,14 @@ void move_prec_cursor(unsigned short pos)
 	outb(TT_PORT_DATA, vga_screen.cursor_pos & 0x00FF);
 }
 
-void move_cursor(unsigned short rel_pos)
+void move_cursor(short rel_pos)
 {
 	vga_screen.cursor_pos += rel_pos;
 	move_prec_cursor(vga_screen.cursor_pos);
+}
+
+vga_screen_t get_screen_datas() {
+	return vga_screen;
 }
 
 /*
@@ -171,15 +175,25 @@ void terminal_dellastchar() {
 	terminal_putentryat(' ', vga_screen.terminal_color, vga_screen.cursor_pos);
 }
 
+void terminal_dellastnchars(unsigned short chars)
+{
+	unsigned short i = 0;
+	while (i != chars) {
+		terminal_dellastchar();
+		i++;
+	}
+}
+
 /*
  * Print a string on the terminal
  * @param data The string to print
  */
-void terminal_writestr(const char *data)
+unsigned short terminal_writestr(const char *data)
 {
 	size_t size = strlen(data);
 	for (size_t i = 0; i < size; i++)
 		terminal_writec(data[i]);
+	return vga_screen.terminal_row * VGA_WIDTH + vga_screen.terminal_column;
 }
 
 void terminal_initialize(void)

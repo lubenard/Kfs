@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 16:14:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/14 23:05:25 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ void handle_special_key(unsigned char scancode, int is_released)
 		else
 			outb(0x60, 0);
 	} else if (scancode == 0xE0) {
-			//printk(KERN_INFO, "Multiple key detected");
 			is_key_multiple = 1;
 			second_scancode = inb(0x60);
 			if (second_scancode > 0x6c)
@@ -136,9 +135,7 @@ void handle_special_key(unsigned char scancode, int is_released)
 	}
 	if (is_released == 0)
 		set_last_key_typed(scancode, second_scancode, 1);
-	//printk(KERN_INFO, "Is released is %d", is_released);
 	if (is_key_multiple == 1 && is_released) {
-		//printk(KERN_INFO, "Is key multiple released");
 		is_key_multiple = 0;
 	}
 }
@@ -148,7 +145,7 @@ int is_special_key(unsigned char scancode)
 	if (scancode == 0x01 || scancode == 0x0E || scancode == 0x1D
 		|| scancode == 0x2A || scancode == 0xAA || scancode == 0x36
 		|| scancode == 0x38 || scancode == 0x3A || scancode == 0xBA
-		|| scancode == 0xE0)
+		|| scancode == 0xE0 || (scancode >= 0x3B && scancode <= 0x46))
 		return 1;
 	return 0;
 }
