@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 15:25:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 20:08:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,11 @@ void set_character_color(uint16_t character)
 {
 	int character_color = ((1 << 4) - 1) & (character >> 8);
 	vga_screen.terminal_color = character_color;
+}
+
+void define_vga_coordonates(size_t x, size_t y) {
+	vga_screen.terminal_column = y;
+	vga_screen.terminal_row = x;
 }
 
 void move_screen_up()

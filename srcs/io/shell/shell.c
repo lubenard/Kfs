@@ -39,7 +39,8 @@ void handle_special_keys(shell_t *shell, kbd_event_t key) {
 		rel_pos = -1;
 	if (shell->cursor_pos + rel_pos < 0)
 		rel_pos = 0;
-	//else if (shell->cursor_pos + rel_pos > shell->cmd_size)
+	else if (shell->cursor_pos + rel_pos > shell->cmd_size)
+		rel_pos = 0;
 	move_cursor(rel_pos);
 	shell->cursor_pos += rel_pos;
 }
@@ -58,7 +59,7 @@ void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
 	for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		shell->buffer[i] = screen_buffer[i];
-	shell->start_cmd_line = datas.cursor_pos;
+	shell->start_cmd_line = datas.cursor_pos - shell->cmd_size;
 }
 
 void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
@@ -70,7 +71,8 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 	if (terminal->active_shell->is_shell_init) {
 		for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 			screen_buffer[i] = terminal->active_shell->buffer[i];
-		move_prec_cursor(datas.cursor_pos);
+		move_prec_cursor(terminal->active_shell->start_cmd_line + terminal->active_shell->cmd_size);
+		define_vga_coordonates(terminal->active_shell->start_cmd_line / 80, terminal->active_shell->start_cmd_line % 80);
 	} else {
 		terminal->active_shell->start_cmd_line = terminal_writestr("Shell > ");
 		memset(terminal->active_shell->cmd_line, 0, 256);
@@ -108,7 +110,7 @@ void wait_for_input(terminal_t terminal) {
 				}*/
 			}
 		} else if (key.is_key_special) {
-			if (key.key_typed_raw == 0x0E) {
+			if (key.key_typed_raw == 0x0E) { // Delete key
 				if (terminal.active_shell->cmd_size > 0) {
 					move_buffer_left(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
 					terminal.active_shell->cursor_pos--;
@@ -117,13 +119,13 @@ void wait_for_input(terminal_t terminal) {
 					move_cursor(-1);
 				}
 			}
-			if (key.key_typed_raw == 0xE0)
+			if (key.key_typed_raw == 0xE0) // Arrow keys
 				handle_special_keys(terminal.active_shell, key);
-			if (key.key_typed_raw == 0x3B)
+			if (key.key_typed_raw == 0x3B) // F1
 				load_shell(&terminal, 0);
-			else if (key.key_typed_raw == 0x3C)
+			else if (key.key_typed_raw == 0x3C) // F2
 				load_shell(&terminal, 1);
-			else if (key.key_typed_raw == 0x3D)
+			else if (key.key_typed_raw == 0x3D) // F3
 				load_shell(&terminal, 2);
 		}
 	}

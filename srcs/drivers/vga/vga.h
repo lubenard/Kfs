@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:05:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 15:27:38 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 20:09:26 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,5 @@ void move_prec_cursor(unsigned short pos);
 void move_cursor(short rel_pos);
 void move_buffer_right(unsigned short cursor_pos);
 void move_buffer_left(unsigned short cursor_pos);
+void define_vga_coordonates(size_t x, size_t y);
 vga_screen_t get_screen_datas();
