@@ -6,15 +6,15 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 20:08:13 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 23:59:02 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
 #include <stdint.h>
-#include "../../lib/lib.h"
 #include "../../io/io.h"
 #include "vga.h"
+#include "../../lib/strlib.h"
 
 /* Les ports d'E/S */
 #define TT_PORT_COMMANDE        0x3D4

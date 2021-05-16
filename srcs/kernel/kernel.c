@@ -6,14 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 23:28:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 23:58:20 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../drivers/vga/vga.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"
-#include "../lib/lib.h"
 #include "../io/io.h"
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"

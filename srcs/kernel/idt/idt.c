@@ -6,12 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 19:22:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:01:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "idt.h"
-#include "../../lib/lib.h"
+#include "../../lib/iolib.h"
+#include "../../lib/memlib.h"
 #include "../../io/io.h"
 
 struct idt_ptr_struct idt_ptr;

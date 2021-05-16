@@ -6,13 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 19:26:18 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/15 14:20:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:01:56 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdarg.h>
 #include "include/printk.h"
-#include "../lib.h"
 #include "../../drivers/vga/vga.h"
 
 /*

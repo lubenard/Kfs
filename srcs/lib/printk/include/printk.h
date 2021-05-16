@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:34:34 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 23:06:57 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:03:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 # define FT_PRINTF_H
 
 # include <stdarg.h>
-# include "../../lib.h"
+# include "../../iolib.h"
+# include "../../strlib.h"
 
 # define PRINTF_BUFF_SIZE	1024
 

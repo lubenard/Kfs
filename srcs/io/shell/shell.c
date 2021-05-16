@@ -1,6 +1,8 @@
 #include "../../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../../drivers/vga/vga.h"
-#include "../../lib/lib.h"
+#include "../../lib/iolib.h"
+#include "../../lib/memlib.h"
+#include "../../lib/strlib.h"
 #include "../io.h"
 #include "shell.h"
 

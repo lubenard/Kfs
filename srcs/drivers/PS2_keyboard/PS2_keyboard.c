@@ -6,13 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 23:05:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 23:59:21 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdint.h>
 #include "../../kernel/isr/isr.h"
-#include "../../lib/lib.h"
 #include "../../drivers/vga/vga.h"
 #include "../../io/io.h"
 #include "PS2_keyboard.h"

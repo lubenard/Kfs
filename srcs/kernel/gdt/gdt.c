@@ -6,12 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 15:57:29 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:00:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "gdt.h"
-#include "../../lib/lib.h"
+#include "../../lib/iolib.h"
+#include "../../lib/memlib.h"
 
 GDTEntry_t gdt_entries[5];
 
