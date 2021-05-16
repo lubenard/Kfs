@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:01:16 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:41:01 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,31 +40,25 @@ void *irq_routines[16] = {
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
-void register_interrupt_handler(int8_t n, isr_t handler)
-{
-	//printk(KERN_INFO, "Set entry at %d, with pointer %p", n, handler);
+void register_interrupt_handler(int8_t n, isr_t handler) {
 	irq_routines[n] = handler;
 }
 
 // This gets called from our ASM interrupt handler stub.
-void irq_handler(registers_t regs)
-{
-	//printk(KERN_INFO, "This function is launched, received %d from regs", regs.int_no - 32);
+void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);
 
 	if (irq_routines[regs.int_no - 32] != 0) {
 		handler = irq_routines[regs.int_no - 32];
 		handler(regs);
-	}/* else
-		printk(KERN_ERROR, "No entry here @ int_no %d", regs.int_no);*/
-
+	}
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
 	if (regs.int_no - 32 >= 8) {
 		// Send reset signal to slave.
 		outb(0xA0, 0x20);
 	}
-	// Send reset signal to master. (As well as slave, if necessary).
+	// Send reset signal to master.
 	outb(0x20, 0x20);
 }

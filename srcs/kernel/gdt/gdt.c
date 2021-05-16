@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:00:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:36:25 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include "../../lib/memlib.h"
 
 GDTEntry_t gdt_entries[5];
-
-#define GDT_BASE 0x00000800
 
 /* Set the value of one GDT entry.
  * @param num the entry we fill (between 0 and 4)

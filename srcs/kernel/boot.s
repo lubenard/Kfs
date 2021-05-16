@@ -1,3 +1,15 @@
+; **************************************************************************** ;
+;                                                                              ;
+;                                                         :::      ::::::::    ;
+;    boot.s                                             :+:      :+:    :+:    ;
+;                                                     +:+ +:+         +:+      ;
+;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
+;                                                 +#+#+#+#+#+   +#+            ;
+;    Created: 2021/05/17 00:20:13 by lubenard          #+#    #+#              ;
+;    Updated: 2021/05/17 00:20:15 by lubenard         ###   ########.fr        ;
+;                                                                              ;
+; **************************************************************************** ;
+
 ; Declare constants for the multiboot header.
 MBALIGN  equ  1 << 0            ; align loaded modules on page boundaries
 MEMINFO  equ  1 << 1            ; provide memory map

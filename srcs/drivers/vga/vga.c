@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 23:59:02 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:57:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,6 @@
 #include "../../io/io.h"
 #include "vga.h"
 #include "../../lib/strlib.h"
-
-/* Les ports d'E/S */
-#define TT_PORT_COMMANDE        0x3D4
-#define TT_PORT_DATA            0x3D5
-
-/* Les commandes du port d'E/S */
-#define TT_COMMANDE_OCTET_SUP    14
-#define TT_COMMANDE_OCTET_INF    15
 
 vga_screen_t vga_screen;
 uint16_t *terminal_buffer;
@@ -48,10 +40,10 @@ void move_prec_cursor(unsigned short pos)
 		vga_screen.cursor_pos = 0;
 	else
 		vga_screen.cursor_pos = pos;
-	outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_SUP);
-	outb(TT_PORT_DATA, ((vga_screen.cursor_pos>> 8) & 0x00FF));
-	outb(TT_PORT_COMMANDE, TT_COMMANDE_OCTET_INF);
-	outb(TT_PORT_DATA, vga_screen.cursor_pos & 0x00FF);
+	outb(0x3D4, 14);
+	outb(0x3D5, ((vga_screen.cursor_pos>> 8) & 0x00FF));
+	outb(0x3D4, 15);
+	outb(0x3D5, vga_screen.cursor_pos & 0x00FF);
 }
 
 void move_cursor(short rel_pos)

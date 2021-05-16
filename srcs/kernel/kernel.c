@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 23:58:20 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:56:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@
 #endif
 
 void display_boot_message() {
-	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
+	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n"
+	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
 void k_main(void)
@@ -42,13 +43,11 @@ void k_main(void)
 	/* Initialize IDT (Interruptor descriptor table) */
 	init_idt();
 
+	/* Init kbd management */
 	init_kbd();
 
 	display_boot_message();
 
+	/* Init shell management */
 	init_shell();
-
-	for(;;) {
-		asm("hlt");
-	}
 }

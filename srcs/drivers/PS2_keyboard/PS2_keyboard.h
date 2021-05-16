@@ -6,11 +6,14 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 15:23:44 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:10:58 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
+#ifndef PS2_KEYBOARD_H
+# define PS2_KEYBOARD_H
+
+# include <stdint.h>
 
 typedef struct kbd_event {
 	unsigned char key_typed;
@@ -24,3 +27,5 @@ typedef struct kbd_event {
 char *set_language(int language);
 void get_last_typed_key(kbd_event_t *key);
 void init_kbd();
+
+#endif

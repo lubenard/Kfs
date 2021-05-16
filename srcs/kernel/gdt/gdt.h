@@ -6,11 +6,15 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 14:24:56 by lubenard          #+#    #+#             */
-/*   Updated: 2021/04/26 17:05:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:36:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
+#ifndef GDT_H
+# define GDT_H
+
+# include <stdint.h>
+# define GDT_BASE 0x00000800
 
 /*
  * We use __attribute__((packed)) to tell compiler to not add extra space
@@ -39,3 +43,5 @@ extern void gdt_flush(uint32_t);
 
 /* Prototype to init GDT */
 void init_gdt();
+
+#endif

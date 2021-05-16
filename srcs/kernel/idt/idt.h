@@ -6,11 +6,14 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 18:15:57 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/12 12:04:54 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 00:14:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
+#ifndef IDT_H
+# define IDT_H
+
+# include <stdint.h>
 
 struct idt32 {
 	uint16_t base_low;
@@ -80,3 +83,5 @@ extern void irq14();
 extern void irq15();
 
 extern void idt_flush(int32_t);
+
+#endif

@@ -1,3 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shell.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/05/17 00:12:16 by lubenard          #+#    #+#             */
+/*   Updated: 2021/05/17 00:12:44 by lubenard         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef SHELL_H
+# define SHELL_H
+
 typedef struct shell {
 	// Screen buffer when backup is needed
 	uint16_t buffer[2000];
@@ -19,3 +34,5 @@ typedef struct terminal {
 }				terminal_t;
 
 void init_shell();
+
+#endif
