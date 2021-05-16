@@ -10,36 +10,12 @@ void print_help() {
 	terminal_writestr("\tclear - clear the screen\n");
 }
 
-size_t shell_strncmp(uint16_t const *s1, char const *s2, size_t n) {
-	size_t i;
-
-	i = 0;
-	if (!s1 || !s2)
-		return (-1);
-	if (n == 0)
-		return (0);
-	uint16_t character;
-	while (s1[i] && s2[i] && i < n - 1) {
-		character = s1[i] & 0x000000FF;
-		if (character != s2[i])
-			break;
-		i++;
-	}
-	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-}
-
 void	handle_input(shell_t *shell) {
-	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
-	uint16_t *start_of_line = (uint16_t*)&screen_buffer[shell->start_cmd_line];
-	/*for (int i = 0; i != shell->cmd_size; i++)
-		terminal_writec(screen_buffer[shell->start_cmd_line + i]);
-	terminal_writec('\n');
-	printk(KERN_INFO, "strncmp = %d", shell_strncmp(start_of_line, "help", 4));*/
-	if (shell_strncmp(start_of_line, "help", 3) == 0)
+	if (strcmp(shell->cmd_line, "help") == 0)
 		print_help();
-	/*else if (shell_strncmp(start_of_line, "kbd language", 12) == 0) {
+	else if (strncmp(shell->cmd_line, "kbd language", 12) == 0) {
 		unsigned short new_language;
-		if (!(new_language = atoi(&input_buffer[13])))
+		if (!(new_language = atoi(&shell->cmd_line[13])))
 			printk(KERN_ERROR, "Bad input: please enter valid numbers");
 		else {
 			if (new_language > 0 && new_language < 3)
@@ -47,10 +23,10 @@ void	handle_input(shell_t *shell) {
 			else
 				printk(KERN_INFO, "Invalid option: 1 for QWERTY map, 2 for AZERTY map");
 		}
-	} */else if (shell_strncmp(start_of_line, "clear", 5) == 0)
+	} else if (strcmp(shell->cmd_line, "clear") == 0)
 		terminal_clear();
 	else {
-		printk(KERN_ERROR, "Command not found");
+		printk(KERN_ERROR, "Command not found: %s", shell->cmd_line);
 		print_help();
 	}
 }
@@ -61,6 +37,9 @@ void handle_special_keys(shell_t *shell, kbd_event_t key) {
 		rel_pos = 1;
 	else if (key.key_typed_raw_two == 0x4B)
 		rel_pos = -1;
+	if (shell->cursor_pos + rel_pos < 0)
+		rel_pos = 0;
+	//else if (shell->cursor_pos + rel_pos > shell->cmd_size)
 	move_cursor(rel_pos);
 	shell->cursor_pos += rel_pos;
 }
@@ -79,7 +58,7 @@ void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
 	for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		shell->buffer[i] = screen_buffer[i];
-	shell->cursor_pos = datas.cursor_pos;
+	shell->start_cmd_line = datas.cursor_pos;
 }
 
 void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
@@ -91,9 +70,12 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 	if (terminal->active_shell->is_shell_init) {
 		for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 			screen_buffer[i] = terminal->active_shell->buffer[i];
-		move_prec_cursor(terminal->active_shell->cursor_pos);
+		move_prec_cursor(datas.cursor_pos);
 	} else {
-		terminal_writestr("Shell > ");
+		terminal->active_shell->start_cmd_line = terminal_writestr("Shell > ");
+		memset(terminal->active_shell->cmd_line, 0, 256);
+		terminal->active_shell->cmd_size = 0;
+		terminal->active_shell->cursor_pos = 0;
 		terminal->active_shell->is_shell_init = 1;
 	}
 }
@@ -101,21 +83,23 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 void wait_for_input(terminal_t terminal) {
 	kbd_event_t key;
 	terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
-	terminal.active_shell->cursor_pos = terminal.first->start_cmd_line;
+	terminal.active_shell->cursor_pos = 0;
 	while (1) {
 		get_last_typed_key(&key);
 		if (key.key_typed != 0 && key.is_key_special == 0) {
 			if (key.key_typed == '\n') {
 				terminal_writec('\n');
-				handle_input(terminal.first);
+				handle_input(terminal.active_shell);
 				terminal.active_shell->cmd_size = 0;
+				memset(terminal.active_shell->cmd_line, 0, 256);
 				terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
-				terminal.active_shell->cursor_pos = terminal.first->start_cmd_line;
+				terminal.active_shell->cursor_pos = 0;
 			} else {
-				terminal.active_shell->cmd_size++;
 				//if (should_move_buffer) {
-					move_buffer_right(terminal.active_shell->cursor_pos);
+					move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
 					terminal_writec(key.key_typed);
+					terminal.active_shell->cmd_line[terminal.active_shell->cmd_size] = key.key_typed;
+					terminal.active_shell->cmd_size++;
 					terminal.active_shell->cursor_pos++;
 				/*}
 				else {
@@ -125,13 +109,16 @@ void wait_for_input(terminal_t terminal) {
 			}
 		} else if (key.is_key_special) {
 			if (key.key_typed_raw == 0x0E) {
-				move_buffer_left(terminal.active_shell->cursor_pos);
-				terminal.active_shell->cursor_pos--;
-				terminal.active_shell->cmd_size--;
-				move_cursor(-1);
+				if (terminal.active_shell->cmd_size > 0) {
+					move_buffer_left(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
+					terminal.active_shell->cursor_pos--;
+					//terminal.active_shell->cmd_line[terminal.active_shell->] = key.key_typed;
+					terminal.active_shell->cmd_size--;
+					move_cursor(-1);
+				}
 			}
 			if (key.key_typed_raw == 0xE0)
-				handle_special_keys(terminal.first, key);
+				handle_special_keys(terminal.active_shell, key);
 			if (key.key_typed_raw == 0x3B)
 				load_shell(&terminal, 0);
 			else if (key.key_typed_raw == 0x3C)
