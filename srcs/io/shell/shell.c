@@ -10,16 +10,34 @@ void print_help() {
 	terminal_writestr("\tclear - clear the screen\n");
 }
 
+size_t shell_strncmp(uint16_t const *s1, char const *s2, size_t n) {
+	size_t i;
+
+	i = 0;
+	if (!s1 || !s2)
+		return (-1);
+	if (n == 0)
+		return (0);
+	uint16_t character;
+	while (s1[i] && s2[i] && i < n - 1) {
+		character = s1[i] & 0x000000FF;
+		if (character != s2[i])
+			break;
+		i++;
+	}
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
 void	handle_input(shell_t *shell) {
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
-	char start_of_line = (char)screen_buffer[shell->start_cmd_line];
-	for (int i = 0; i != shell->cmd_size; i++)
+	uint16_t *start_of_line = (uint16_t*)&screen_buffer[shell->start_cmd_line];
+	/*for (int i = 0; i != shell->cmd_size; i++)
 		terminal_writec(screen_buffer[shell->start_cmd_line + i]);
 	terminal_writec('\n');
-	printk(KERN_INFO, "strncmp = %d", strncmp(&start_of_line, "help", 2));
-	//if (strncmp(&start_of_line, "help", 3) == 0)
-	//	print_help();
-	/*else if (strncmp(&shell.start_cmd_line, "kbd language", 12) == 0) {
+	printk(KERN_INFO, "strncmp = %d", shell_strncmp(start_of_line, "help", 4));*/
+	if (shell_strncmp(start_of_line, "help", 3) == 0)
+		print_help();
+	/*else if (shell_strncmp(start_of_line, "kbd language", 12) == 0) {
 		unsigned short new_language;
 		if (!(new_language = atoi(&input_buffer[13])))
 			printk(KERN_ERROR, "Bad input: please enter valid numbers");
@@ -29,35 +47,11 @@ void	handle_input(shell_t *shell) {
 			else
 				printk(KERN_INFO, "Invalid option: 1 for QWERTY map, 2 for AZERTY map");
 		}
-	} else if (strcmp(input_buffer, "clear") == 0)
+	} */else if (shell_strncmp(start_of_line, "clear", 5) == 0)
 		terminal_clear();
-	*//*else {
+	else {
 		printk(KERN_ERROR, "Command not found");
-		//print_help();
-	}*/
-}
-
-/*
- * Useful when inserting character into the line
- */
-void move_buffer_right(shell_t *shell) {
-	int i = 1999;
-	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
-	while (i != shell->cursor_pos - 1) {
-		screen_buffer[i + 1] = screen_buffer[i];
-		i--;
-	}
-}
-
-/*
- * Useful when deleting character into the line
- */
-void move_buffer_left(shell_t *shell) {
-	int i = shell->cursor_pos - 1;
-	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
-	while (i != 1999) {
-		screen_buffer[i] = screen_buffer[i + 1];
-		i++;
+		print_help();
 	}
 }
 
@@ -71,14 +65,14 @@ void handle_special_keys(shell_t *shell, kbd_event_t key) {
 	shell->cursor_pos += rel_pos;
 }
 
-shell_t *get_current_active_shell(terminal_t terminal) {
-	if (terminal.active_shell == 0)
-		return terminal.first;
-	if (terminal.active_shell == 1)
-		return terminal.second;
-	if (terminal.active_shell == 2)
-		return terminal.third;
-	return 0;
+void change_active_shell(terminal_t *terminal,
+						unsigned short new_active_shell) {
+	if (new_active_shell == 0)
+		terminal->active_shell = terminal->first;
+	if (new_active_shell == 1)
+		terminal->active_shell = terminal->second;
+	if (new_active_shell == 2)
+		terminal->active_shell = terminal->third;
 }
 
 void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
@@ -89,41 +83,40 @@ void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
 }
 
 void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
-	shell_t *shell = get_current_active_shell(*terminal);
 	vga_screen_t datas = get_screen_datas();
-	copy_screen_into_buffer(shell, datas);
+	copy_screen_into_buffer(terminal->active_shell, datas);
 	terminal_clear();
-	terminal->active_shell = new_shell_to_load;
-	shell = get_current_active_shell(*terminal);
+	change_active_shell(terminal, new_shell_to_load);
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
-	if (shell->is_shell_init) {
+	if (terminal->active_shell->is_shell_init) {
 		for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
-			screen_buffer[i] = shell->buffer[i];
-		move_prec_cursor(shell->cursor_pos);
+			screen_buffer[i] = terminal->active_shell->buffer[i];
+		move_prec_cursor(terminal->active_shell->cursor_pos);
 	} else {
 		terminal_writestr("Shell > ");
-		shell->is_shell_init = 1;
+		terminal->active_shell->is_shell_init = 1;
 	}
 }
 
 void wait_for_input(terminal_t terminal) {
 	kbd_event_t key;
-	terminal.first->start_cmd_line = terminal_writestr("Shell > ");
-	terminal.first->cursor_pos = terminal.first->start_cmd_line;
+	terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
+	terminal.active_shell->cursor_pos = terminal.first->start_cmd_line;
 	while (1) {
 		get_last_typed_key(&key);
 		if (key.key_typed != 0 && key.is_key_special == 0) {
 			if (key.key_typed == '\n') {
 				terminal_writec('\n');
 				handle_input(terminal.first);
-				terminal.first->cmd_size = 0;
-				terminal.first->start_cmd_line = terminal_writestr("Shell > ");
+				terminal.active_shell->cmd_size = 0;
+				terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
+				terminal.active_shell->cursor_pos = terminal.first->start_cmd_line;
 			} else {
-				terminal.first->cmd_size++;
+				terminal.active_shell->cmd_size++;
 				//if (should_move_buffer) {
-					move_buffer_right(get_current_active_shell(terminal));
+					move_buffer_right(terminal.active_shell->cursor_pos);
 					terminal_writec(key.key_typed);
-					terminal.first->cursor_pos++;
+					terminal.active_shell->cursor_pos++;
 				/*}
 				else {
 					terminal_writec(key.key_typed);
@@ -132,9 +125,9 @@ void wait_for_input(terminal_t terminal) {
 			}
 		} else if (key.is_key_special) {
 			if (key.key_typed_raw == 0x0E) {
-				move_buffer_left(get_current_active_shell(terminal));
-				//terminal_dellastchar();
-				terminal.first->cursor_pos--;
+				move_buffer_left(terminal.active_shell->cursor_pos);
+				terminal.active_shell->cursor_pos--;
+				terminal.active_shell->cmd_size--;
 				move_cursor(-1);
 			}
 			if (key.key_typed_raw == 0xE0)
@@ -158,7 +151,7 @@ void	init_shell() {
 	terminal.first = &first;
 	terminal.second = &second;
 	terminal.third = &third;
-	terminal.active_shell = 0;
+	terminal.active_shell = &first;
 	memset(terminal.first, 0, sizeof(shell_t));
 	memset(terminal.second, 0, sizeof(shell_t));
 	memset(terminal.third, 0, sizeof(shell_t));

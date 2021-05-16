@@ -10,7 +10,7 @@ typedef struct terminal {
 			shell_t *first;
 			shell_t *second;
 			shell_t *third;
-			unsigned short active_shell;
+			shell_t *active_shell;
 }				terminal_t;
 
 void init_shell();

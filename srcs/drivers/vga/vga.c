@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 23:44:03 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 15:25:04 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,30 @@ void terminal_writec(const char c)
 			if (++vga_screen.terminal_row == VGA_HEIGHT)
 				move_screen_up();
 		}
+	}
+}
+
+/*
+ * Useful when deleting character into the line
+ */
+void move_buffer_left(unsigned short cursor_pos) {
+	int i = cursor_pos - 1;
+	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
+	while (i != 1999) {
+		screen_buffer[i] = screen_buffer[i + 1];
+		i++;
+	}
+}
+
+/*
+ * Useful when inserting character into the line
+ */
+void move_buffer_right(unsigned short cursor_pos) {
+	int i = 1999;
+	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
+	while (i != cursor_pos - 1) {
+		screen_buffer[i + 1] = screen_buffer[i];
+		i--;
 	}
 }
 
