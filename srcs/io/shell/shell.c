@@ -1,6 +1,7 @@
 #include "../../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../../drivers/vga/vga.h"
 #include "../../lib/lib.h"
+#include "../io.h"
 #include "shell.h"
 
 void print_help() {
@@ -8,6 +9,8 @@ void print_help() {
 	terminal_writestr("\thelp - print this help\n");
 	terminal_writestr("\tkbd language - set kbd map: 1 for QWERTY, 2 for AZERTY\n");
 	terminal_writestr("\tclear - clear the screen\n");
+	terminal_writestr("\tshutdown - shutdown the computer\n");
+	terminal_writestr("\treboot - reboot the computer\n");
 }
 
 void	handle_input(shell_t *shell) {
@@ -25,6 +28,15 @@ void	handle_input(shell_t *shell) {
 		}
 	} else if (strcmp(shell->cmd_line, "clear") == 0)
 		terminal_clear();
+	else if (strcmp(shell->cmd_line, "shutdown") == 0)
+		outw(0x604, 0x2000);
+	else if (strcmp(shell->cmd_line, "reboot") == 0) {
+		// 8242 reset
+		uint8_t good = 0x02;
+		while (good & 0x02)
+			good = inb(0x64);
+		outb(0x64, 0xFE);
+	}
 	else {
 		printk(KERN_ERROR, "Command not found: %s", shell->cmd_line);
 		print_help();
@@ -91,18 +103,21 @@ void wait_for_input(terminal_t terminal) {
 		if (key.key_typed != 0 && key.is_key_special == 0) {
 			if (key.key_typed == '\n') {
 				terminal_writec('\n');
-				handle_input(terminal.active_shell);
+				if (terminal.active_shell->cmd_size != 0)
+					handle_input(terminal.active_shell);
 				terminal.active_shell->cmd_size = 0;
 				memset(terminal.active_shell->cmd_line, 0, 256);
 				terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
 				terminal.active_shell->cursor_pos = 0;
 			} else {
 				//if (should_move_buffer) {
-					move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
-					terminal_writec(key.key_typed);
-					terminal.active_shell->cmd_line[terminal.active_shell->cmd_size] = key.key_typed;
-					terminal.active_shell->cmd_size++;
-					terminal.active_shell->cursor_pos++;
+					if (terminal.active_shell->cmd_size < 256) {
+						move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
+						terminal_writec(key.key_typed);
+						terminal.active_shell->cmd_line[terminal.active_shell->cmd_size] = key.key_typed;
+						terminal.active_shell->cmd_size++;
+						terminal.active_shell->cursor_pos++;
+					}
 				/*}
 				else {
 					terminal_writec(key.key_typed);
