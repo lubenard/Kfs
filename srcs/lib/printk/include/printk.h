@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:34:34 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/03 15:15:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 23:06:57 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void			fill_buffer_str(t_output *output, char *fill);
 void			fill_buffer_with(t_output *output, int i, char filling);
 void			fill_buffer_rev(t_output *output, char arg[17]);
 void			fill_buffer_nbr(t_output *output, int nbr);
-
+void			fill_buffer_nbr_u(t_output *output, unsigned int n);
 /*
 ** Flag gestion
 */

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:13 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/15 14:18:32 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 22:15:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 size_t	strlen(const char *str);
 int		isalpha(int c);
-size_t	strchri(const char *s, int c);
+int		strchri(const char *s, int c);
 void	bzero(void *s, size_t n);
 int		isprint(int c);
 char	*strupper(char *str);

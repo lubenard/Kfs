@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:28 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/14 15:11:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 22:15:33 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int		isalpha(int c)
 	return (0);
 }
 
-size_t	strchri(const char *s, int c)
+int		strchri(const char *s, int c)
 {
 	size_t	n;
 
@@ -40,7 +40,7 @@ size_t	strchri(const char *s, int c)
 			return (n);
 		n++;
 	}
-	return (0);
+	return (-1);
 }
 
 void	bzero(void *s, size_t n)

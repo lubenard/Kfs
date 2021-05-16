@@ -6,12 +6,31 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:10:18 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/03 15:11:07 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/16 23:06:15 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/printk.h"
 #include "../../drivers/vga/vga.h"
+
+void fill_buffer_nbr_u(t_output *output, unsigned int n) {
+	int i;
+
+	i = 0;
+	if (n >= 4294967295)
+	{
+		n = 294967295;
+		fill_buffer(output, '4', &i);
+	}
+	if (n > 9)
+	{
+		fill_buffer_nbr(output, n / 10);
+		fill_buffer_nbr(output, n % 10);
+	}
+	else
+		fill_buffer(output, n + '0', &i);
+
+}
 
 void	fill_buffer_nbr(t_output *output, int n)
 {
