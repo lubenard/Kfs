@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/17 00:20:13 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/17 00:20:15 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/05/17 14:42:04 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -52,6 +52,10 @@ section .text
 global _start:function (_start.end - _start)
 _start:
 
+	; Enable SSE instructions:
+	; Sse introduce 70 new instructions.
+	; It fixed the bug of invalid opcode with keyboard IRQ
+	; See more here https://wiki.osdev.org/SSE
 	mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
 	and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
 	or ax, 0x2          ; set coprocessor monitoring  CR0.MP
@@ -90,20 +94,10 @@ _start:
 	; aligned above and we've since pushed a multiple of 16 bytes to the
 	; stack since (pushed 0 bytes so far) and the alignment is thus
 	; preserved and the call is well defined.
-        ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
+    ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
 	extern k_main
 	call k_main
- 
-	; If the system has nothing more to do, put the computer into an
-	; infinite loop. To do that:
-	; 1) Disable interrupts with cli (clear interrupt enable in eflags).
-	;    They are already disabled by the bootloader, so this is not needed.
-	;    Mind that you might later enable interrupts and return from
-	;    kernel_main (which is sort of nonsensical to do).
-	; 2) Wait for the next interrupt to arrive with hlt (halt instruction).
-	;    Since they are disabled, this will lock up the computer.
-	; 3) Jump to the hlt instruction if it ever wakes up due to a
-	;    non-maskable interrupt occurring or due to system management mode.
+
 	cli
 .hang:	hlt
 	jmp .hang

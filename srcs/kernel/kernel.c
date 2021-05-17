@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:56:22 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 15:31:46 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ void display_boot_message() {
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
+/*
+ * First kernel called function
+ */
 void k_main(void)
 {
 	/* Initialize terminal interface */

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 23:59:21 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 14:57:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,13 +74,19 @@ int shift_status = 0;
 kbd_event_t last_typed_key;
 unsigned short is_key_multiple;
 
+/*
+ * Set keyboard map
+ */
 char *set_language(int language)
 {
 	kbd_language = language - 1;
 	return (locale_code_kbd[kbd_language]);
 }
 
-char translateKey(uint8_t scancode) {
+/*
+ * Transform scancode into actual keycode
+ */
+char translate_key(uint8_t scancode) {
 	char keycode;
 
 	if (scancode > 0x58)
@@ -92,9 +98,13 @@ char translateKey(uint8_t scancode) {
 	return (keycode);
 }
 
+/*
+ * Fill the last_key_typed structure.
+ * This structure will be used by shell to get the last key typed
+ */
 void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
 						short is_key_special) {
-	last_typed_key.key_typed = translateKey(scancode);
+	last_typed_key.key_typed = translate_key(scancode);
 	last_typed_key.key_typed_raw = scancode;
 	last_typed_key.key_typed_raw_two = scancode_two;
 	last_typed_key.is_key_special = is_key_special;
@@ -112,6 +122,10 @@ void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
  * Schema found here: https://forum.osdev.org/viewtopic.php?t=10053
  */
 
+/*
+ * Handle the special keys
+ * (all keys not being printable: arrows, shift, capslock)
+ */
 void handle_special_key(unsigned char scancode, int is_released)
 {
 	unsigned int second_scancode = 0;
@@ -139,6 +153,9 @@ void handle_special_key(unsigned char scancode, int is_released)
 	}
 }
 
+/*
+ * Detect if the key is 'special'
+ */
 int is_special_key(unsigned char scancode)
 {
 	if (scancode == 0x01 || scancode == 0x0E || scancode == 0x1D
@@ -149,6 +166,11 @@ int is_special_key(unsigned char scancode)
 	return 0;
 }
 
+/*
+ * Function to get last key typed
+ * Once this function is called, it reset the last key to 0
+ * To avoid getting the last same key multiple time
+ */
 void get_last_typed_key(kbd_event_t *key)
 {
 	*key = last_typed_key;
@@ -159,6 +181,9 @@ void get_last_typed_key(kbd_event_t *key)
 	last_typed_key.is_key_special = 0;
 }
 
+/*
+ * Function called by IRQ when key is delivered
+ */
 void get_key(registers_t regs)
 {
 	(void)regs;
@@ -182,6 +207,11 @@ void get_key(registers_t regs)
 	}
 }
 
+/*
+ * Init keyboard.
+ * Set default map to 2 (Azerty mapping)
+ * and register getkey into IRQ system
+ */
 void init_kbd()
 {
 	is_key_multiple = 0;

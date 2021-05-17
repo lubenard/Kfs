@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:41:01 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 15:31:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,9 @@ static const char *interrupt_message[] = {
 	"Alignement check exception", "Machine check exception"
 };
 
-// This gets called from our ASM interrupt handler.
+/*
+ * This gets called from our ASM interrupt handler.
+ */
 void isr_handler(registers_t regs)
 {
 	if (regs.int_no < 19)
@@ -40,11 +42,16 @@ void *irq_routines[16] = {
 	0, 0, 0, 0, 0, 0, 0, 0
 };
 
+/*
+ * Register a IRQ with associated function
+ */
 void register_interrupt_handler(int8_t n, isr_t handler) {
 	irq_routines[n] = handler;
 }
 
-// This gets called from our ASM interrupt handler stub.
+/*
+ * This gets called from our ASM interrupt handler
+ */
 void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);

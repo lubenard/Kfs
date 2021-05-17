@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/02 16:43:24 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/12 11:40:45 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/05/17 12:56:44 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -89,7 +89,7 @@ IRQ 13,45
 IRQ 14,46
 IRQ 15,47
 
-; Import isr_handler for isr.c
+; Import handlers from isr.c
 extern isr_handler
 extern irq_handler
 
@@ -97,12 +97,12 @@ extern irq_handler
 ; up for kernel mode segments, calls the C-level fault handler,
 ; and finally restores the stack frame.
 isr_common_stub:
-   pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+   pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
 
-   mov ax, ds               ; Lower 16-bits of eax = ds.
-   push eax                 ; save the data segment descriptor
+   mov ax, ds           ; Lower 16-bits of eax = ds.
+   push eax             ; save the data segment descriptor
 
-   mov ax, 0x10  ; load the kernel data segment descriptor
+   mov ax, 0x10         ; load the kernel data segment descriptor
    mov ds, ax
    mov es, ax
    mov fs, ax
@@ -110,41 +110,43 @@ isr_common_stub:
 
    call isr_handler
 
-   pop eax        ; reload the original data segment descriptor
+   pop eax              ; reload the original data segment descriptor
    mov ds, ax
    mov es, ax
    mov fs, ax
    mov gs, ax
 
-   popa                     ; Pops edi,esi,ebp...
-   add esp, 8     ; Cleans up the pushed error code and pushed ISR number
+   popa                 ; Pops edi,esi,ebp...
+   add esp, 8           ; Cleans up the pushed error code and pushed ISR number
    sti
-   iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and esp
+   iret                 ; pops 5 things at once: CS, EIP, EFLAGS, SS, and esp
 
 
 ; This is a stub that we have created for IRQ based ISRs. This calls
-; 'irq_handler' in our C code. We need to create this in an 'irq.c'
+; 'irq_handler' in our C code.
 irq_common_stub:
-   pusha                    ; Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+   pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
 
-   mov ax, ds               ; Lower 16-bits of eax = ds.
-   push eax                 ; save the data segment descriptor
+   mov ax, ds           ; Lower 16-bits of eax = ds.
+   push eax             ; save the data segment descriptor
 
-   mov ax, 0x10             ; load the kernel data segment descriptor
+   mov ax, 0x10         ; load the kernel data segment descriptor
    mov ds, ax
    mov es, ax
    mov fs, ax
    mov gs, ax
 
-   call irq_handler
+   call irq_handler     ; Call handler
 
-   pop ebx        ; reload the original data segment descriptor
+                        ; After call of the handler function, we want to
+                        ; restore the state of registers
+   pop ebx              ; reload the original data segment descriptor
    mov ds, bx
    mov es, bx
    mov fs, bx
    mov gs, bx
 
-   popa                     ; Pops edi,esi,ebp...
-   add esp, 8     ; Cleans up the pushed error code and pushed ISR number
+   popa                 ; Pops edi,esi,ebp... (Remove them from the stack)
+   add esp, 8           ; Cleans up the pushed error code and pushed ISR number
    sti
-   iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+   iret                 ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 23:59:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:57:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 15:14:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,25 @@ uint16_t *terminal_buffer;
 static int fg_color;
 static int bg_color;
 
+/*
+ * Return the background and foreground color for a character
+ */
 static inline uint8_t vga_entry_color(int fg_color, int bg_color)
 {
 	return fg_color | bg_color << 4;
 }
 
+/*
+ * Return a good formatted character, including his color
+ */
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color)
 {
 	return (uint16_t) uc | (uint16_t) color << 8;
 }
 
+/*
+ * Move cursor to a precise location on the screen
+ */
 void move_prec_cursor(unsigned short pos)
 {
 	if (pos < 0)
@@ -46,21 +55,31 @@ void move_prec_cursor(unsigned short pos)
 	outb(0x3D5, vga_screen.cursor_pos & 0x00FF);
 }
 
+/*
+ * Move the cursor to his relative position, without having to recompute the
+ * whole position
+ */
 void move_cursor(short rel_pos)
 {
 	vga_screen.cursor_pos += rel_pos;
 	move_prec_cursor(vga_screen.cursor_pos);
 }
 
+/*
+ * Return vga_screen structure
+ * Useful for getting vga screen into a array
+ * Used to easily switch terminal
+ */
 vga_screen_t get_screen_datas() {
 	return vga_screen;
 }
 
 /*
  * Erase all the content of the terminal
+ * Write ' ' on each character for the buffer size
+ * and reset position to 0
  */
 void terminal_clear() {
-	// We write ' ' on each character for the buffer size
 	size_t index;
 	for (size_t y = 0; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
@@ -71,18 +90,6 @@ void terminal_clear() {
 	vga_screen.terminal_row = 0;
 	vga_screen.terminal_column = 0;
 	vga_screen.cursor_pos = 0;
-}
-
-void terminal_set_fg_color(int new_fg_color)
-{
-	fg_color = new_fg_color;
-	vga_screen.terminal_color = vga_entry_color(fg_color, bg_color);
-}
-
-void terminal_set_bg_color(int new_bg_color)
-{
-	bg_color = new_bg_color;
-	vga_screen.terminal_color = vga_entry_color(fg_color, bg_color);
 }
 
 /*
@@ -100,17 +107,38 @@ void terminal_set_bg_color(int new_bg_color)
  *  ------------------- 1 in decimal (color for blue background)
  * More infos here: https://wiki.osdev.org/Printing_To_Screen
  */
-void set_character_color(uint16_t character)
+
+/*
+ * Set Fg color for the following characters
+ */
+void terminal_set_fg_color(int new_fg_color)
 {
-	int character_color = ((1 << 4) - 1) & (character >> 8);
-	vga_screen.terminal_color = character_color;
+	fg_color = new_fg_color;
+	vga_screen.terminal_color = vga_entry_color(fg_color, bg_color);
 }
 
+/*
+ * Set Bg color for the following characters
+ */
+void terminal_set_bg_color(int new_bg_color)
+{
+	bg_color = new_bg_color;
+	vga_screen.terminal_color = vga_entry_color(fg_color, bg_color);
+}
+
+/*
+ * define where next character should be placed
+ * Used to restore terminal buffer after terminal switch
+ */
 void define_vga_coordonates(size_t x, size_t y) {
 	vga_screen.terminal_column = y;
 	vga_screen.terminal_row = x;
 }
 
+/*
+ * Move screen buffer up by one line and set the last line to spaces only
+ * Manage scrolling effect
+ */
 void move_screen_up()
 {
 	// Move all character by one line up
@@ -132,6 +160,9 @@ void move_screen_up()
 	move_prec_cursor((VGA_HEIGHT - 1) * VGA_WIDTH);
 }
 
+/*
+ * Fill entry in the vga buffer
+ */
 void terminal_putentryat(char c, uint8_t color, unsigned short pos)
 {
 	terminal_buffer[pos] = vga_entry(c, color);
@@ -186,6 +217,9 @@ void move_buffer_right(unsigned short cursor_pos) {
 	}
 }
 
+/*
+ * Delete the last character printed based on the cursor position
+ */
 void terminal_dellastchar() {
 	if (vga_screen.terminal_column == 0) {
 		vga_screen.terminal_row--;
@@ -196,6 +230,9 @@ void terminal_dellastchar() {
 	terminal_putentryat(' ', vga_screen.terminal_color, vga_screen.cursor_pos);
 }
 
+/*
+ * Delete last N characters based on the cursor position
+ */
 void terminal_dellastnchars(unsigned short chars)
 {
 	unsigned short i = 0;
@@ -217,6 +254,9 @@ unsigned short terminal_writestr(const char *data)
 	return vga_screen.terminal_row * VGA_WIDTH + vga_screen.terminal_column;
 }
 
+/*
+ * Initialise screen driver
+ */
 void terminal_initialize(void)
 {
 	vga_screen.terminal_row = 0;

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:10:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/17 11:42:11 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define PS2_KEYBOARD_H
 
 # include <stdint.h>
+
+# define DELETE_KEY 0x0E
+# define F1_KEY 0x3B
+# define F2_KEY 0x3C
+# define F3_KEY 0x3D
 
 typedef struct kbd_event {
 	unsigned char key_typed;
