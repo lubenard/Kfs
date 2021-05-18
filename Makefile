@@ -70,8 +70,10 @@ $(NAME): $(OBJ_C) $(OBJ_ASM)
 	@printf "\033[32m[✓]\033[0m\n"
 
 clean:
+	@printf "\033[31mSuppression des *.o...\033[0m"
 	@rm -rf $(OBJ_ASM)
 	@rm -rf $(OBJ_C)
+	@printf "\033[32m[✓]\033[0m\n"
 	@rm -rf isodir
 
 fclean: clean

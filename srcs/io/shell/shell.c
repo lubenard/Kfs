@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 15:29:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/18 10:43:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,28 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 }
 
 /*
+ * Useful when deleting character into the line
+ */
+void move_input_buffer_left(shell_t *shell) {
+	int i = shell->cursor_pos - 1;
+	while (i != 254) {
+		shell->cmd_line[i] = shell->cmd_line[i + 1];
+		i++;
+	}
+}
+
+/*
+ * Useful when inserting character into the line
+ */
+void move_input_buffer_right(shell_t *shell) {
+	int i = 254;
+	while (i != shell->cursor_pos - 1) {
+		shell->cmd_line[i + 1] = shell->cmd_line[i];
+		i--;
+	}
+}
+
+/*
  * Infinite loop to handle keystrokes and input
  */
 void wait_for_input(terminal_t terminal) {
@@ -170,7 +192,8 @@ void wait_for_input(terminal_t terminal) {
 				if (terminal.active_shell->cmd_size < 256) {
 					move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
 					terminal_writec(key.key_typed);
-					terminal.active_shell->cmd_line[terminal.active_shell->cmd_size] = key.key_typed;
+					move_input_buffer_right(terminal.active_shell);
+					terminal.active_shell->cmd_line[terminal.active_shell->cursor_pos] = key.key_typed;
 					terminal.active_shell->cmd_size++;
 					terminal.active_shell->cursor_pos++;
 				}
@@ -179,6 +202,7 @@ void wait_for_input(terminal_t terminal) {
 			if (key.key_typed_raw == DELETE_KEY) {
 				if (terminal.active_shell->cmd_size > 0) {
 					move_buffer_left(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
+					move_input_buffer_left(terminal.active_shell);
 					terminal.active_shell->cursor_pos--;
 					terminal.active_shell->cmd_size--;
 					move_cursor(-1);
