@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/18 10:43:48 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/19 15:33:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,50 +17,20 @@
 #include "../../lib/strlib.h"
 #include "../io.h"
 #include "shell.h"
+#include "builtins/builtins.h"
+
+uint32_t esp;
+uint32_t ebp;
 
 void print_help() {
 	terminal_writestr("Commands available:\n");
 	terminal_writestr("\thelp - print this help\n");
 	terminal_writestr("\tkbd language - set kbd map: 1 for QWERTY, 2 for AZERTY\n");
+	terminal_writestr("\tprint_stack - Print the current stack\n");
+	terminal_writestr("\techo - echo the content\n");
 	terminal_writestr("\tclear - clear the screen\n");
 	terminal_writestr("\tshutdown - shutdown the computer\n");
 	terminal_writestr("\treboot - reboot the computer\n");
-}
-
-/*
- * Send a shutdown signal
- * It should not work on real hardware /!\
- * It it only working for QEMU
- */
-void	shutdown() {
-	outw(0x604, 0x2000);
-}
-
-/*
- * Send a keyboard reboot signal
- * This should work on real hardware
- */
-void	reboot() {
-	// 8242 reset
-	uint8_t good = 0x02;
-	while (good & 0x02)
-		good = inb(0x64);
-	outb(0x64, 0xFE);
-}
-
-/*
- * Command in charge for changing kbd map
- */
-void	change_kbd_map(shell_t *shell) {
-	unsigned short new_language;
-	if (!(new_language = atoi(&shell->cmd_line[13])))
-		printk(KERN_ERROR, "Bad input: please enter valid numbers");
-	else {
-		if (new_language > 0 && new_language < 3)
-			printk(KERN_INFO, "Keyboard layout is now %s", set_language(new_language));
-		else
-			printk(KERN_INFO, "Invalid option: 1 for QWERTY map, 2 for AZERTY map");
-	}
 }
 
 /*
@@ -70,13 +40,17 @@ void	handle_input(shell_t *shell) {
 	if (strcmp(shell->cmd_line, "help") == 0)
 		print_help();
 	else if (strncmp(shell->cmd_line, "kbd language", 12) == 0)
-		change_kbd_map(shell);
+		change_kbd_map(shell->cmd_line);
 	else if (strcmp(shell->cmd_line, "clear") == 0)
 		terminal_clear();
 	else if (strcmp(shell->cmd_line, "shutdown") == 0)
 		shutdown();
 	else if (strcmp(shell->cmd_line, "reboot") == 0)
 		reboot();
+	else if (strcmp(shell->cmd_line, "print_stack") == 0)
+		print_stack(esp, ebp);
+	else if (strncmp(shell->cmd_line, "echo", 4) == 0)
+		printk(KERN_NORMAL, "%s\n", &shell->cmd_line[5]);
 	else {
 		printk(KERN_ERROR, "Command not found: %s", shell->cmd_line);
 		print_help();
@@ -224,6 +198,8 @@ void wait_for_input(terminal_t terminal) {
  * Init shell
  */
 void	init_shell() {
+	asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
+	asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
 	terminal_t terminal;
 	shell_t first;
 	shell_t second;

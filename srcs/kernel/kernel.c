@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 00:45:32 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/19 15:30:57 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 #include "../lib/memlib.h"
 #include "../lib/iolib.h"
+#include "../lib/strlib.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -35,25 +36,11 @@ void display_boot_message() {
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
-void get_ebp(uint32_t *ebp) {
-
-	asm volatile ("movl %%ebp,%0" : "=r"(*ebp) ::);
-}
-
-void get_esp(uint32_t *esp) {
-
-	asm volatile ("movl %%esp,%0" : "=r"(*esp) ::);
-}
-
 /*
  * First kernel called function
  */
 void k_main(void)
 {
-	uint32_t esp;
-	char test[10] = "abcdefghij";
-	uint32_t ebp;
-
 	/* Initialize terminal interface */
 	terminal_initialize();
 
@@ -67,13 +54,6 @@ void k_main(void)
 	init_kbd();
 
 	display_boot_message();
-
-	asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
-
-	asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
-
-	printk(KERN_INFO, "Esp is %d ebp %d = %d %p %p", esp, ebp, ebp - esp, &esp, &ebp);
-	(void)test;
 
 	/* Init shell management */
 	init_shell();
