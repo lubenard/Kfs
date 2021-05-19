@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 15:33:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/20 00:25:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,33 +27,70 @@ void print_help() {
 	terminal_writestr("\thelp - print this help\n");
 	terminal_writestr("\tkbd language - set kbd map: 1 for QWERTY, 2 for AZERTY\n");
 	terminal_writestr("\tprint_stack - Print the current stack\n");
+	terminal_writestr("\tprint_hist - Print the shell history\n");
 	terminal_writestr("\techo - echo the content\n");
 	terminal_writestr("\tclear - clear the screen\n");
 	terminal_writestr("\tshutdown - shutdown the computer\n");
 	terminal_writestr("\treboot - reboot the computer\n");
 }
 
+void move_command_hist_up(shell_t *shell, unsigned short limit) {
+	unsigned short i = 0;
+	while (i < limit) {
+		strlcpy(shell->cmd_line[i], shell->cmd_line[i + 1],
+				strlen(shell->cmd_line[i + 1]));
+	 i++;
+	}
+	memset(shell->cmd_line[limit], 0, 128);
+}
+
+void print_history(shell_t *shell) {
+	int i = 0;
+	int j = 1;
+	while (i != 4) {
+		if (strlen(shell->cmd_line[i]) > 0)
+			printk(KERN_NORMAL, "[%d] %s\n", j++, shell->cmd_line[i]);
+		i++;
+	}
+}
+
 /*
  * Decide witch command should be launched based on input
  */
 void	handle_input(shell_t *shell) {
-	if (strcmp(shell->cmd_line, "help") == 0)
+	char *current_cmd;
+
+	current_cmd = shell->cmd_line[shell->cmd_hist_curr];
+	if (strcmp(current_cmd, "help") == 0)
 		print_help();
-	else if (strncmp(shell->cmd_line, "kbd language", 12) == 0)
-		change_kbd_map(shell->cmd_line);
-	else if (strcmp(shell->cmd_line, "clear") == 0)
+	else if (strncmp(current_cmd, "kbd language", 12) == 0)
+		change_kbd_map(current_cmd);
+	else if (strcmp(current_cmd, "clear") == 0)
 		terminal_clear();
-	else if (strcmp(shell->cmd_line, "shutdown") == 0)
+	else if (strcmp(current_cmd, "shutdown") == 0)
 		shutdown();
-	else if (strcmp(shell->cmd_line, "reboot") == 0)
+	else if (strcmp(current_cmd, "reboot") == 0)
 		reboot();
-	else if (strcmp(shell->cmd_line, "print_stack") == 0)
+	else if (strcmp(current_cmd, "print_stack") == 0)
 		print_stack(esp, ebp);
-	else if (strncmp(shell->cmd_line, "echo", 4) == 0)
-		printk(KERN_NORMAL, "%s\n", &shell->cmd_line[5]);
+	else if (strncmp(current_cmd, "echo", 4) == 0)
+		printk(KERN_NORMAL, "%s\n", &current_cmd[5]);
+	else if (strncmp(current_cmd, "print_history", 4) == 0)
+		print_history(shell);
 	else {
-		printk(KERN_ERROR, "Command not found: %s", shell->cmd_line);
+		printk(KERN_ERROR, "Command not found: %s", current_cmd);
 		print_help();
+	}
+	if (shell->cmd_hist_size > 0)
+		shell->cmd_hist_size--;
+	if (shell->cmd_hist_curr == 4) {
+		move_command_hist_up(shell, 4);
+	} else {
+		move_command_hist_up(shell, 3);
+		strlcpy(shell->cmd_line[3],
+				shell->cmd_line[shell->cmd_hist_curr - 1],
+				strlen(shell->cmd_line[shell->cmd_hist_curr - 1]));
+		shell->cmd_hist_curr = 4;
 	}
 }
 
@@ -62,16 +99,36 @@ void	handle_input(shell_t *shell) {
  */
 void handle_special_keys(shell_t *shell, kbd_event_t key) {
 	short rel_pos = 0;
-	if (key.key_typed_raw_two == 0x4D)
-		rel_pos = 1;
-	else if (key.key_typed_raw_two == 0x4B)
-		rel_pos = -1;
-	if (shell->cursor_pos + rel_pos < 0)
-		rel_pos = 0;
-	else if (shell->cursor_pos + rel_pos > shell->cmd_size)
-		rel_pos = 0;
-	move_cursor(rel_pos);
-	shell->cursor_pos += rel_pos;
+	if (key.key_typed_raw_two == 0x4D || key.key_typed_raw_two == 0x4B) {
+		if (key.key_typed_raw_two == 0x4D) // Right arrow
+			rel_pos = 1;
+		else if (key.key_typed_raw_two == 0x4B) // Left arrow
+			rel_pos = -1;
+		// Avoid cursor going before the prompt or after the cmd
+		if (shell->cursor_pos + rel_pos < 0 ||
+			shell->cursor_pos + rel_pos > shell->cmd_size)
+			rel_pos = 0;
+		move_cursor(rel_pos);
+		shell->cursor_pos += rel_pos;
+	} else {
+		if (key.key_typed_raw_two == 0x48) { // Up arrow
+			if (shell->cmd_hist_curr > shell->cmd_hist_size) {
+				shell->cmd_hist_curr--;
+				terminal_dellastnchars(shell->cmd_size);
+				terminal_writestr(shell->cmd_line[shell->cmd_hist_curr]);
+				shell->cmd_size = strlen(shell->cmd_line[shell->cmd_hist_curr]);
+				shell->cursor_pos = shell->cmd_size;
+			}
+		} else if (key.key_typed_raw_two == 0x50) { // Down arrow
+			if (shell->cmd_hist_curr < 4) {
+				shell->cmd_hist_curr++;
+				terminal_dellastnchars(shell->cmd_size);
+				terminal_writestr(shell->cmd_line[shell->cmd_hist_curr]);
+				shell->cmd_size = strlen(shell->cmd_line[shell->cmd_hist_curr]);
+				shell->cursor_pos = shell->cmd_size;
+			}
+		}
+	}
 }
 
 /*
@@ -116,10 +173,12 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 		define_vga_coordonates(terminal->active_shell->start_cmd_line / 80, terminal->active_shell->start_cmd_line % 80);
 	} else {
 		terminal->active_shell->start_cmd_line = terminal_writestr("Shell > ");
-		memset(terminal->active_shell->cmd_line, 0, 256);
+		memset(terminal->active_shell->cmd_line, 0, 128);
 		terminal->active_shell->cmd_size = 0;
 		terminal->active_shell->cursor_pos = 0;
 		terminal->active_shell->is_shell_init = 1;
+		terminal->active_shell->cmd_hist_size = 4;
+		terminal->active_shell->cmd_hist_curr = 4;
 	}
 }
 
@@ -128,8 +187,8 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
  */
 void move_input_buffer_left(shell_t *shell) {
 	int i = shell->cursor_pos - 1;
-	while (i != 254) {
-		shell->cmd_line[i] = shell->cmd_line[i + 1];
+	while (i != 126) {
+		shell->cmd_line[shell->cmd_hist_curr][i] = shell->cmd_line[shell->cmd_hist_curr][i + 1];
 		i++;
 	}
 }
@@ -138,9 +197,9 @@ void move_input_buffer_left(shell_t *shell) {
  * Useful when inserting character into the line
  */
 void move_input_buffer_right(shell_t *shell) {
-	int i = 254;
+	int i = 126;
 	while (i != shell->cursor_pos - 1) {
-		shell->cmd_line[i + 1] = shell->cmd_line[i];
+		shell->cmd_line[shell->cmd_hist_curr][i + 1] = shell->cmd_line[shell->cmd_hist_curr][i];
 		i--;
 	}
 }
@@ -159,15 +218,14 @@ void wait_for_input(terminal_t terminal) {
 				if (terminal.active_shell->cmd_size != 0)
 					handle_input(terminal.active_shell);
 				terminal.active_shell->cmd_size = 0;
-				memset(terminal.active_shell->cmd_line, 0, 256);
 				terminal.active_shell->start_cmd_line = terminal_writestr("Shell > ");
 				terminal.active_shell->cursor_pos = 0;
 			} else {
-				if (terminal.active_shell->cmd_size < 256) {
+				if (terminal.active_shell->cmd_size < 127) {
 					move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
 					terminal_writec(key.key_typed);
 					move_input_buffer_right(terminal.active_shell);
-					terminal.active_shell->cmd_line[terminal.active_shell->cursor_pos] = key.key_typed;
+					terminal.active_shell->cmd_line[terminal.active_shell->cmd_hist_curr][terminal.active_shell->cursor_pos] = key.key_typed;
 					terminal.active_shell->cmd_size++;
 					terminal.active_shell->cursor_pos++;
 				}
@@ -214,5 +272,7 @@ void	init_shell() {
 	memset(terminal.third, 0, sizeof(shell_t));
 	terminal.first->is_shell_init = 1;
 	terminal.active_shell->cursor_pos = 0;
+	terminal.active_shell->cmd_hist_size = 4;
+	terminal.active_shell->cmd_hist_curr = 4;
 	wait_for_input(terminal);
 }

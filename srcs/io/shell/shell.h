@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:12:16 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:12:44 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/19 23:37:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ typedef struct shell {
 	uint16_t buffer[2000];
 	unsigned short start_cmd_line;
 	// Command line buffer
-	char cmd_line[256];
+	char cmd_line[5][128];
+	// Used to remember where we are in history
+	unsigned short cmd_hist_size;
+	unsigned short cmd_hist_curr;
 	// Command line size
 	unsigned short cmd_size;
 	// Cursor position relative to cmd_line
