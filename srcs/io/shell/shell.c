@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/20 00:25:45 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/20 12:19:58 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void move_command_hist_up(shell_t *shell, unsigned short limit) {
 				strlen(shell->cmd_line[i + 1]));
 	 i++;
 	}
-	memset(shell->cmd_line[limit], 0, 128);
+	memset(shell->cmd_line[limit], 0, SHELL_CMD_SIZE);
 }
 
 void print_history(shell_t *shell) {
@@ -83,14 +83,14 @@ void	handle_input(shell_t *shell) {
 	}
 	if (shell->cmd_hist_size > 0)
 		shell->cmd_hist_size--;
-	if (shell->cmd_hist_curr == 4) {
-		move_command_hist_up(shell, 4);
+	if (shell->cmd_hist_curr == SHELL_REAL_HIST_SIZE) {
+		move_command_hist_up(shell, SHELL_REAL_HIST_SIZE);
 	} else {
 		move_command_hist_up(shell, 3);
 		strlcpy(shell->cmd_line[3],
 				shell->cmd_line[shell->cmd_hist_curr - 1],
 				strlen(shell->cmd_line[shell->cmd_hist_curr - 1]));
-		shell->cmd_hist_curr = 4;
+		shell->cmd_hist_curr = SHELL_REAL_HIST_SIZE;
 	}
 }
 
@@ -120,7 +120,7 @@ void handle_special_keys(shell_t *shell, kbd_event_t key) {
 				shell->cursor_pos = shell->cmd_size;
 			}
 		} else if (key.key_typed_raw_two == 0x50) { // Down arrow
-			if (shell->cmd_hist_curr < 4) {
+			if (shell->cmd_hist_curr < SHELL_REAL_HIST_SIZE) {
 				shell->cmd_hist_curr++;
 				terminal_dellastnchars(shell->cmd_size);
 				terminal_writestr(shell->cmd_line[shell->cmd_hist_curr]);
@@ -173,7 +173,7 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 		define_vga_coordonates(terminal->active_shell->start_cmd_line / 80, terminal->active_shell->start_cmd_line % 80);
 	} else {
 		terminal->active_shell->start_cmd_line = terminal_writestr("Shell > ");
-		memset(terminal->active_shell->cmd_line, 0, 128);
+		memset(terminal->active_shell->cmd_line, 0, SHELL_CMD_SIZE);
 		terminal->active_shell->cmd_size = 0;
 		terminal->active_shell->cursor_pos = 0;
 		terminal->active_shell->is_shell_init = 1;
@@ -187,7 +187,7 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
  */
 void move_input_buffer_left(shell_t *shell) {
 	int i = shell->cursor_pos - 1;
-	while (i != 126) {
+	while (i != SHELL_CMD_SIZE - 2) {
 		shell->cmd_line[shell->cmd_hist_curr][i] = shell->cmd_line[shell->cmd_hist_curr][i + 1];
 		i++;
 	}
@@ -197,7 +197,7 @@ void move_input_buffer_left(shell_t *shell) {
  * Useful when inserting character into the line
  */
 void move_input_buffer_right(shell_t *shell) {
-	int i = 126;
+	int i = SHELL_CMD_SIZE - 2;
 	while (i != shell->cursor_pos - 1) {
 		shell->cmd_line[shell->cmd_hist_curr][i + 1] = shell->cmd_line[shell->cmd_hist_curr][i];
 		i--;
@@ -222,10 +222,12 @@ void wait_for_input(terminal_t terminal) {
 				terminal.active_shell->cursor_pos = 0;
 			} else {
 				if (terminal.active_shell->cmd_size < 127) {
-					move_buffer_right(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
+					move_buffer_right(terminal.active_shell->start_cmd_line
+										+ terminal.active_shell->cursor_pos);
 					terminal_writec(key.key_typed);
 					move_input_buffer_right(terminal.active_shell);
-					terminal.active_shell->cmd_line[terminal.active_shell->cmd_hist_curr][terminal.active_shell->cursor_pos] = key.key_typed;
+					terminal.active_shell->cmd_line[terminal.active_shell->cmd_hist_curr]
+								[terminal.active_shell->cursor_pos] = key.key_typed;
 					terminal.active_shell->cmd_size++;
 					terminal.active_shell->cursor_pos++;
 				}
@@ -233,7 +235,8 @@ void wait_for_input(terminal_t terminal) {
 		} else if (key.is_key_special) {
 			if (key.key_typed_raw == DELETE_KEY) {
 				if (terminal.active_shell->cmd_size > 0) {
-					move_buffer_left(terminal.active_shell->start_cmd_line + terminal.active_shell->cursor_pos);
+					move_buffer_left(terminal.active_shell->start_cmd_line
+										+ terminal.active_shell->cursor_pos);
 					move_input_buffer_left(terminal.active_shell);
 					terminal.active_shell->cursor_pos--;
 					terminal.active_shell->cmd_size--;
