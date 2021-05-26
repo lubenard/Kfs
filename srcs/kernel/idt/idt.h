@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 18:15:57 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:14:45 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/26 20:17:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,6 @@ extern void irq13();
 extern void irq14();
 extern void irq15();
 
-extern void idt_flush(int32_t);
+extern void idt_flush(uint32_t);
 
 #endif

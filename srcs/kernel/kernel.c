@@ -6,20 +6,16 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 15:30:57 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/26 15:42:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../drivers/vga/vga.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"
-#include "../io/io.h"
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
-
-#include "../lib/memlib.h"
-#include "../lib/iolib.h"
-#include "../lib/strlib.h"
+#include "memory/memory.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -52,6 +48,9 @@ void k_main(void)
 
 	/* Init kbd management */
 	init_kbd();
+
+	/* Enable memory management. Enable paging, userspace and kernel space */
+	init_memory();
 
 	display_boot_message();
 

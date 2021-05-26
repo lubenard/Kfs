@@ -1,19 +1,22 @@
 ; **************************************************************************** ;
 ;                                                                              ;
 ;                                                         :::      ::::::::    ;
-;    idt_asm.s                                          :+:      :+:    :+:    ;
+;    paging_asm.s                                       :+:      :+:    :+:    ;
 ;                                                     +:+ +:+         +:+      ;
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
-;    Created: 2021/05/26 20:16:42 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/26 20:16:56 by lubenard         ###   ########.fr        ;
+;    Created: 2021/05/26 15:23:32 by lubenard          #+#    #+#              ;
+;    Updated: 2021/05/26 20:14:57 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
-[GLOBAL idt_flush]    ; Allows the C code to call idt_flush().
+[GLOBAL enable_paging]
 
-idt_flush:
-	mov eax, [esp+4]  ; Get the pointer to the IDT, passed as a parameter.
-	lidt [eax]        ; Load the IDT pointer.
-	sti               ; Enable interruptions
+enable_paging:
+	mov eax, [esp+4]
+	mov cr3, eax
+
+	mov eax, cr0
+	or eax, 0x80000001
+	mov cr0, eax
 	ret

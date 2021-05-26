@@ -10,7 +10,8 @@ SRCDIR = srcs
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
 				kernel/idt/idt_asm.s \
-				kernel/isr/isr_asm.s
+				kernel/isr/isr_asm.s \
+				kernel/memory/paging_asm.s
 
 SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \
@@ -34,7 +35,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/shell.c \
 			  io/shell/builtins/print_stack.c \
 			  io/shell/builtins/shutdown.c \
-			  io/shell/builtins/kbd.c
+			  io/shell/builtins/kbd.c \
+			  kernel/memory/memory.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))

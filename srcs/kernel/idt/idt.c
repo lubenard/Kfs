@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:01:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/05/26 20:17:38 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void init_idt()
 
 	memset(&idt_entries, 0, sizeof(struct idt32)*256);
 
-	idt_flush((int32_t)&idt_ptr);
+	idt_flush((uint32_t)&idt_ptr);
 
 	// Fill 32 first entrys
 	idt_set_gate(0, (int32_t)isr0, 0x08, 0x8E);
