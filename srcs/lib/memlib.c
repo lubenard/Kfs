@@ -6,11 +6,11 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:24:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/03 15:19:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "memlib.h"
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -39,4 +39,9 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 		i++;
 	}
 	return (t1);
+}
+
+void *malloc(long unsigned size) {
+	(void)size;
+	return (0);
 }

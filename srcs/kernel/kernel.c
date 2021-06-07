@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/26 15:42:30 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/04 17:43:56 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,7 @@ void display_boot_message() {
 /*
  * First kernel called function
  */
-void k_main(void)
-{
+void k_main(multiboot_info_t* mbd, unsigned int magic) {
 	/* Initialize terminal interface */
 	terminal_initialize();
 
@@ -50,10 +49,10 @@ void k_main(void)
 	init_kbd();
 
 	/* Enable memory management. Enable paging, userspace and kernel space */
-	init_memory();
+	//init_memory();
 
 	display_boot_message();
 
 	/* Init shell management */
-	init_shell();
+	//init_shell();
 }

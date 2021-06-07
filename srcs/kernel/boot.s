@@ -87,14 +87,20 @@ _start:
 	; yet. The GDT should be loaded here. Paging should be enabled here.
 	; C++ features such as global constructors and exceptions will require
 	; runtime support to work as well.
- 
+
+	; We push eax and ebx on the stack to get infos about the memory map.
+	; Thankfully, grub is handling this for us.
+	; See more here: https://wiki.osdev.org/Detecting_Memory_(x86)#Memory_Map_Via_GRUB
+	; If grub is not present, we need to ask the bios via : INT 0x15, EAX = 0xE820
+	push eax
+	push ebx
 	; Enter the high-level kernel. The ABI requires the stack is 16-byte
 	; aligned at the time of the call instruction (which afterwards pushes
 	; the return pointer of size 4 bytes). The stack was originally 16-byte
 	; aligned above and we've since pushed a multiple of 16 bytes to the
 	; stack since (pushed 0 bytes so far) and the alignment is thus
 	; preserved and the call is well defined.
-    ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
+	; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
 	extern k_main
 	call k_main
 

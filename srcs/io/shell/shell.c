@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/20 12:19:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/03 10:59:41 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,8 @@ void	init_shell() {
 	shell_t third;
 
 	terminal.first = &first;
+	memset(terminal.first, 0, sizeof(shell_t));
+	terminal.first->is_shell_init = 1;
 	terminal.second = &second;
 	terminal.third = &third;
 	terminal.active_shell = &first;

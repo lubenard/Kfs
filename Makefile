@@ -92,7 +92,7 @@ fclean: clean
 re: fclean all
 
 launch: all
-	qemu-system-x86_64 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
 
 .SILENT:
 
