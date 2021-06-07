@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/04 17:43:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/07 18:39:40 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
 #include "memory/memory.h"
+#include "../lib/iolib.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -35,7 +36,7 @@ void display_boot_message() {
 /*
  * First kernel called function
  */
-void k_main(multiboot_info_t* mbd, unsigned int magic) {
+void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Initialize terminal interface */
 	terminal_initialize();
 
@@ -48,6 +49,10 @@ void k_main(multiboot_info_t* mbd, unsigned int magic) {
 	/* Init kbd management */
 	init_kbd();
 
+	(void) magic;
+	if (!(mb_mmap->flags & (1<<6))) {
+		printk(KERN_ERROR, "couldn't get memory map!");
+	}
 	/* Enable memory management. Enable paging, userspace and kernel space */
 	//init_memory();
 
