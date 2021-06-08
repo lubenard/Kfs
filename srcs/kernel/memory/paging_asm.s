@@ -11,11 +11,16 @@
 ; **************************************************************************** ;
 
 [GLOBAL enable_paging]
+[GLOBAL flush_tlb]
+
+flush_tlb:
+	mov eax, cr3
+	mov cr3, eax
+	ret
 
 enable_paging:
 	mov eax, [esp+4]
 	mov cr3, eax
-
 	mov eax, cr0
 	or eax, 0x80000001
 	mov cr0, eax

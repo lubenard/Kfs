@@ -94,6 +94,8 @@ re: fclean all
 launch: all
 	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
 
+relaunch: fclean launch
+
 .SILENT:
 
 .PHONY: all re fclean clean

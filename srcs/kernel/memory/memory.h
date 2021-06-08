@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/07 18:37:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/08 15:49:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,5 +141,4 @@ typedef struct multiboot_mmap_entry multiboot_memory_map_t;
 void init_memory();
 extern void enable_paging(unsigned int *);
 extern void flush_tlb();
-extern void get_memory_size();
 #endif
