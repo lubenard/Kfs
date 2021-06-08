@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/08 15:49:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/08 15:56:04 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,8 +132,10 @@ struct multiboot_color {
 
 struct multiboot_mmap_entry {
 	uint32_t size;
-	uint64_t addr;
-	uint64_t len;
+	uint32_t addr_low;
+	uint32_t addr_high;
+	uint32_t len_low;
+	uint32_t len_high;
 	uint32_t type;
 } __attribute__((packed));
 typedef struct multiboot_mmap_entry multiboot_memory_map_t;

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/08 15:48:57 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/08 18:01:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,19 +56,18 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
 	while(entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
-		// do something with the entry
 		if (entry->type == 1) {
-			printk(KERN_INFO, "Ram is available addr %d", entry->addr);
-			printk(KERN_INFO, "\tSize of %d", entry->len);
+			printk(KERN_INFO, "Ram is available addr_low %d addr_high %d", entry->addr_low, entry->addr_high);
+			printk(KERN_INFO, "\tSize of %d %d", entry->len_low, entry->len_high);
 		}
 		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
 	}
 
 	/* Enable memory management. Enable paging, userspace and kernel space */
-	//init_memory();
+	init_memory();
 
 	display_boot_message();
 
 	/* Init shell management */
-	//init_shell();
+	init_shell();
 }
