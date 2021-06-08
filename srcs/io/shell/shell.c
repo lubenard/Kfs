@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/03 10:59:41 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/08 18:06:11 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,8 +249,8 @@ void wait_for_input(terminal_t terminal) {
 				load_shell(&terminal, 0);
 			else if (key.key_typed_raw == F2_KEY)
 				load_shell(&terminal, 1);
-			else if (key.key_typed_raw == F3_KEY)
-				load_shell(&terminal, 2);
+			/*else if (key.key_typed_raw == F3_KEY)
+				load_shell(&terminal, 2);*/
 		}
 	}
 }
@@ -264,18 +264,16 @@ void	init_shell() {
 	terminal_t terminal;
 	shell_t first;
 	shell_t second;
-	shell_t third;
+	//shell_t third;
 
+	memset(&first, 0, sizeof(shell_t));
+	memset(&second, 0, sizeof(shell_t));
+	//memset(&third, 0, sizeof(shell_t));
 	terminal.first = &first;
-	memset(terminal.first, 0, sizeof(shell_t));
-	terminal.first->is_shell_init = 1;
 	terminal.second = &second;
-	terminal.third = &third;
-	terminal.active_shell = &first;
-	memset(terminal.first, 0, sizeof(shell_t));
-	memset(terminal.second, 0, sizeof(shell_t));
-	memset(terminal.third, 0, sizeof(shell_t));
+	//terminal.third = &third;
 	terminal.first->is_shell_init = 1;
+	terminal.active_shell = terminal.first;
 	terminal.active_shell->cursor_pos = 0;
 	terminal.active_shell->cmd_hist_size = 4;
 	terminal.active_shell->cmd_hist_curr = 4;
