@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/08 15:56:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/09 14:50:58 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,17 @@ struct multiboot_mmap_entry {
 	uint32_t type;
 } __attribute__((packed));
 typedef struct multiboot_mmap_entry multiboot_memory_map_t;
+
+typedef struct mem_page_tracking {
+	struct mem_page_tracking *prev;
+	uint32_t addr_low;
+	uint32_t addr_high;
+	uint32_t len_low;
+	uint32_t len_high;
+	uint32_t available;
+	struct mem_page_tracking *next;
+} __attribute__((packed));
+}				mem_page_tracking_t;
 
 void init_memory();
 extern void enable_paging(unsigned int *);
