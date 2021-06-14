@@ -6,11 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/03 15:19:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/14 16:46:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
+#include "../kernel/memory/memory.h"
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -43,5 +44,9 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 
 void *malloc(long unsigned size) {
 	(void)size;
+	//mem_page_tracking_t *lknd_list_head = get_mem_lknd_list_head();
+	/*while (lknd_list_head->is_allocated == 1) {
+		lknd_list_head = lknd_list_head->next;
+	}*/
 	return (0);
 }

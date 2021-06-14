@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/09 14:50:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/14 15:32:35 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,13 @@ typedef struct multiboot_elf_section_header_table {
 	uint32_t addr;
 	uint32_t shndx;
 }			multiboot_elf_section_header_table_t;
+
+/* This pointer for this struct is supposed to be in framebuffer_palette_addr */
+struct multiboot_color {
+	uint8_t red;
+	uint8_t green;
+	uint8_t blue;
+};
 
 typedef struct multiboot_info {
 	/* Multiboot info version number */
@@ -123,13 +130,6 @@ typedef struct multiboot_info {
 	};
 } multiboot_info_t;
 
-/* This pointer for this struct is supposed to be in framebuffer_palette_addr */
-struct multiboot_color {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-};
-
 struct multiboot_mmap_entry {
 	uint32_t size;
 	uint32_t addr_low;
@@ -146,9 +146,9 @@ typedef struct mem_page_tracking {
 	uint32_t addr_high;
 	uint32_t len_low;
 	uint32_t len_high;
-	uint32_t available;
+	uint32_t is_allocated;
+	uint32_t owner_pid;
 	struct mem_page_tracking *next;
-} __attribute__((packed));
 }				mem_page_tracking_t;
 
 void init_memory();
