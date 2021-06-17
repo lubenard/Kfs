@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/14 17:03:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/17 17:08:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,15 +28,26 @@
 # error "This kernel needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
 
+
 void display_boot_message() {
 	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n"
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
+void panic(const char *message, const char *file, uint32_t line) {
+	// Disable interrupts
+	asm volatile("cli");
+	printk(KERN_ERROR, "PANIC ! '%s' at %s:%d", message, file, line);
+	// Halt by going into an infinite loop.
+	for(;;);
+}
+# define PANIC(msg) panic(msg, __FILE__, __LINE__);
 /*
  * First kernel called function
  */
 void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
+	(void)magic;
+
 	/* Initialize terminal interface */
 	terminal_initialize();
 
@@ -49,22 +60,8 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Init kbd management */
 	init_kbd();
 
-	(void) magic;
-	if (!(mb_mmap->flags & (1<<6))) {
-		printk(KERN_ERROR, "Couldn't get memory map!");
-	}
-
-	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
-	while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
-		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
-		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
-			printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
-		}
-		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
-	}
-
 	/* Enable memory management. Enable paging, userspace and kernel space */
-	init_memory();
+	init_memory(mb_mmap);
 
 	display_boot_message();
 
