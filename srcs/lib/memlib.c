@@ -6,12 +6,15 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/14 16:46:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/17 17:59:33 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
 #include "../kernel/memory/memory.h"
+
+extern uint32_t end;
+uint32_t placement_address = (uint32_t)&end;
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -40,6 +43,19 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 		i++;
 	}
 	return (t1);
+}
+
+uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
+	if (align == 1 && (placement_address & 0xFFFFF000)) {
+		// Align address with physical addr if needed.
+		placement_address &= 0xFFFFF000;
+		placement_address += 0x1000;
+	}
+	if (phys)
+		*phys = placement_address;
+	uint32_t tmp = placement_address;
+	placement_address += size;
+	return tmp;
 }
 
 void *malloc(long unsigned size) {

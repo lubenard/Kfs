@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/17 17:08:03 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/17 18:12:43 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "../io/shell/shell.h"
 #include "memory/memory.h"
 #include "../lib/iolib.h"
+#include "../lib/memlib.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -28,6 +29,7 @@
 # error "This kernel needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
 
+# define PANIC(msg) panic(msg, __FILE__, __LINE__);
 
 void display_boot_message() {
 	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n"
@@ -41,7 +43,7 @@ void panic(const char *message, const char *file, uint32_t line) {
 	// Halt by going into an infinite loop.
 	for(;;);
 }
-# define PANIC(msg) panic(msg, __FILE__, __LINE__);
+
 /*
  * First kernel called function
  */
