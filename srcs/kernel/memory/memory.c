@@ -6,12 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/17 15:41:48 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/21 11:32:49 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memory.h"
 #include "../../lib/iolib.h"
+#include "../../lib/memlib.h"
 
 void map_page(void * physaddr, void * virtualaddr, unsigned int flags) {
     // Make sure that both addresses are page-aligned.
@@ -35,16 +36,39 @@ void map_page(void * physaddr, void * virtualaddr, unsigned int flags) {
 	flush_tlb();
 }
 
-void get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
+multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	if (!(mb_mmap->flags & (1<<6))) {
 		printk(KERN_ERROR, "Couldn't get memory map!");
+		//PANIC("Couldn't get a Memory map !");
 	}
 
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
+	multiboot_memory_map_t* ret_entry = entry;
+	/*while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
+		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
+		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
+			printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
+		}
+		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
+	}*/
+	return ret_entry;
+}
+
+void	build_lkd_list(multiboot_memory_map_t *entry, multiboot_info_t *mb_mmap) {
+	mem_page_tracking_t *head;
+
+	if (!(head = (mem_page_tracking_t*)e_kmalloc(sizeof(mem_page_tracking_t), 1, NULL)))
+		return;
 	while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
 		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
 		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
 			printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
+			head->addr_low = entry->addr_low;
+			head->addr_high = entry->addr_high;
+			head->len_low = entry->len_low;
+			head->len_high = entry->len_high;
+			head->is_allocated = 0;
+			head->owner_pid = 0;
 		}
 		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
 	}
@@ -54,7 +78,7 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t page_directory[1024] __attribute__((aligned(4096)));
 	uint32_t page_table[1024] __attribute__((aligned(4096)));
 
-	get_memory_map_from_grub(mb_mmap);
+	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 
 	//set each entry to not present
 	/*for (int i = 0; i < 1024; i++) {
@@ -79,4 +103,6 @@ void init_memory(multiboot_info_t *mb_mmap) {
 		page_directory[k] = ((unsigned int)page_table) | 3;
 	}
 	enable_paging(page_directory);
+
+	build_lkd_list(map_entry, mb_mmap);
 }

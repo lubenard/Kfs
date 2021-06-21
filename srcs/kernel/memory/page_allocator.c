@@ -6,14 +6,14 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 21:44:56 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/09 21:59:05 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/21 07:47:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memory.h"
 
 // Should set the first free page to allocated
-mem_page_tracking_t *allocate_page(mem_page_tracking_t *list) {
+mem_page_tracking_t *page_allocator(mem_page_tracking_t *list) {
 	mem_page_tracking_t *tmp;
 
 	tmp = list;

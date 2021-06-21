@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/17 17:59:33 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/21 07:48:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 	return (t1);
 }
 
+/*
+ * Early malloc. Used to create the linked list for memory management
+ */
 uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
 	if (align == 1 && (placement_address & 0xFFFFF000)) {
 		// Align address with physical addr if needed.
