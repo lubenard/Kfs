@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/09 21:44:56 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/21 07:47:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/24 15:12:11 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ void free_page(mem_page_tracking_t *list, unsigned int page_to_free) {
 	unsigned int i;
 
 	tmp = list;
-
 	while (i != page_to_free) {
 		tmp = tmp->next;
 		i++;

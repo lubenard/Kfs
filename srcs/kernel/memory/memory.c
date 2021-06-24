@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/21 11:32:49 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/06/24 18:03:14 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,31 @@ multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	return ret_entry;
 }
 
+void build_physical_mem_lkd_list(uint32_t *page_directory) {
+	mem_page_tracking_t *head;
+	mem_page_tracking_t *current;
+	for (unsigned int k = 0; k < 1024; k++) {
+		for (unsigned int j = 0; j < 1024; j++) {
+			if (k == 0 && j == 0) {
+				// Fill head pointer
+			} else {
+				// Create new node, then fill it
+				if (!(current = (mem_page_tracking_t *)e_kmalloc(sizeof(mem_page_tracking_t), 1, NULL))) {
+					// return Error;
+					return;
+				}
+				current->addr_low = page_directory[k][j];
+				//current->addr_high = entry->addr_high;
+				current->len_low = 4096;
+				//current->len_low = entry->len_low;
+				//current->len_high = entry->len_high;
+				current->is_allocated = 0;
+				current->owner_pid = 0;
+			}
+		}
+	}
+}
+
 void	build_lkd_list(multiboot_memory_map_t *entry, multiboot_info_t *mb_mmap) {
 	mem_page_tracking_t *head;
 
@@ -98,11 +123,14 @@ void init_memory(multiboot_info_t *mb_mmap) {
 			// Those bits are used by the attributes ;)
 			// attributes: supervisor level, read/write, present.
 			page_table[j] = (j * 0x1000) | 3;
+			if (k == 0)
+				printk(KERN_INFO, "Page address (%d) is %d", j, page_table[j]);
 		}
 		// attributes: supervisor level, read/write, present
 		page_directory[k] = ((unsigned int)page_table) | 3;
 	}
 	enable_paging(page_directory);
 
-	build_lkd_list(map_entry, mb_mmap);
+	build_physical_mem_lkd_list(page_directory);
+	//build_physical_mem_lkd_list(map_entry, mb_mmap);
 }
