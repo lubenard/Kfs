@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/24 18:03:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/01 23:58:37 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,7 @@
 #include "../../lib/iolib.h"
 #include "../../lib/memlib.h"
 
-void map_page(void * physaddr, void * virtualaddr, unsigned int flags) {
-    // Make sure that both addresses are page-aligned.
- 
-    unsigned long pdindex = (unsigned long)virtualaddr >> 22;
-    unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
- 
-    //unsigned long * pd = (unsigned long *)0xFFFFF000;
-    // Here you need to check whether the PD entry is present.
-    // When it is not present, you need to create a new empty PT and
-    // adjust the PDE accordingly.
- 
-    unsigned long * pt = ((unsigned long *)0xFFC00000) + (0x400 * pdindex);
-    // Here you need to check whether the PT entry is present.
-    // When it is, then there is already a mapping present. What do you do now?
- 
-    pt[ptindex] = ((unsigned long)physaddr) | (flags & 0xFFF) | 0x01; // Present
- 
-    // Now you need to flush the entry in the TLB
-    // or you might not notice the change.
-	flush_tlb();
-}
+extern void* endKernel;
 
 multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	if (!(mb_mmap->flags & (1<<6))) {
@@ -44,58 +24,45 @@ multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
 	multiboot_memory_map_t* ret_entry = entry;
-	/*while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
-		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
-		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
-			printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
-		}
-		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
-	}*/
-	return ret_entry;
-}
-
-void build_physical_mem_lkd_list(uint32_t *page_directory) {
-	mem_page_tracking_t *head;
-	mem_page_tracking_t *current;
-	for (unsigned int k = 0; k < 1024; k++) {
-		for (unsigned int j = 0; j < 1024; j++) {
-			if (k == 0 && j == 0) {
-				// Fill head pointer
-			} else {
-				// Create new node, then fill it
-				if (!(current = (mem_page_tracking_t *)e_kmalloc(sizeof(mem_page_tracking_t), 1, NULL))) {
-					// return Error;
-					return;
-				}
-				current->addr_low = page_directory[k][j];
-				//current->addr_high = entry->addr_high;
-				current->len_low = 4096;
-				//current->len_low = entry->len_low;
-				//current->len_high = entry->len_high;
-				current->is_allocated = 0;
-				current->owner_pid = 0;
-			}
-		}
-	}
-}
-
-void	build_lkd_list(multiboot_memory_map_t *entry, multiboot_info_t *mb_mmap) {
-	mem_page_tracking_t *head;
-
-	if (!(head = (mem_page_tracking_t*)e_kmalloc(sizeof(mem_page_tracking_t), 1, NULL)))
-		return;
 	while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
 		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
 		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
 			printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
-			head->addr_low = entry->addr_low;
-			head->addr_high = entry->addr_high;
-			head->len_low = entry->len_low;
-			head->len_high = entry->len_high;
-			head->is_allocated = 0;
-			head->owner_pid = 0;
 		}
 		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
+	}
+	return ret_entry;
+}
+
+mem_page_tracking_t *create_new_node_memory(uint32_t addr_low, uint32_t size, uint32_t pid) {
+	mem_page_tracking_t *node;
+	// We can create a header element right now.
+	if (!(node = (mem_page_tracking_t*)e_kmalloc(sizeof(mem_page_tracking_t), 1, NULL)))
+		return NULL;
+	node->addr_low = addr_low;
+	//node->addr_high = entry->addr_high;
+	node->len_low = size;
+	//node->len_high = entry->len_high;
+	node->is_allocated = 1;
+	node->owner_pid = pid;
+	return node;
+}
+
+void first_fit_memory(mem_page_tracking_t *lknd_lst, unsigned int size) {
+	// If there is no element in the linked list, all memory is free.
+	if (lknd_lst == NULL) {
+		mem_page_tracking_t *head = create_new_node_memory((uint32_t) &endKernel, size, 0);
+		printk(KERN_INFO, "First node is size %d containing addr %x", head->len_low, head->addr_low);
+	} else {
+		while (lknd_lst->next) {
+			if (lknd_lst->addr_low + size < lknd_lst->next->addr_low) {
+				// We can allocate here
+				mem_page_tracking_t *node = create_new_node_memory(lknd_lst->addr_low + lknd_lst->len_low, size, 0);
+				printk(KERN_INFO, "First node is size %d", node->len_low);
+				return ;
+			}
+			lknd_lst = lknd_lst->next;
+		}
 	}
 }
 
@@ -103,8 +70,10 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t page_directory[1024] __attribute__((aligned(4096)));
 	uint32_t page_table[1024] __attribute__((aligned(4096)));
 
+	(void)mb_mmap;
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 
+	(void)map_entry;
 	//set each entry to not present
 	/*for (int i = 0; i < 1024; i++) {
 		// This sets the following flags to the pages:
@@ -123,14 +92,14 @@ void init_memory(multiboot_info_t *mb_mmap) {
 			// Those bits are used by the attributes ;)
 			// attributes: supervisor level, read/write, present.
 			page_table[j] = (j * 0x1000) | 3;
-			if (k == 0)
-				printk(KERN_INFO, "Page address (%d) is %d", j, page_table[j]);
+			//if (k == 0)
+			//	printk(KERN_INFO, "Page address (%d) is %d", j, page_table[j]);
 		}
 		// attributes: supervisor level, read/write, present
 		page_directory[k] = ((unsigned int)page_table) | 3;
 	}
 	enable_paging(page_directory);
 
-	build_physical_mem_lkd_list(page_directory);
-	//build_physical_mem_lkd_list(map_entry, mb_mmap);
+	//build_virtual_mem_lkd_list(map_entry, mb_mmap);
+	first_fit_memory(NULL, 20);
 }

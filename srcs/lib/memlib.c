@@ -6,15 +6,16 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/21 07:48:45 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/01 23:57:19 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
 #include "../kernel/memory/memory.h"
 
-extern uint32_t end;
-uint32_t placement_address = (uint32_t)&end;
+extern uint32_t endKernel;
+
+uint32_t placement_address = (uint32_t)&endKernel;
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -45,6 +46,8 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 	return (t1);
 }
 
+#include "iolib.h"
+
 /*
  * Early malloc. Used to create the linked list for memory management
  */
@@ -56,6 +59,7 @@ uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
 	}
 	if (phys)
 		*phys = placement_address;
+	printk(KERN_INFO, "Placing it at %x", placement_address);
 	uint32_t tmp = placement_address;
 	placement_address += size;
 	return tmp;

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/14 15:32:35 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/01 23:39:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,18 @@
  */
 
 /* The magic field should contain this. */
-#define MULTIBOOT_HEADER_MAGIC                  0x1BADB002
+# define MULTIBOOT_HEADER_MAGIC                  0x1BADB002
 
 /* This should be in %eax. */
-#define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002
+# define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002
 
-#define MULTIBOOT_MEMORY_AVAILABLE              1
-#define MULTIBOOT_MEMORY_RESERVED               2
-#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
-#define MULTIBOOT_MEMORY_NVS                    4
-#define MULTIBOOT_MEMORY_BADRAM                 5
+# define MULTIBOOT_MEMORY_AVAILABLE              1
+# define MULTIBOOT_MEMORY_RESERVED               2
+# define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
+# define MULTIBOOT_MEMORY_NVS                    4
+# define MULTIBOOT_MEMORY_BADRAM                 5
+
+# define MAGIC_NUMBER_MEMORY                     0x1234AB
 
 typedef struct multiboot_framebuffer_palette {
 	uint32_t framebuffer_palette_addr;
