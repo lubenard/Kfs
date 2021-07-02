@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/01 23:57:19 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/02 00:08:53 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
 	return tmp;
 }
 
-void *malloc(long unsigned size) {
+void *kmalloc(long unsigned size) {
 	(void)size;
 	//mem_page_tracking_t *lknd_list_head = get_mem_lknd_list_head();
 	/*while (lknd_list_head->is_allocated == 1) {
