@@ -21,6 +21,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/isr/isr.c \
 			  lib/memlib.c \
 			  lib/strlib.c \
+			  lib/bitwiselib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
 			  lib/printk/fill_buffer.c \
