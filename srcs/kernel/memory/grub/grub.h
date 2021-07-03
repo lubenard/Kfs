@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 19:38:48 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 19:42:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 22:09:50 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,11 @@
 # define GRUB_H
 
 #include <stdint.h>
+
+/*
+ * This table is mainly comming from
+ * https://www.gnu.org/software/grub/manual/multiboot/html_node/Boot-information-format.html_node
+ */
 
 typedef struct multiboot_framebuffer_palette {
 	uint32_t framebuffer_palette_addr;
