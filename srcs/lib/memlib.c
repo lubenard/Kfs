@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/02 00:08:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 19:23:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 extern uint32_t endKernel;
 
-uint32_t placement_address = (uint32_t)&endKernel;
+//uint32_t placement_address = (uint32_t)&endKernel;
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -48,22 +48,6 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 
 #include "iolib.h"
 
-/*
- * Early malloc. Used to create the linked list for memory management
- */
-uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
-	if (align == 1 && (placement_address & 0xFFFFF000)) {
-		// Align address with physical addr if needed.
-		placement_address &= 0xFFFFF000;
-		placement_address += 0x1000;
-	}
-	if (phys)
-		*phys = placement_address;
-	printk(KERN_INFO, "Placing it at %x", placement_address);
-	uint32_t tmp = placement_address;
-	placement_address += size;
-	return tmp;
-}
 
 void *kmalloc(long unsigned size) {
 	(void)size;

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/17 18:12:43 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 22:55:01 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
 #include "memory/memory.h"
+#include "memory/grub/grub.h"
 #include "../lib/iolib.h"
 #include "../lib/memlib.h"
 
@@ -29,19 +30,9 @@
 # error "This kernel needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
 
-# define PANIC(msg) panic(msg, __FILE__, __LINE__);
-
 void display_boot_message() {
 	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n"
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
-}
-
-void panic(const char *message, const char *file, uint32_t line) {
-	// Disable interrupts
-	asm volatile("cli");
-	printk(KERN_ERROR, "PANIC ! '%s' at %s:%d", message, file, line);
-	// Halt by going into an infinite loop.
-	for(;;);
 }
 
 /*
@@ -62,10 +53,15 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Init kbd management */
 	init_kbd();
 
-	/* Enable memory management. Enable paging, userspace and kernel space */
+	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
 
-	display_boot_message();
+	// Should cause page fault
+	/*uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t do_page_fault = *ptr;
+	(void)do_page_fault;*/
+
+	//display_boot_message();
 
 	/* Init shell management */
 	init_shell();

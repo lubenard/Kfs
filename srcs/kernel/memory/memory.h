@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/01 23:39:13 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 22:52:52 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,8 @@
 
 # include <stdint.h>
 
-/*
- * This table is mainly comming from
- * https://www.gnu.org/software/grub/manual/multiboot/html_node/Boot-information-format.html_node
- */
+# define INDEX_FROM_BIT(a) (a / (8 * 4))
+# define OFFSET_FROM_BIT(a) (a % (8 * 4))
 
 /* The magic field should contain this. */
 # define MULTIBOOT_HEADER_MAGIC                  0x1BADB002
@@ -26,134 +24,47 @@
 /* This should be in %eax. */
 # define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002
 
-# define MULTIBOOT_MEMORY_AVAILABLE              1
-# define MULTIBOOT_MEMORY_RESERVED               2
-# define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
-# define MULTIBOOT_MEMORY_NVS                    4
-# define MULTIBOOT_MEMORY_BADRAM                 5
+/*
+ * This is bitfield:
+ * See more here :
+ * https://stackoverflow.com/questions/3186008/in-c-what-does-a-colon-mean-inside-a-declaration
+ */
+typedef struct page {
+	uint32_t present    : 1;   // Page present in memory
+	uint32_t rw         : 1;   // Read-only if clear, readwrite if set
+	uint32_t user       : 1;   // Supervisor level only if clear
+	uint32_t accessed   : 1;   // Has the page been accessed since last refresh?
+	uint32_t dirty      : 1;   // Has the page been written to since last refresh?
+	uint32_t unused     : 7;   // Amalgamation of unused and reserved bits
+	uint32_t frame      : 20;  // Frame address (shifted right 12 bits)
+} page_t;
 
-# define MAGIC_NUMBER_MEMORY                     0x1234AB
+typedef struct page_table {
+	page_t pages[1024];
+} page_table_t;
 
-typedef struct multiboot_framebuffer_palette {
-	uint32_t framebuffer_palette_addr;
-	uint16_t framebuffer_palette_num_colors;
-}			multiboot_framebuffer_palette_t;
-
-typedef struct multiboot_framebuffer {
-	uint8_t framebuffer_red_field_position;
-	uint8_t framebuffer_red_mask_size;
-	uint8_t framebuffer_green_field_position;
-	uint8_t framebuffer_green_mask_size;
-	uint8_t framebuffer_blue_field_position;
-	uint8_t framebuffer_blue_mask_size;
-}			multiboot_framebuffer_t;
-
-/* The symbol table for a.out. */
-typedef struct multiboot_aout_symbol_table {
-	uint32_t tabsize;
-	uint32_t strsize;
-	uint32_t addr;
-	uint32_t reserved;
-}			multiboot_aout_symbol_table_t;
-
-/* The section header table for ELF. */
-typedef struct multiboot_elf_section_header_table {
-	uint32_t num;
-	uint32_t size;
-	uint32_t addr;
-	uint32_t shndx;
-}			multiboot_elf_section_header_table_t;
-
-/* This pointer for this struct is supposed to be in framebuffer_palette_addr */
-struct multiboot_color {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-};
-
-typedef struct multiboot_info {
-	/* Multiboot info version number */
-	uint32_t flags;
-
-	/* Available memory from BIOS */
-	uint32_t mem_lower;
-	uint32_t mem_upper;
-
-	/* "root" partition */
-	uint32_t boot_device;
-
-	/* Kernel command line */
-	uint32_t cmdline;
-
-	/* Boot-Module list */
-	uint32_t mods_count;
-	uint32_t mods_addr;
-
-	union {
-		multiboot_aout_symbol_table_t aout_sym;
-		multiboot_elf_section_header_table_t elf_sec;
-	} u;
-
-	/* Memory Mapping buffer */
-	uint32_t mmap_length;
-	uint32_t mmap_addr;
-
-	/* Drive Info buffer */
-	uint32_t drives_length;
-	uint32_t drives_addr;
-
-	/* ROM configuration table */
-	uint32_t config_table;
-
-	/* Boot Loader Name */
-	uint32_t boot_loader_name;
-
-	/* APM table */
-	uint32_t apm_table;
-
-	/* Video */
-	uint32_t vbe_control_info;
-	uint32_t vbe_mode_info;
-	uint16_t vbe_mode;
-	uint16_t vbe_interface_seg;
-	uint16_t vbe_interface_off;
-	uint16_t vbe_interface_len;
-
-	uint64_t framebuffer_addr;
-	uint32_t framebuffer_pitch;
-	uint32_t framebuffer_width;
-	uint32_t framebuffer_height;
-	uint8_t framebuffer_bpp;
-	uint8_t framebuffer_type;
-
-	union {
-		multiboot_framebuffer_palette_t framebuffer_palette;
-		multiboot_framebuffer_t framebuffer;
-	};
-} multiboot_info_t;
-
-struct multiboot_mmap_entry {
-	uint32_t size;
-	uint32_t addr_low;
-	uint32_t addr_high;
-	uint32_t len_low;
-	uint32_t len_high;
-	uint32_t type;
-} __attribute__((packed));
-typedef struct multiboot_mmap_entry multiboot_memory_map_t;
-
-typedef struct mem_page_tracking {
-	struct mem_page_tracking *prev;
-	uint32_t addr_low;
-	uint32_t addr_high;
-	uint32_t len_low;
-	uint32_t len_high;
-	uint32_t is_allocated;
-	uint32_t owner_pid;
-	struct mem_page_tracking *next;
-}				mem_page_tracking_t;
+typedef struct page_directory {
+	page_table_t *tables[1024];
+	/* Physical addr of tables */
+	uint32_t tablesPhysical[1024];
+	/*
+	 * The physical address of tablesPhysical. This comes into play
+	 * when we get our kernel heap allocated and the directory
+	 * may be in a different location in virtual memory.
+	 */
+	uint32_t physicalAddr;
+} page_directory_t;
 
 void init_memory();
+
+void alloc_frame(page_t *page, int is_kernel, int is_writeable);
+
+page_t *get_page(uint32_t address, int make, page_directory_t *dir);
+
+void setFrames(uint32_t *new_frames, uint32_t nframes);
+
+/* ASM called functions */
 extern void enable_paging(unsigned int *);
 extern void flush_tlb();
+
 #endif

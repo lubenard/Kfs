@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 17:56:09 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 22:24:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,18 @@
 #include "../../drivers/vga/vga.h"
 
 #define PANIC(msg) panic(msg, __FILE__, __LINE__);
+
+/*
+ * US RW  P - Description
+ * 0  0  0 - Supervisory process tried to read a non-present page entry
+ * 0  0  1 - Supervisory process tried to read a page and caused a protection fault
+ * 0  1  0 - Supervisory process tried to write to a non-present page entry
+ * 0  1  1 - Supervisory process tried to write a page and caused a protection fault
+ * 1  0  0 - User process tried to read a non-present page entry
+ * 1  0  1 - User process tried to read a page and caused a protection fault
+ * 1  1  0 - User process tried to write to a non-present page entry
+ * 1  1  1 - User process tried to write a page and caused a protection fault
+ */
 
 void panic(const char *message, const char *file, unsigned int line) {
 	// Disable interrupts
