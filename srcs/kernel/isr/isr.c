@@ -6,13 +6,24 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 15:31:22 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/03 17:56:09 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "isr.h"
 #include "../../lib/iolib.h"
 #include "../../io/io.h"
+#include "../../drivers/vga/vga.h"
+
+#define PANIC(msg) panic(msg, __FILE__, __LINE__);
+
+void panic(const char *message, const char *file, unsigned int line) {
+	// Disable interrupts
+	asm volatile("cli");
+	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
+	// Halt by going into an infinite loop.
+	for(;;);
+}
 
 static const char *interrupt_message[] = {
 	"Division by 0", "Debug exception", "Non maskable interrupt",
@@ -20,21 +31,39 @@ static const char *interrupt_message[] = {
 	"Out of bounds exception", "Invalid opcode", "No coprocessor exception",
 	"Double fault", "Coprocessor segment overrun", "Bad TSS",
 	"Segment not present", "Stack fault", "General protection fault",
-	"Page fault", "Unknown interrupt exception", "Coprocessor fault",
-	"Alignement check exception", "Machine check exception"
+	"Page fault", "Unknown interrupt exception", "x87 Floating point exception",
+	"Alignement check exception", "Machine check exception",
+	"SIMD Floating point exception", "Virtualization exception",
+	"Unknown interrupt exception", "Security exception",
+	"Unknown interrupt exception", "Triple fault",
 };
 
 /*
  * This gets called from our ASM interrupt handler.
  */
-void isr_handler(registers_t regs)
-{
-	if (regs.int_no < 19)
-		printk(KERN_ERROR, "received interrupt: %s",
+void isr_handler(registers_t regs) {
+	if (regs.int_no < 25)
+		printk(KERN_ERROR, "received interrupt: %d: %s", regs.int_no,
 		interrupt_message[regs.int_no]);
 	else
 		printk(KERN_ERROR, "received interrupt: %d", regs.int_no);
-	while (1){}
+
+	uint32_t faulting_address;
+	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
+
+	if (!(regs.err_code & 0x1))
+		terminal_writestr("Present "); // Page not present
+	if (regs.err_code & 0x2)
+		terminal_writestr("read-only "); // Write operation?
+	if (regs.err_code & 0x4)
+		terminal_writestr("user-mode "); // Processor was in user-mode?
+	if (regs.err_code & 0x8)
+		terminal_writestr("reserved "); // Overwritten CPU-reserved bits of page entry?
+
+	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
+	for (;;);
+	//PANIC("PAGE FAULT");
+	//PANIC(interrupt_message[regs.int_no]);
 }
 
 void *irq_routines[16] = {
@@ -56,9 +85,11 @@ void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);
 
-	if (irq_routines[regs.int_no - 32] != 0) {
-		handler = irq_routines[regs.int_no - 32];
-		handler(regs);
+	if (regs.int_no >= 32) {
+		if (irq_routines[regs.int_no - 32] != 0) {
+			handler = irq_routines[regs.int_no - 32];
+			handler(regs);
+		}
 	}
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
