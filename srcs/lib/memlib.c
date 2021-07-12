@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 19:23:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/12 16:56:58 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "../kernel/memory/memory.h"
 
 extern uint32_t endKernel;
-
-//uint32_t placement_address = (uint32_t)&endKernel;
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -46,14 +44,7 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 	return (t1);
 }
 
-#include "iolib.h"
-
-
 void *kmalloc(long unsigned size) {
 	(void)size;
-	//mem_page_tracking_t *lknd_list_head = get_mem_lknd_list_head();
-	/*while (lknd_list_head->is_allocated == 1) {
-		lknd_list_head = lknd_list_head->next;
-	}*/
 	return (0);
 }

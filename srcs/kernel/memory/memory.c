@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 23:09:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/12 16:02:51 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "../../lib/memlib.h"
 #include "../../lib/bitwiselib.h"
 #include "grub/grub.h"
+#include "heap/heap.h"
 
 extern uint32_t endKernel;
 uint32_t placement_address = (uint32_t) &endKernel;
@@ -42,7 +43,7 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 
 	// Getting the size of the memory via grub.
-	nframes = map_entry->size / 0x1000; // 0x1000 -> 4096 (size of 1 page)
+	nframes = map_entry->len_low / 0x1000; // 0x1000 -> 4096 (size of 1 page)
 	setFrames((uint32_t *)e_kmalloc(INDEX_FROM_BIT(nframes), 0, 0), nframes);
 
 	// Let's make a page directory.
@@ -56,4 +57,8 @@ void init_memory(multiboot_info_t *mb_mmap) {
 		i += 0x1000;
 	}
 	enable_paging(&page_directory->tablesPhysical[0]);
+	printk(KERN_INFO, "Paging enabled and working, can begin ram at %x for %d bytes", map_entry->addr_low, map_entry->len_low);
+	printk(KERN_INFO, "EndKenel says %x, addr_low says %d", placement_address, map_entry->addr_low);
+	printk(KERN_INFO, "ram is now at %x, with a size of %d", placement_address, map_entry->len_low - (placement_address - map_entry->addr_low));
+	first_fit_memory(0, 10);
 }

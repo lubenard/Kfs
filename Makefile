@@ -40,7 +40,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/page_manager.c \
 			  kernel/memory/frame_manager.c \
-			  kernel/memory/grub/grub.c
+			  kernel/memory/grub/grub.c \
+			  kernel/memory/heap/heap.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
