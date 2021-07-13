@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 22:08:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/12 16:04:31 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/13 13:26:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,9 @@
 #include <stdint.h>
 
 # define MAGIC_NUMBER_MEMORY                     0x1234AB
+# define KHEAP_START                             0xC0000000
+# define KHEAP_MIN_SIZE                          0x1000 // 4096 bytes
+# define kHEAP_MAX_SIZE                          0xF4240 // 1 000 000 bytes, 1Mb
 
 typedef struct mem_page_tracking {
 	struct mem_page_tracking *prev;

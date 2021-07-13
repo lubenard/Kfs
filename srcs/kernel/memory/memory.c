@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/12 16:02:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/13 13:29:15 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,20 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	memset(page_directory, 0, sizeof(page_directory_t));
 
 	unsigned int i = 0;
+
+	for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
+		get_page(i, 1, page_directory);
+
+	i = 0;
 	while (i < (uint32_t)placement_address) {
 		// Kernel code is readable but not writeable from userspace.
 		alloc_frame(get_page(i, 1, page_directory), 0, 0);
 		i += 0x1000;
 	}
+
+	for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
+		alloc_frame( get_page(i, 1, page_directory), 0, 0);
+
 	enable_paging(&page_directory->tablesPhysical[0]);
 	printk(KERN_INFO, "Paging enabled and working, can begin ram at %x for %d bytes", map_entry->addr_low, map_entry->len_low);
 	printk(KERN_INFO, "EndKenel says %x, addr_low says %d", placement_address, map_entry->addr_low);

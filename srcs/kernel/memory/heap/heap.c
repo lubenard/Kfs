@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 22:17:41 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/12 17:07:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/13 13:48:50 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ mem_page_tracking_t *first_fit_memory(mem_page_tracking_t *lknd_lst, unsigned in
 	// If there is no element in the linked list, all memory is free.
 	if (!lknd_lst) {
 		printk(KERN_INFO, "Creating header linking list node");
-		mem_page_tracking_t *head = create_new_node_memory((uint32_t) &endKernel + 4096, size, 0);
+		mem_page_tracking_t *head = create_new_node_memory((uint32_t) 0, size, 0);
 		printk(KERN_INFO, "First node is size %d containing addr %x", head->len_low, head->addr_low);
 		return head;
 	} else {
