@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 22:55:01 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/22 20:26:43 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,5 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	//display_boot_message();
 
 	/* Init shell management */
-	init_shell();
+	//init_shell();
 }

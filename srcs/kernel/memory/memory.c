@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/17 18:15:40 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/22 21:18:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,11 @@
 #include "heap/heap.h"
 
 extern uint32_t endKernel;
-uint32_t placement_address = (uint32_t) &endKernel;
+uint32_t static placement_address = (uint32_t) &endKernel;
+
+void set_placement_addr(uint32_t new_placement_address) {
+	placement_address += new_placement_address;
+}
 
 /*
  * Early malloc. Used to create the linked list for memory management
@@ -90,6 +94,8 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	//printk(KERN_INFO, "Paging enabled and working, can begin ram at %x for %d bytes", map_entry->addr_low, map_entry->len_low);
 	printk(KERN_INFO, "EndKenel says %x, addr_low says %d", placement_address, map_entry->addr_low);
 	//printk(KERN_INFO, "ram is now at %x, with a size of %d", placement_address, map_entry->len_low - (placement_address - map_entry->addr_low));
-	mem_page_tracking_t *head = first_fit_memory(0, 10);
-	first_fit_memory(head, 4);
+	//mem_page_tracking_t *head = first_fit_memory(0, 10);
+	//first_fit_memory(head, 4);
+	kmalloc(10);
+	//kmalloc(10);
 }

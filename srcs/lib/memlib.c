@@ -6,11 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/12 16:56:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/22 19:59:11 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
+#include "../kernel/memory/heap/heap.h"
 #include "../kernel/memory/memory.h"
 
 extern uint32_t endKernel;
@@ -44,7 +45,13 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 	return (t1);
 }
 
-void *kmalloc(long unsigned size) {
-	(void)size;
-	return (0);
+mem_page_tracking_t *first_node_addr = 0;
+
+void *kmalloc(uint32_t size) {
+	if (first_node_addr)
+		return (void *)first_fit_memory(first_node_addr, size)->addr_low;
+	else {
+		first_node_addr = first_fit_memory(0, size);
+		return (void *)first_node_addr->addr_low;
+	}
 }

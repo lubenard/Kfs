@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 22:52:52 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/22 21:06:32 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,10 @@ void alloc_frame(page_t *page, int is_kernel, int is_writeable);
 page_t *get_page(uint32_t address, int make, page_directory_t *dir);
 
 void setFrames(uint32_t *new_frames, uint32_t nframes);
+
+uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys);
+
+void set_placement_addr(uint32_t new_placement_address);
 
 /* ASM called functions */
 extern void enable_paging(unsigned int *);
