@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 21:18:03 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/23 04:41:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys) {
 	if (phys)
 		*phys = placement_address;
 	uint32_t tmp = placement_address;
+	printk(KERN_INFO, "Placement addr is %d", placement_address);
 	placement_address += size;
 	return tmp;
 }
@@ -50,13 +51,16 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 	(void)map_entry;
 
-	// holds the physical address where we want to start mapping these pages to.
-	// in this case, we want to map these pages to the very beginning of memory
 	unsigned int i;
 
-	//unsigned int j;
+	for(i = 0; i < 1024; i++) {
+		// This sets the following flags to the pages:
+		//   Supervisor: Only kernel-mode can access them
+		//   Write Enabled: It can be both read from and written to
+		//   Not Present: The page table is not present
+		page_directory[i] = 0x00000002;
+	}
 
-	//for (i = )
 	//we will fill all 1024 entries in the table, mapping 4 megabytes
 	for(i = 0; i < 1024; i++) {
 		// As the address is page aligned, it will always leave 12 bits zeroed.
@@ -74,21 +78,20 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	page_directory = (page_directory_t*)e_kmalloc(sizeof(page_directory_t), 1, 0);
 	memset(page_directory, 0, sizeof(page_directory_t));
 
-	unsigned int i = 0;*/
+	for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
+		get_page(i, 1, page_directory);
 
-	/*for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
-		get_page(i, 1, page_directory);*/
-
-	/*i = 0;
+	i = 0;
 	while (i < (uint32_t)placement_address) {
 		// Kernel code is readable but not writeable from userspace.
 		alloc_frame(get_page(i, 1, page_directory), 0, 0);
 		i += 0x1000;
-	}*/
+	}
 
-	/*for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
-		alloc_frame(get_page(i, 1, page_directory), 0, 0);*/
+	for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
+		alloc_frame(get_page(i, 1, page_directory), 0, 0);
 
+	switch_page_directory(page_directory);*/
 	enable_paging(page_directory);
 	//enable_paging(&page_directory->tablesPhysical[0]);
 	//printk(KERN_INFO, "Paging enabled and working, can begin ram at %x for %d bytes", map_entry->addr_low, map_entry->len_low);
@@ -96,6 +99,10 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	//printk(KERN_INFO, "ram is now at %x, with a size of %d", placement_address, map_entry->len_low - (placement_address - map_entry->addr_low));
 	//mem_page_tracking_t *head = first_fit_memory(0, 10);
 	//first_fit_memory(head, 4);
-	kmalloc(10);
+	char *test = kmalloc(10);
+	(void)test;
+	test[0] = 'a';
+	//test[1] = '\0';
+	//printk(KERN_NORMAL, "TEST STRING = %s\n", test);
 	//kmalloc(10);
 }

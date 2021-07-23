@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:13:40 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 22:23:35 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/23 15:17:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,3 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
 	else
 		return 0;
 }
-

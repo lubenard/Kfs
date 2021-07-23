@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 22:08:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 21:13:05 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/22 23:18:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,16 +27,14 @@ typedef struct mem_page_tracking {
 	unsigned int owner_pid;
 	struct mem_page_tracking_tail *tail;
 	uint32_t len_low;
-	unsigned short magic_number;
+	int magic_number;
 	uint32_t addr_low;
 }	__attribute__((packed))	mem_page_tracking_t;
 
 
 typedef struct mem_page_tracking_tail {
-	unsigned short magic_number;
+	int magic_number;
 }	__attribute__((packed))	mem_page_tracking_tail_t;
-
-
 
 mem_page_tracking_t *create_new_node_memory(uint32_t addr_low, uint32_t size, uint32_t pid, short should_early_malloc);
 void delete_node_memory(mem_page_tracking_t *node);

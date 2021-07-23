@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 21:06:32 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/23 04:43:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 
 /* This should be in %eax. */
 # define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002
+
+# define PAGE_SIZE 4096
 
 /*
  * This is bitfield:
