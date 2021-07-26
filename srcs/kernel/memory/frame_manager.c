@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:12:52 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 23:34:39 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/23 16:34:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "../../lib/memlib.h"
 #include "memory.h"
 
-uint32_t *frames;
+/*uint32_t *frames;
 uint32_t nframes;
 
 void setFrames(uint32_t *new_frames, uint32_t new_nframes) {
@@ -80,4 +80,4 @@ void free_frame(page_t *page) {
 		clear_frame(frame);
 		page->frame = 0x0;
 	}
-}
+}*/

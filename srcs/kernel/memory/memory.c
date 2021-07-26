@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/23 04:41:05 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/07/23 16:33:34 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 
 extern uint32_t endKernel;
 uint32_t static placement_address = (uint32_t) &endKernel;
+
+uint32_t *frames;
 
 void set_placement_addr(uint32_t new_placement_address) {
 	placement_address += new_placement_address;
@@ -46,10 +48,13 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t first_page_table[1024] __attribute__((aligned(4096)));
 
 	//page_directory_t *page_directory;
-	//uint32_t nframes;
+	uint32_t nframes;
 
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
-	(void)map_entry;
+	// Getting the size of the memory via grub.
+	nframes = map_entry->len_low / 0x1000; // 0x1000 -> 4096 (size of 1 page)
+
+	printk(KERN_INFO, "Should require no more than %d pages", nframes);
 
 	unsigned int i;
 
@@ -70,12 +75,11 @@ void init_memory(multiboot_info_t *mb_mmap) {
 
 	page_directory[0] = ((unsigned int)first_page_table) | 3;
 
-	// Getting the size of the memory via grub.
-	/*nframes = map_entry->len_low / 0x1000; // 0x1000 -> 4096 (size of 1 page)
-	setFrames((uint32_t *)e_kmalloc(INDEX_FROM_BIT(nframes), 0, 0), nframes);
+	frames = (uint32_t*)e_kmalloc(INDEX_FROM_BIT(nframes), 0, 0);
+	memset(frames, 0, INDEX_FROM_BIT(nframes));
 
 	// Let's make a page directory.
-	page_directory = (page_directory_t*)e_kmalloc(sizeof(page_directory_t), 1, 0);
+	/*page_directory = (page_directory_t*)e_kmalloc(sizeof(page_directory_t), 1, 0);
 	memset(page_directory, 0, sizeof(page_directory_t));
 
 	for (i = KHEAP_START; i < KHEAP_START+KHEAP_MIN_SIZE; i += 0x1000)
