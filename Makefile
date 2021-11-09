@@ -42,6 +42,10 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/frame_manager.c \
 			  kernel/memory/grub/grub.c \
 			  kernel/memory/heap/heap.c
+			  #kernel/memory/malloc/srcs/malloc.c \
+			  kernel/memory/malloc/srcs/free.c \
+			  kernel/memory/malloc/srcs/calloc.c \
+			  kernel/memory/malloc/srcs/realloc.c \
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
