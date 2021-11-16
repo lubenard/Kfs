@@ -41,7 +41,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/page_manager.c \
 			  kernel/memory/frame_manager.c \
 			  kernel/memory/grub/grub.c \
-			  kernel/memory/heap/heap.c
+			  kernel/memory/heap/heap.c \
+			  kernel/memory/pmm/pmm.c 
 			  #kernel/memory/malloc/srcs/malloc.c \
 			  kernel/memory/malloc/srcs/free.c \
 			  kernel/memory/malloc/srcs/calloc.c \
@@ -59,7 +60,8 @@ CFLAGS = -Wall -Wextra -Werror \
 		 -fno-exceptions \
 		 -fno-stack-protector \
 		 -nostdlib \
-		 -nodefaultlibs
+		 -nodefaultlibs \
+		 -mgeneral-regs-only
 
 all:  $(NAME)
 
@@ -101,7 +103,7 @@ fclean: clean
 re: fclean all
 
 launch: all
-	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
 
 relaunch: fclean launch
 

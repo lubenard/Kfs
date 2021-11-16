@@ -84,9 +84,7 @@ _start:
 	; environment where crucial features are offline. Note that the
 	; processor is not fully initialized yet: Features such as floating
 	; point instructions and instruction set extensions are not initialized
-	; yet. The GDT should be loaded here. Paging should be enabled here.
-	; C++ features such as global constructors and exceptions will require
-	; runtime support to work as well.
+	; yet.
 
 	; We push eax and ebx on the stack to get infos about the memory map.
 	; Thankfully, grub is handling this for us.
