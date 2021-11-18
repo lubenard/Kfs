@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:13:40 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/23 16:12:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/17 14:24:16 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "memory.h"
 #include "../../lib/memlib.h"
 
-page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
+/*page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
 	// Turn the address into an index.
 	address /= 0x1000;
 	// Find the page table containing this address.
@@ -35,4 +35,4 @@ page_t *get_page(uint32_t address, int make, page_directory_t *dir) {
 void get_n_pages(unsigned int page_number) {
 	(void)page_number;
 
-}
+}*/

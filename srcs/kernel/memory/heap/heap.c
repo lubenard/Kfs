@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 22:17:41 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 23:33:35 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/17 14:23:16 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 
 extern uint32_t endKernel;
 
-mem_page_tracking_t *create_new_node_memory(uint32_t addr_low, uint32_t size, uint32_t pid, short should_early_malloc) {
+/*mem_page_tracking_t *create_new_node_memory(uint32_t addr_low, uint32_t size, uint32_t pid, short should_early_malloc) {
 	mem_page_tracking_t *node;
 	(void)addr_low;
 	(void)should_early_malloc;
@@ -80,4 +80,4 @@ mem_page_tracking_t *first_fit_memory(mem_page_tracking_t *lknd_lst, unsigned in
 		}
 		return 0;
 	}
-}
+}*/

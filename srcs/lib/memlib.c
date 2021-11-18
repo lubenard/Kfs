@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 19:59:11 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/17 14:23:53 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,4 @@ void	*memcpy(void *s1, void const *s2, size_t n)
 		i++;
 	}
 	return (t1);
-}
-
-mem_page_tracking_t *first_node_addr = 0;
-
-void *kmalloc(uint32_t size) {
-	if (first_node_addr)
-		return (void *)first_fit_memory(first_node_addr, size)->addr_low;
-	else {
-		first_node_addr = first_fit_memory(0, size);
-		return (void *)first_node_addr->addr_low;
-	}
 }
