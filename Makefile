@@ -54,7 +54,7 @@ SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
 OBJ_C = $(SRCS_C:.c=.o)
 OBJ_ASM = $(SRCS_ASM:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror \
+CFLAGS = -Wall -Wextra -Werror -g3\
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
 		 -fno-exceptions \
@@ -106,7 +106,7 @@ run: all
 	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
 
 run_debug: all
-	qemu-system-x86_64 -s -S -m 256 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -s -S -d int -m 256 -cdrom $(ISO_NAME)
 
 relaunch: fclean run
 
