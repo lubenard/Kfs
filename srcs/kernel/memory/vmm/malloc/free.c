@@ -6,13 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/28 11:21:03 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 19:24:33 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 21:14:09 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
-#include <pthread.h>
-#include <sys/mman.h>
+#include "../vmm.h"
 
 extern t_alloc *g_curr_node;
 

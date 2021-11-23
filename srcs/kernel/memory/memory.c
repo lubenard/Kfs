@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 19:46:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 21:16:12 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,6 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	printk(KERN_INFO, "Paging enabled and working, mapped 1mb + kernel");
 	/* Init physical memory manager */
 	create_pmm_array((char *)placement_address + 1, nframes);
-	pmm_unset_pages(pmm_next_fit(5000, 0), 5000);
+	//pmm_unset_pages(pmm_next_fit(5000, 0), 5000);
 	//init_vmm(roundUp((char*)placement_address + nframes + 2, 4096));
 }

@@ -6,19 +6,18 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 18:57:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 21:23:12 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <sys/mman.h>
-#include <pthread.h>
 #include "malloc.h"
+#include "../vmm.h"
 
 //TODO: Used for ft_memcpy, clean it later
 #include "../../../../lib/memlib.h"
 t_alloc *g_curr_node = 0;
 
+#include "../../../../lib/iolib.h"
 // DEBUG ONLY
 #include "../../../../lib/strlib.h"
 
@@ -40,9 +39,9 @@ t_alloc *init_node(size_t size_requested) {
 
 	size_requested += TOTAL_STRUCT_SIZE + 1;
 	size_requested = (size_requested / PAGESIZE + 1) * PAGESIZE;
-	bloc = mmap(NULL, size_requested, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+	bloc = mmap(size_requested, 0);
 	node = (t_alloc *)((char *)bloc + STRUCT_BLOCK_SIZE + 1);
-	if (!bloc || bloc == MAP_FAILED)
+	if (!bloc || bloc == 0)
 		return 0;
 	bloc->total_node = 0;
 	bloc->total_size = size_requested - 1;
@@ -158,6 +157,7 @@ void	*real_malloc(size_t size) {
 		g_curr_node = tmp2_g_curr_node;
 		tmp2_g_curr_node = 0;
 	}
+	printk(KERN_INFO, "Return from malloc is %p with size %d", (char *)return_node_ptr + STRUCT_SIZE + 1, return_node_ptr->size);
 	return ((char *)return_node_ptr + STRUCT_SIZE + 1);
 }
 
