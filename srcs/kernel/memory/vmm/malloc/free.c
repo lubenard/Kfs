@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/28 11:21:03 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/08 15:55:12 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 19:24:33 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <pthread.h>
 #include <sys/mman.h>
 
-extern pthread_mutex_t g_mutex;
 extern t_alloc *g_curr_node;
 
 #include "../../../../lib/iolib.h"
@@ -23,9 +22,7 @@ void reorganize_pointer(t_block *node) {
 	t_block  *cur_block;
 	t_alloc *first_alloc_of_bloc;
 	t_alloc *last_alloc_of_bloc;
-	int i;
 
-	i = 0;
 	cur_block = node;
 	first_alloc_of_bloc = (t_alloc *)((char *)cur_block + STRUCT_BLOCK_SIZE + 1);
 
@@ -63,7 +60,6 @@ int		check_real_freed_nodes(t_block *node) {
 	if (total_node == 0)
 		total_node = 1;
 	node->total_node = total_node;
-	node->total_freed_node = total_freed_node;
 	return total_freed_node;
 }
 
@@ -80,8 +76,8 @@ void	check_block_to_free(t_alloc *alloc) {
 			block_tmp = block_tmp->next;
 			continue;
 		}
-		if (check_real_freed_nodes(block_tmp) == block_tmp->total_node) {
-			check_real_freed_nodes(block_tmp);
+		if (check_real_freed_nodes(block_tmp) == (int)block_tmp->total_node) {
+			//check_real_freed_nodes(block_tmp);
 			reorganize_pointer(block_tmp);
 			munmap(block_tmp, block_tmp->total_size + 1);
 			return;
@@ -104,11 +100,9 @@ void	real_free(void *ptr) {
 			check_block_to_free(node_ptr);
 		}
 	} else
-		printk("Invalid free\n");
+		printk(KERN_NORMAL, "Invalid free\n");
 }
 
 void free(void *ptr) {
-	pthread_mutex_lock(&g_mutex);
 	real_free(ptr);
-	pthread_mutex_unlock(&g_mutex);
 }

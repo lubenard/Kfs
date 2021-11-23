@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/10/13 23:35:18 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 18:57:04 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,11 @@
 #include "malloc.h"
 
 //TODO: Used for ft_memcpy, clean it later
-#include "../debug_lib/srcs/memlib.h"
+#include "../../../../lib/memlib.h"
 t_alloc *g_curr_node = 0;
-pthread_mutex_t g_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 // DEBUG ONLY
-#include "../debug_lib/srcs/strlib.h"
+#include "../../../../lib/strlib.h"
 
 t_block *curr_block_start;
 t_block *curr_block_end;
@@ -46,7 +45,6 @@ t_alloc *init_node(size_t size_requested) {
 	if (!bloc || bloc == MAP_FAILED)
 		return 0;
 	bloc->total_node = 0;
-	bloc->total_freed_node = 0;
 	bloc->total_size = size_requested - 1;
 	curr_block_start = bloc;
 	curr_block_end = (t_block *)((char *)bloc + bloc->total_size);
@@ -166,8 +164,6 @@ void	*real_malloc(size_t size) {
 void	*malloc(size_t size) {
 	void *return_ptr;
 
-	pthread_mutex_lock(&g_mutex);
 	return_ptr = real_malloc(size);
-	pthread_mutex_unlock(&g_mutex);
 	return return_ptr;
 }

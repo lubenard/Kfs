@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:55:29 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/09 14:54:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/23 19:00:37 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,10 @@ void	*realloc(void *ptr, size_t size);
 void	*calloc(size_t nitems, size_t size);
 
 struct s_block {
-	int				buffer_overflow;
-	char			block_type;
-	int				total_node;
-	short			total_freed_node;
-	int				total_size;
+	char			buffer[3];
+	unsigned int	pid;
+	unsigned int	total_node;
+	unsigned int	total_size;
 	struct s_block	*next;
 	struct s_block	*prev;
 }			__attribute__((packed));
