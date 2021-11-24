@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 19:46:29 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/24 12:32:38 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void create_pmm_array(void *start_addr, unsigned int page_number) {
 	// Set all blocks to free.
 	for (unsigned int i = 0; i < page_number; i++)
 		pmm_array[i] = PMM_BLOCK_FREE;
+	printk(KERN_INFO, "Pmm Initialised, memory start at %p", pmm_infos->pmm_memory_start);
 }
 
 void set_block_status(unsigned int index, char new_block_status) {

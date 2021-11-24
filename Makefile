@@ -38,10 +38,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c \
 			  kernel/memory/memory.c \
-			  kernel/memory/page_manager.c \
-			  kernel/memory/frame_manager.c \
 			  kernel/memory/grub/grub.c \
-			  kernel/memory/heap/heap.c \
 			  kernel/memory/pmm/pmm.c \
 			  kernel/memory/vmm/vmm.c \
 			  kernel/memory/vmm/malloc/malloc.c \

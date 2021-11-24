@@ -6,15 +6,11 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/17 14:23:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/24 11:48:39 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
-#include "../kernel/memory/heap/heap.h"
-#include "../kernel/memory/memory.h"
-
-extern uint32_t endKernel;
 
 void	*memset(void *s, int c, size_t n)
 {

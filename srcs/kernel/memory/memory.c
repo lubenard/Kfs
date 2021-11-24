@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 21:16:12 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/24 12:31:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "../../lib/memlib.h"
 #include "../../lib/bitwiselib.h"
 #include "grub/grub.h"
-#include "heap/heap.h"
 #include "pmm/pmm.h"
 #include "vmm/vmm.h"
 
@@ -57,7 +56,6 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t nframes;
 	unsigned int i;
 	unsigned int k = 0;
-	//void *start_memory;
 	uint32_t page_directory[1024] __attribute__((aligned(4096)));
 	uint32_t page_table[1024] __attribute__((aligned(4096)));
 	//uint32_t sec_page_table[1024] __attribute__((aligned(4096)));
@@ -69,6 +67,7 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	nframes = ((map_entry->len_low - get_kernel_size()) / 0x1000); // Ox1000 is 4096 in hexa (Size of one page)
 
 	printk(KERN_NORMAL, "Should require no more than %d pages without kernel, origninaly %d\n", nframes, (map_entry->len_low / 0x1000));
+	printk(KERN_NORMAL, "%d pages = %d tables\n", (map_entry->len_low / 0x1000), (map_entry->len_low / 0x1000) / 1024);
 
 	printk(KERN_INFO, "Memory should begin at %p, placement_address at %p", roundUp3((void*)placement_address, 4096), placement_address);
 
@@ -85,18 +84,22 @@ void init_memory(multiboot_info_t *mb_mmap) {
 
 	printk(KERN_INFO, "%d pages directory entry needed + %d frames", nframes / 1024, nframes % 1024);
 	printk(KERN_INFO, "Kernel is %d bytes, aka %d pages, aka %d page table", get_kernel_size(), get_kernel_size() / 4096, (get_kernel_size() / 4096) / 1024);
+	printk(KERN_INFO, "Pmm should take %d pages, aka %d page table", nframes / 4096, (nframes / 4096) / 1024);
 
+	//((get_kernel_size() / 4096) / 1024) + 1
 	/* Mapping 1rst mb + kernel memory */
 	for (unsigned int j = 0; j < ((get_kernel_size() / 4096) / 1024) + 1; j++) {
-		for (i = 0; i < 257 + get_kernel_size(); i++) {
+		for (i = 0; i < 258 + (get_kernel_size() / 4096) + (nframes / 4096); i++) {
 			page_table[i] = (k * 0x1000) | 3; // attributes: supervisor level, read/write, present.
+			//printk(KERN_INFO, "k = %d", k);
 			//printk(KERN_INFO, "%d * 0x1000 = %d, aka %p", k, k * 0x1000, k * 0x1000);
 			k++;
 		}
-		//printk(KERN_INFO, "J = %d", j);
+		//printk(KERN_INFO, "J = %d, k = %d", j, k);
 		page_directory[j] = ((unsigned int)page_table) | 3; // attributes: supervisor level, read/write, present
 	}
 
+	printk(KERN_INFO, "Mapped until %p", k * 0x1000);
 	//printk(KERN_INFO, "Address of page_table %p and Address of sec_page_table %p, third %p", page_table, sec_page_table, third_page_table);
 
 	/*for (i = 0; i < 1024; i++) {
