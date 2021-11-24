@@ -6,13 +6,14 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/24 12:32:38 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/24 14:33:49 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../lib/iolib.h"
 #include "pmm.h"
 #include <stddef.h>
+#include "../memory.h"
 
 char *pmm_array = 0;
 t_pmm *pmm_infos;
@@ -62,6 +63,7 @@ void *pmm_next_fit(unsigned int size, int flags) {
 
 		if (available_pages == wanted_page_number) {
 			for (unsigned int j = 0; j < wanted_page_number; j++) {
+				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000));
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
 			printk(KERN_INFO, "Returning %p with size %d", (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000), size);

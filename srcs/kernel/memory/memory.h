@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/23 04:43:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/24 14:32:50 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,8 @@ typedef struct page_directory {
 
 void init_memory();
 
-void alloc_frame(page_t *page, int is_kernel, int is_writeable);
-
-page_t *get_page(uint32_t address, int make, page_directory_t *dir);
-
-void setFrames(uint32_t *new_frames, uint32_t nframes);
-
-uint32_t e_kmalloc(uint32_t size, int align, uint32_t *phys);
-
 void set_placement_addr(uint32_t new_placement_address);
+void map_page(void *addr);
 
 /* ASM called functions */
 extern void enable_paging(unsigned int *);
