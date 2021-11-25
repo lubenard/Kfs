@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/06/08 18:06:11 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 16:17:25 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,14 +264,15 @@ void	init_shell() {
 	terminal_t terminal;
 	shell_t first;
 	shell_t second;
-	//shell_t third;
+	shell_t third;
 
 	memset(&first, 0, sizeof(shell_t));
 	memset(&second, 0, sizeof(shell_t));
+	// Cause weird bug, make crash
 	//memset(&third, 0, sizeof(shell_t));
 	terminal.first = &first;
 	terminal.second = &second;
-	//terminal.third = &third;
+	terminal.third = &third;
 	terminal.first->is_shell_init = 1;
 	terminal.active_shell = terminal.first;
 	terminal.active_shell->cursor_pos = 0;

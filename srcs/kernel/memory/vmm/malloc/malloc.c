@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 21:23:12 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 12:11:02 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,4 +166,8 @@ void	*malloc(size_t size) {
 
 	return_ptr = real_malloc(size);
 	return return_ptr;
+}
+
+int get_var_size(void *var) {
+	return ((t_alloc *)((char*)var - STRUCT_SIZE - 1))->size;
 }

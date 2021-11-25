@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/17 17:09:17 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 16:16:37 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,17 +60,18 @@ void isr_handler(registers_t regs) {
 	else
 		printk(KERN_ERROR, "received interrupt: %d", regs.int_no);
 
+	/* Getting faulty adress from cr2 register */
 	uint32_t faulting_address;
 	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
 
-	/*if (!(regs.err_code & 0x1))
+	if (!(regs.err_code & 0x1))
 		terminal_writestr("Present "); // Page not present
 	if (regs.err_code & 0x2)
 		terminal_writestr("read-only "); // Write operation?
 	if (regs.err_code & 0x4)
 		terminal_writestr("user-mode "); // Processor was in user-mode?
 	if (regs.err_code & 0x8)
-		terminal_writestr("reserved "); // Overwritten CPU-reserved bits of page entry?*/
+		terminal_writestr("reserved "); // Overwritten CPU-reserved bits of page entry?
 	printk(KERN_ERROR, "US %d RW %d P %d", regs.err_code & 0x4, regs.err_code & 0x2, regs.err_code & 0x1);
 
 	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);

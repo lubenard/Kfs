@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/24 21:00:05 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 15:23:15 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,12 @@ void create_pmm_array(void *start_addr, unsigned int page_number) {
 	pmm_infos->pmm_page_number = page_number;
 	pmm_infos->pmm_last_index = 0;
 	pmm_array = (char*)start_addr + sizeof(t_pmm) + 1;
-	void *test_var = (void*)roundUp2((char *)pmm_array + page_number + 1, 4096);
-	printk(KERN_INFO, "Page directory space should begin at %p", (char *)pmm_array + page_number + 1);
-	pmm_infos->pmm_memory_start = (void*)roundUp2((char *)pmm_array + page_number + (sizeof(uint32_t) * (page_number / 1024)  * 1024) + 1, 4096);
+	pmm_infos->pmm_memory_start = (void*)roundUp2((char *)pmm_array + page_number + 1, 4096);
 	printk(KERN_INFO, "Initialised pmm at %p with size %d, end at %p", pmm_array, page_number, (char*)pmm_array + page_number);
 	// Set all blocks to free.
 	for (unsigned int i = 0; i < page_number; i++)
 		pmm_array[i] = PMM_BLOCK_FREE;
-	printk(KERN_INFO, "Pmm Initialised, memory start at %p, test var = %p, diff is %d", pmm_infos->pmm_memory_start, test_var, (unsigned int)pmm_infos->pmm_memory_start - (unsigned int)test_var);
+	printk(KERN_INFO, "Pmm Initialised, memory start at %p", pmm_infos->pmm_memory_start);
 }
 
 void set_block_status(unsigned int index, char new_block_status) {

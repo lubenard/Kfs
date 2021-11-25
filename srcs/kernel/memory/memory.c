@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/24 20:34:47 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 16:11:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ uint32_t page_directory[1024] __attribute__((aligned(4096)));
 
 unsigned int k;
 
+void *map_page_start;
+
 void map_page(void *addr) {
 	// Check if pointer is aligned on 4096
 	if (((uintptr_t)addr % 4096) != 0) {
@@ -41,36 +43,17 @@ void map_page(void *addr) {
 		printk(KERN_INFO, "pdindex present");
 	else {
 		printk(KERN_INFO, "pdindex NOT present");
-		/*uint32_t page_table[1024] __attribute__((aligned(4096)));
-		(void)page_table;
+		uint32_t *page_table = map_page_start;
 		for (int i = 0; i < 1024; i++) {
 			page_table[i] = (k * 0x1000) | 3;
 			k++;
 		}
 		printk(KERN_INFO, "Added pdindex %d to page_directory", pdindex);
-		*///page_directory[pdindex] = ((unsigned int)page_table) | 3;
-		//flush_tlb();
-		//enable_paging(page_directory);
+		page_directory[pdindex] = ((unsigned int)page_table) | 3;
+		flush_tlb();
+		enable_paging(page_directory);
 	}
-	//unsigned long *pt = (unsigned long *)(0x400 * pdindex);
-	//printk(KERN_INFO, "PT %p", pt);
 }
-
-/*void map_page(void *physaddr, void *virtualaddr, unsigned int flags) {
-	// Make sure that both addresses are page-aligned.
-	unsigned long pdindex = (unsigned long)virtualaddr >> 22;
-	unsigned long ptindex = (unsigned long)virtualaddr >> 12 & 0x03FF;
-	unsigned long *pd = (unsigned long *)0xFFFFF000;
-	// Here you need to check whether the PD entry is present.
-	// When it is not present, you need to create a new empty PT and
-	// adjust the PDE accordingly.
-	unsigned long *pt = ((unsigned long *)0xFFC00000) + (0x400 * pdindex);
-	// Here you need to check whether the PT entry is present.
-	// When it is, then there is already a mapping present. What do you do now?
-	pt[ptindex] = ((unsigned long)physaddr) | (flags & 0xFFF) | 0x01; // Present
-	// Now you need to flush the entry in the TLB
-	// or you might not notice the change.
-}*/
 
 void set_placement_addr(uint32_t new_placement_address) {
 	placement_address += new_placement_address;
@@ -84,11 +67,23 @@ uint32_t get_kernel_size() {
 	return placement_address - start_kernel_addr;
 }
 
+void compute_space_for_page_directory(void *start_addr, uint32_t nframes) {
+	start_addr = (void*) roundUp3(start_addr, 4096);
+	map_page_start = start_addr;
+	printk(KERN_NORMAL, "Should require no more than %d nframes, starting at %p\n", nframes / 1024, start_addr);
+	printk(KERN_NORMAL, "Should take %d bytes\n", sizeof(uint32_t) * (nframes / 1024) * 1024);
+	for (uint32_t i = 0; i < nframes / 1024; i++) {
+		map_page(start_addr);
+		//printk(KERN_INFO, "Addr for pd is %p", start_addr);
+		start_addr += 4096;
+	}
+	printk(KERN_NORMAL, "compute space for page directory: %p -> %p\n", map_page_start, start_addr);
+}
+
 void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t nframes;
 	unsigned int i;
 	uint32_t page_table[1024] __attribute__((aligned(4096)));
-	//uint32_t sec_page_table[1024] __attribute__((aligned(4096)));
 
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 
@@ -132,36 +127,17 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	printk(KERN_INFO, "Mapped until %p", (k - 1) * 0x1000);
 	//printk(KERN_INFO, "Address of page_table %p and Address of sec_page_table %p, third %p", page_table, sec_page_table, third_page_table);
 
-	// Mapping for exclusive usage of page_dir
-	/*for (i = 0; i < 1024; i++) {
-		sec_page_table[i] = (k * 0x1000) | 3; // attributes: supervisor level, read/write, present.
-		//printk(KERN_INFO, "%d * 0x1000 = %d, aka %p", k, k * 0x1000, k * 0x1000);
-		k++;
-	}
-	page_directory[1] = ((unsigned int)sec_page_table) | 3; // attributes: supervisor level, read/write, present
-	*/
-
-	/*for (i = 0; i < 1024; i++) {
-		third_page_table[i] = (k * 0x1000) | 3; // attributes: supervisor level, read/write, present.
-		//printk(KERN_INFO, "%d * 0x1000 = %d, aka %p", k, k * 0x1000, k * 0x1000);
-		k++;
-	}
-	page_directory[2] = ((unsigned int)third_page_table) | 3; // attributes: supervisor level, read/write, present
-*/
-
-	//printk(KERN_INFO, "Mapped %d pages", nframes / 1024);
-
-	/*for (i = 0; i < nframes % 1024; i++) {
-		page_table[i] = (k * 0x1000) | 3;
-		k++;
-	}*/
-	//page_directory[++j] = ((unsigned int)page_table) | 3; // attributes: supervisor level, read/write, present
-
-	//printk(KERN_INFO, "Mapped %d", nframes % 1024);
-
 	enable_paging(page_directory);
-	//printk(KERN_INFO, "Paging enabled and working, mapped 1mb + kernel");
+
+	compute_space_for_page_directory((char *)placement_address + 1, nframes);
+
 	/* Init physical memory manager */
-	create_pmm_array((char *)placement_address + 1, nframes);
-	map_page((void*)0x400000);
+	create_pmm_array((void *)roundUp3((char *)placement_address + 1 + ((nframes / 1024) * 4096) + 1, 4096), nframes);
+
+	/*map_page((void*)0x400000);
+
+	// Should cause page fault
+	uint32_t *ptr = (uint32_t*)0x400000;
+	uint32_t do_page_fault = *ptr;
+	(void)do_page_fault;*/
 }
