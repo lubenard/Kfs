@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 15:23:15 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 19:06:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void create_pmm_array(void *start_addr, unsigned int page_number) {
 	pmm_infos = start_addr;
 	pmm_infos->pmm_page_number = page_number;
 	pmm_infos->pmm_last_index = 0;
+	pmm_infos->available_pages_number = page_number;
 	pmm_array = (char*)start_addr + sizeof(t_pmm) + 1;
 	pmm_infos->pmm_memory_start = (void*)roundUp2((char *)pmm_array + page_number + 1, 4096);
 	printk(KERN_INFO, "Initialised pmm at %p with size %d, end at %p", pmm_array, page_number, (char*)pmm_array + page_number);
@@ -51,6 +52,10 @@ void *pmm_next_fit(unsigned int size, int flags) {
 	unsigned wanted_page_number = (size / 4097) + 1;
 	unsigned int available_pages = 0;
 	printk(KERN_INFO, "Wanted page_number is %d", wanted_page_number);
+	if (wanted_page_number > pmm_infos->available_pages_number) {
+		printk(KERN_ERROR, "Out of memory !");
+		return 0;
+	}
 	while (pmm_infos->pmm_last_index != pmm_infos->pmm_page_number) {
 		if (pmm_array[pmm_infos->pmm_last_index + available_pages] == PMM_BLOCK_FREE) {
 			printk(KERN_INFO, "Bloc a index %d is free, available_pages %d / %d", pmm_infos->pmm_last_index + available_pages, available_pages + 1, wanted_page_number);
@@ -58,6 +63,8 @@ void *pmm_next_fit(unsigned int size, int flags) {
 		} else {
 			available_pages = 0;
 			pmm_infos->pmm_last_index++;
+			if (pmm_infos->pmm_last_index > pmm_infos->pmm_page_number)
+				pmm_infos->pmm_last_index = 0;
 			printk(KERN_INFO, "Reset infos");
 		}
 
@@ -66,6 +73,7 @@ void *pmm_next_fit(unsigned int size, int flags) {
 				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000));
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
+			pmm_infos->available_pages_number -= wanted_page_number;
 			printk(KERN_INFO, "Returning %p with size %d", (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000), size);
 			return (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000);
 		}
@@ -82,5 +90,7 @@ void pmm_unset_pages(void *ptr, unsigned int size) {
 	for (unsigned int i = 0; i < pages; i++) {
 		printk(KERN_INFO, "Releasing page at index %d", index + i);
 		pmm_array[index + i] = PMM_BLOCK_FREE;
+		unmap_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000));
 	}
+	pmm_infos->available_pages_number += pages;
 }

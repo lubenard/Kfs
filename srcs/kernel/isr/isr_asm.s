@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/02 16:43:24 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/17 12:56:44 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/11/25 19:41:03 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -108,7 +108,7 @@ isr_common_stub:
    mov fs, ax
    mov gs, ax
 
-   call isr_handler
+   call isr_handler     ; call C function isr_handler
 
    pop eax              ; reload the original data segment descriptor
    mov ds, ax
