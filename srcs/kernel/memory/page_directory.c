@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/26 19:38:47 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/26 19:42:21 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,12 @@ void map_page(void *addr) {
 		} else {
 			printk(KERN_INFO, "ptindex not present, mapping for %p at page_table[%d]", (k + ptindex) * 0x1000, ptindex);
 			page_table[ptindex] = (k + ptindex) * 0x1000 | 3;
-			//enable_paging(page_directory);
-			//flush_tlb_addr((void *)((k + ptindex) * 0x1000));
+			flush_tlb_addr((void *)((k + ptindex) * 0x1000));
 		}
 	}
 	else {
 		printk(KERN_INFO, "pdindex NOT present, k = %d", k);
+		flush_tlb_addr((void*)((k + ptindex) * 0x1000));
 		page_table[ptindex] = ((k + ptindex) * 0x1000) | 3;
 		printk(KERN_INFO, "Before loop, page table is %p", page_table);
 		for (unsigned int i = 0; i < 1024; i++) {
@@ -88,11 +88,9 @@ void map_page(void *addr) {
 		}
 		printk(KERN_INFO, "After loop");
 		printk(KERN_INFO, "added page_directory[%d] + mapped page table at addr %p", pdindex, page_table);
-		//flush_tlb_addr(page_table);
+		flush_tlb_addr(page_table);
 		page_directory[pdindex] = ((unsigned int)page_table) | 3;
 	}
-	//flush_tlb();
-	enable_paging(page_directory);
 }
 
 void init_pd_and_map_kernel(void *start_addr) {
