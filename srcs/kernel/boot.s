@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/17 00:20:13 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/17 14:42:04 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/11/26 19:04:23 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -56,13 +56,14 @@ _start:
 	; Sse introduce 70 new instructions.
 	; It fixed the bug of invalid opcode with keyboard IRQ
 	; See more here https://wiki.osdev.org/SSE
-	mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
-	and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
-	or ax, 0x2          ; set coprocessor monitoring  CR0.MP
-	mov cr0, eax
-	mov eax, cr4        ; cr4 too cannot be manipulated directly
-	or ax, 3 << 9       ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
-	mov cr4, eax
+	;mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
+	;and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
+	;or ax, 0x2          ; set coprocessor monitoring  CR0.MP
+	;mov cr0, eax
+	;mov eax, cr4        ; cr4 too cannot be manipulated directly
+	;or ax, 3 << 9       ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	;mov cr4, eax
+
 	; The bootloader has loaded us into 32-bit protected mode on a x86
 	; machine. Interrupts are disabled. Paging is disabled. The processor
 	; state is as defined in the multiboot standard. The kernel has full

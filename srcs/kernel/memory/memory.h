@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 18:54:24 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/26 18:00:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ typedef struct page_directory {
 
 void init_memory();
 
-void set_placement_addr(uint32_t new_placement_address);
 void map_page(void *addr);
 void unmap_page(void *addr);
+void init_pd_and_map_kernel(void *start_addr);
 
 /* ASM called functions */
 extern void enable_paging(unsigned int *);

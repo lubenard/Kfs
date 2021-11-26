@@ -39,6 +39,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/kbd.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/grub/grub.c \
+			  kernel/memory/page_directory.c \
 			  kernel/memory/pmm/pmm.c \
 			  kernel/memory/vmm/vmm.c \
 			  kernel/memory/vmm/malloc/malloc.c \
