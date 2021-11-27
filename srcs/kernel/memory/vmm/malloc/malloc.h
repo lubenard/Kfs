@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:55:29 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/23 19:00:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/27 13:20:28 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 # include <stddef.h>
 # include <stdint.h>
 
-# define PAGESIZE 4096
+# define PAGESIZE 16384
 # define MAGIC_NUMBER 0x7A12
-# define TINY 4096
-# define SMALL 8192
-# define LARGE 8193
+# define TINY 16384
+# define SMALL 24576
+# define LARGE 24577
 # define ALLOC_FREE 1
 # define ALLOC_USED 2
 

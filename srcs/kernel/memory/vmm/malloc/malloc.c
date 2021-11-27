@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 12:11:02 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/27 13:21:51 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,19 @@ t_alloc *init_node(size_t size_requested) {
 	if (!bloc || bloc == 0)
 		return 0;
 	bloc->total_node = 0;
+	bloc->next = NULL;
+	bloc->prev = (g_curr_node) ? g_curr_node->block : NULL;
 	bloc->total_size = size_requested - 1;
+
 	curr_block_start = bloc;
 	curr_block_end = (t_block *)((char *)bloc + bloc->total_size);
+
 	node->size = bloc->total_size - STRUCT_SIZE - 1;
 	node->buffer_overflow = MAGIC_NUMBER;
-	// Available: 1, Not Available: 2
 	node->is_busy = ALLOC_FREE;
 	node->next = NULL;
 	node->block = bloc;
 	node->prev = NULL;
-	bloc->next = NULL;
-	bloc->prev = (g_curr_node) ? g_curr_node->block : NULL;
 	if (g_curr_node)
 		g_curr_node->block->next = bloc;
 	return node;

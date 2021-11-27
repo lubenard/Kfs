@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 19:19:46 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/27 13:17:38 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,14 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;*/
 
-	/*printk(KERN_NORMAL, "Before malloc\n");
+	printk(KERN_NORMAL, "Before malloc\n");
 	char *test = malloc(5000);
 	(void)test;
 	test[0] = 'a';
 	test[1] = 'b';
 	test[2] = 'c';
 	test[3] = '\0';
-	printk(KERN_NORMAL, "String is %s\n", test);*/
+	printk(KERN_NORMAL, "String is %s\n", test);
 	/*test = malloc(4);
 	(void)test;
 	test[0] = 'a';
