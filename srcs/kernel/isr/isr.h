@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/03 14:32:20 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/30 18:43:32 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@
 typedef struct registers
 {
    int32_t ds; // Data segment selector
-   int32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha.
+   int32_t edi, esi, ebp, useless_value, ebx, edx, ecx, eax; // Pushed by pusha.
    int32_t int_no, err_code; // Interrupt number and error code (if applicable)
-   int32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically
+   int32_t eip, cs, eflags, esp, ss; // Pushed by the processor automatically
 } registers_t;
 
 typedef void (*isr_t)(registers_t);

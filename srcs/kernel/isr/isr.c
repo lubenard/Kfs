@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 19:42:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/30 18:47:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@
  */
 
 void panic(const char *message, const char *file, unsigned int line) {
-		printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
-	}
+	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
+}
 
 static const char *interrupt_message[] = {
 	"Division by 0", "Debug exception", "Non maskable interrupt",
@@ -47,39 +47,44 @@ static const char *interrupt_message[] = {
 	"Unknown interrupt exception", "Triple fault",
 };
 
-/*
- * This gets called from our ASM interrupt handler.
- */
-void isr_handler(registers_t regs) {
-	if (regs.int_no < 25)
-		printk(KERN_ERROR, "Received interrupt: %d: %s", regs.int_no,
-		interrupt_message[regs.int_no]);
-	else
-		printk(KERN_ERROR, "Received interrupt: %d", regs.int_no);
+
+void page_fault_handler(registers_t *regs) {
 
 	/* Getting faulty adress from cr2 register */
 	uint32_t faulting_address;
 	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
 
-	if (!(regs.err_code & 0x1))
+	if (!(regs->err_code & 0x1))
 		printk(KERN_ERROR, "Page not present !"); // Page not present
-	if (regs.err_code & 0x2)
+	if (regs->err_code & 0x2)
 		printk(KERN_ERROR, "Read-only page !"); // Write operation?
-	if (regs.err_code & 0x4)
+	if (regs->err_code & 0x4)
 		printk(KERN_ERROR, "User-mode !"); // Processor was in user-mode?
-	if (regs.err_code & 0x8)
+	if (regs->err_code & 0x8)
 		printk(KERN_ERROR, "Bits reserved !"); // Overwritten CPU-reserved bits of page entry?
-
-	// Disable interrupts
-	asm volatile("cli");
-
 	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
-	PANIC(interrupt_message[regs.int_no]);
-	for(;;);
-	/*if (regs.int_no == 0x8 || regs.int_no == 0x12) {
+}
+
+/*
+ * This gets called from our ASM interrupt handler.
+ */
+void isr_handler(registers_t *regs) {
+	if (regs->int_no < 25)
+		printk(KERN_ERROR, "Received interrupt: %d: %s", regs->int_no,
+		interrupt_message[regs->int_no]);
+	else
+		printk(KERN_ERROR, "Received interrupt: %d", regs->int_no);
+	// 14 -> Page fault error code
+	if (regs->int_no == 14)
+		page_fault_handler(regs);
+	// Should be only FATAL errors
+	if (regs->int_no == 0x8 || regs->int_no == 0x12) {
+		// Disable interrupts
+		asm volatile("cli");
 		// Halt by going into an infinite loop.
+		PANIC(interrupt_message[regs->int_no]);
 		for(;;);
-	}*/
+	}
 }
 
 void *irq_routines[16] = {

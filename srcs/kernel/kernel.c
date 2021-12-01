@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/27 13:17:38 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/30 18:17:55 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,14 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
 
-	// Should cause page fault
-	/*uint32_t *ptr = (uint32_t*)0xA0000000;
-	uint32_t do_page_fault = *ptr;
-	(void)do_page_fault;*/
-
-	printk(KERN_NORMAL, "Before malloc\n");
+	/*printk(KERN_NORMAL, "Before malloc\n");
 	char *test = malloc(5000);
 	(void)test;
 	test[0] = 'a';
 	test[1] = 'b';
 	test[2] = 'c';
 	test[3] = '\0';
-	printk(KERN_NORMAL, "String is %s\n", test);
+	printk(KERN_NORMAL, "String is %s\n", test);*/
 	/*test = malloc(4);
 	(void)test;
 	test[0] = 'a';
@@ -77,8 +72,8 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	test[2] = 'd';
 	test[3] = '\0';
 	printk(KERN_NORMAL, "String is %s\n", test);*/
-
-	printk(KERN_NORMAL, "After malloc\n");
+	asm volatile ("int $0xE");
+	//printk(KERN_NORMAL, "After malloc\n");
 	//display_boot_message();
 
 	/* Init shell management */
