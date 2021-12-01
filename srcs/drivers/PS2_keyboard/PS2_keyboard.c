@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 14:57:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/01 19:20:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,9 @@ void get_last_typed_key(kbd_event_t *key)
 /*
  * Function called by IRQ when key is delivered
  */
-void get_key(registers_t regs)
+void get_key(registers_t *regs)
 {
 	(void)regs;
-
 	/* Read from the keyboard's data buffer */
     uint16_t scancode = inb(0x60);
 

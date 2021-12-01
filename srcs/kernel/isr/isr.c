@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/30 18:47:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/01 19:16:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void panic(const char *message, const char *file, unsigned int line) {
 
 static const char *interrupt_message[] = {
 	"Division by 0", "Debug exception", "Non maskable interrupt",
-	"Breakpoint exception", "Into detected overflow",
+	"Breakpoint exception", "Overflow detected",
 	"Out of bounds exception", "Invalid opcode", "No coprocessor exception",
 	"Double fault", "Coprocessor segment overrun", "Bad TSS",
 	"Segment not present", "Stack fault", "General protection fault",
@@ -75,8 +75,8 @@ void isr_handler(registers_t *regs) {
 	else
 		printk(KERN_ERROR, "Received interrupt: %d", regs->int_no);
 	// 14 -> Page fault error code
-	if (regs->int_no == 14)
-		page_fault_handler(regs);
+	//if (regs->int_no == 14)
+	//	page_fault_handler(regs);
 	// Should be only FATAL errors
 	if (regs->int_no == 0x8 || regs->int_no == 0x12) {
 		// Disable interrupts
@@ -102,19 +102,21 @@ void register_interrupt_handler(int8_t n, isr_t handler) {
 /*
  * This gets called from our ASM interrupt handler
  */
-void irq_handler(registers_t regs) {
+void irq_handler(registers_t *regs) {
 
-	void (*handler)(registers_t r);
+	void (*handler)(registers_t *r);
 
-	if (regs.int_no >= 32) {
-		if (irq_routines[regs.int_no - 32] != 0) {
-			handler = irq_routines[regs.int_no - 32];
+	if (regs->int_no >= 32) {
+		if (irq_routines[regs->int_no - 32] != 0) {
+			handler = irq_routines[regs->int_no - 32];
 			handler(regs);
+		} else {
+			printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs->int_no - 32);
 		}
 	}
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
-	if (regs.int_no - 32 >= 8) {
+	if (regs->int_no - 32 >= 8) {
 		// Send reset signal to slave.
 		outb(0xA0, 0x20);
 	}
