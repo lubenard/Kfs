@@ -19,6 +19,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/gdt/gdt.c \
 			  kernel/idt/idt.c \
 			  kernel/isr/isr.c \
+			  kernel/isr/irqs/pit.c \
 			  lib/memlib.c \
 			  lib/strlib.c \
 			  lib/bitwiselib.c \

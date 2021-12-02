@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 17:51:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 20:43:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@
 #include "../../io/io.h"
 #include "../../drivers/vga/vga.h"
 #include "../../io/shell/builtins/builtins.h"
-
-#define PANIC(msg) panic(msg, __FILE__, __LINE__);
 
 /*
  * US RW  P - Description
@@ -31,7 +29,11 @@
  */
 
 void panic(const char *message, const char *file, unsigned int line) {
+	// Disable cli
+	asm volatile("cli");
 	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
+	// Infinite loop to stop the kernel
+	for (;;);
 }
 
 static const char *interrupt_message[] = {
@@ -46,7 +48,6 @@ static const char *interrupt_message[] = {
 	"Unknown interrupt exception", "Security exception",
 	"Unknown interrupt exception", "Triple fault",
 };
-
 
 void page_fault_handler(registers_t regs) {
 
@@ -79,11 +80,7 @@ void isr_handler(registers_t regs) {
 		page_fault_handler(regs);
 	// Should be only FATAL errors
 	if (regs.int_no == 0x8 || regs.int_no == 0x12) {
-		// Disable interrupts
-		asm volatile("cli");
-		// Halt by going into an infinite loop.
 		PANIC(interrupt_message[regs.int_no]);
-		for(;;);
 	}
 }
 

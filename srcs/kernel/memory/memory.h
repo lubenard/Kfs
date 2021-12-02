@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/26 18:00:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:58:24 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,6 @@ typedef struct page {
 	uint32_t unused     : 7;   // Amalgamation of unused and reserved bits
 	uint32_t frame      : 20;  // Frame address (shifted right 12 bits)
 } page_t;
-
-typedef struct page_table {
-	page_t pages[1024];
-} page_table_t;
-
-typedef struct page_directory {
-	page_table_t *tables[1024];
-	/* Physical addr of tables */
-	uint32_t tablesPhysical[1024];
-	/*
-	 * The physical address of tablesPhysical. This comes into play
-	 * when we get our kernel heap allocated and the directory
-	 * may be in a different location in virtual memory.
-	 */
-	uint32_t physicalAddr;
-} page_directory_t;
 
 void init_memory();
 

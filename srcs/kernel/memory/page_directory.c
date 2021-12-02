@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/26 19:42:21 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:57:40 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "../../lib/iolib.h"
 
 uint32_t page_directory[1024] __attribute__((aligned(4096)));
-
 void *page_directory_start;
 
 static inline void flush_tlb_addr(void *addr) {
@@ -113,7 +112,11 @@ void init_pd_and_map_kernel(void *start_addr) {
 		page_directory[i] = 0x00000002;
 	}
 
-	/* Mapping 4 first mb (including kernel) */
+	/*
+	 * Mapping 4 first mb (including kernel)
+	 * Kernel is very probably starting at 0x100000
+	 * We map from 0x0 to 0x3FF000
+	 */
 	for (i = 0; i < 1024; i++) {
 		page_table[i] = (i * 0x1000) | 3; // attributes: supervisor level, read/write, present.
 	}

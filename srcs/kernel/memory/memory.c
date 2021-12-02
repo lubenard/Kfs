@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/30 18:16:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 18:09:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	/* Init physical memory manager */
 	create_pmm_array((void *)roundUp3((char *)end_kernel_addr + 1 + ((nframes / 1024) * 4096) + 1, 4096), nframes);
 
+	// USED FOR TEST
 	/*map_page((void*)0x400000);
 	// Do not cause page fault
 	uint32_t *ptr1 = (uint32_t*)0x400000;
@@ -61,28 +62,4 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	(void)not_page_fault;*/
 
 	//unmap_page((void*)0x400000);
-
-	//map_page((void*)0x401000);
-	// Cause page fault
-	/*uint32_t *ptr2 = (uint32_t*)0x401000;
-	uint32_t do_page_fault = *ptr2;
-	(void)do_page_fault;*/
-
-	//map_page((void*)0x402000);
-	//unmap_page((void*)0x401000);
-	// Cause page fault
-	/*uint32_t *ptr1 = (uint32_t*)0x402000;
-	uint32_t do_page_fault2 = *ptr1;
-	(void)do_page_fault2;*/
-
-	/*map_page((void*)0x400000);
-	map_page((void*)0x800000);
-	map_page((void*)0x1200000);
-	unmap_page((void*)0x800000);
-	map_page((void*)0x800000);*/
-
-	// Should cause page fault
-	/*uint32_t *ptr = (uint32_t*)0x400000;
-	uint32_t do_page_fault = *ptr;
-	(void)do_page_fault;*/
 }
