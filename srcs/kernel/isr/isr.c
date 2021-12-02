@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/01 19:16:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:51:08 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,19 @@ static const char *interrupt_message[] = {
 };
 
 
-void page_fault_handler(registers_t *regs) {
+void page_fault_handler(registers_t regs) {
 
 	/* Getting faulty adress from cr2 register */
 	uint32_t faulting_address;
 	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
 
-	if (!(regs->err_code & 0x1))
+	if (!(regs.err_code & 0x1))
 		printk(KERN_ERROR, "Page not present !"); // Page not present
-	if (regs->err_code & 0x2)
+	if (regs.err_code & 0x2)
 		printk(KERN_ERROR, "Read-only page !"); // Write operation?
-	if (regs->err_code & 0x4)
+	if (regs.err_code & 0x4)
 		printk(KERN_ERROR, "User-mode !"); // Processor was in user-mode?
-	if (regs->err_code & 0x8)
+	if (regs.err_code & 0x8)
 		printk(KERN_ERROR, "Bits reserved !"); // Overwritten CPU-reserved bits of page entry?
 	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
 }
@@ -68,21 +68,21 @@ void page_fault_handler(registers_t *regs) {
 /*
  * This gets called from our ASM interrupt handler.
  */
-void isr_handler(registers_t *regs) {
-	if (regs->int_no < 25)
-		printk(KERN_ERROR, "Received interrupt: %d: %s", regs->int_no,
-		interrupt_message[regs->int_no]);
+void isr_handler(registers_t regs) {
+	if (regs.int_no < 25)
+		printk(KERN_ERROR, "Received interrupt: %d: %s", regs.int_no,
+		interrupt_message[regs.int_no]);
 	else
-		printk(KERN_ERROR, "Received interrupt: %d", regs->int_no);
+		printk(KERN_ERROR, "Received interrupt: %d", regs.int_no);
 	// 14 -> Page fault error code
-	//if (regs->int_no == 14)
-	//	page_fault_handler(regs);
+	if (regs.int_no == 14)
+		page_fault_handler(regs);
 	// Should be only FATAL errors
-	if (regs->int_no == 0x8 || regs->int_no == 0x12) {
+	if (regs.int_no == 0x8 || regs.int_no == 0x12) {
 		// Disable interrupts
 		asm volatile("cli");
 		// Halt by going into an infinite loop.
-		PANIC(interrupt_message[regs->int_no]);
+		PANIC(interrupt_message[regs.int_no]);
 		for(;;);
 	}
 }
@@ -102,21 +102,23 @@ void register_interrupt_handler(int8_t n, isr_t handler) {
 /*
  * This gets called from our ASM interrupt handler
  */
-void irq_handler(registers_t *regs) {
+void irq_handler(registers_t regs) {
 
-	void (*handler)(registers_t *r);
+	void (*handler)(registers_t r);
 
-	if (regs->int_no >= 32) {
-		if (irq_routines[regs->int_no - 32] != 0) {
-			handler = irq_routines[regs->int_no - 32];
+	//printk(KERN_ERROR, "IRQ fired %d", regs.int_no);
+	if (regs.int_no >= 32) {
+		if (irq_routines[regs.int_no - 32] != 0) {
+			handler = irq_routines[regs.int_no - 32];
 			handler(regs);
-		} else {
-			printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs->int_no - 32);
-		}
+		} /*else {
+			
+			//printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);
+		}*/
 	}
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
-	if (regs->int_no - 32 >= 8) {
+	if (regs.int_no - 32 >= 8) {
 		// Send reset signal to slave.
 		outb(0xA0, 0x20);
 	}

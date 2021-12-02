@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/01 19:20:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:32:28 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "../../drivers/vga/vga.h"
 #include "../../io/io.h"
 #include "PS2_keyboard.h"
+#include "../../lib/iolib.h"
 
 static const char qwertAsciiTable[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -213,6 +214,7 @@ void get_key(registers_t *regs)
  */
 void init_kbd()
 {
+	printk(KERN_INFO, "Kbd init");
 	is_key_multiple = 0;
 	set_language(2);
 	register_interrupt_handler(1, &get_key);

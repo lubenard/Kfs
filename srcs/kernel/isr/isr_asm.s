@@ -93,57 +93,57 @@ IRQ 15,47
 extern isr_handler
 extern irq_handler
 
-; This is our common ISR stub. It saves the processor state, sets
-; up for kernel mode segments, calls the C-level fault handler,
-; and finally restores the stack frame.
 isr_common_stub:
-    pusha
-    push ds
-    push es
-    push fs
-    push gs
-    mov ax, 0x10   ; Load the Kernel Data Segment descriptor!
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov eax, esp   ; Push us the stack
-    push eax
-    mov eax, isr_handler
-    call eax       ; A special call, preserves the 'eip' register
-    pop eax
-    pop gs
-    pop fs
-    pop es
-    pop ds
-    popa
-    add esp, 8     ; Cleans up the pushed error code and pushed ISR number
-    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP!
+   pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
+
+   mov ax, ds           ; Lower 16-bits of eax = ds.
+   push eax             ; save the data segment descriptor
+
+   mov ax, 0x10         ; load the kernel data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   call isr_handler     ; call C function isr_handler
+
+   pop eax              ; reload the original data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   popa                 ; Pops edi,esi,ebp...
+   add esp, 8           ; Cleans up the pushed error code and pushed ISR number
+   sti
+   iret                 ; pops 5 things at once: CS, EIP, EFLAGS, SS, and esp
+
 
 ; This is a stub that we have created for IRQ based ISRs. This calls
 ; 'irq_handler' in our C code.
 irq_common_stub:
-    pusha
-    mov ax, ds
-    push eax
-    mov ax, 0x10 ;0x10
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    push esp                 ; At this point ESP is a pointer to where GS (and the rest
-                             ; of the interrupt handler state resides)
-                             ; Push ESP as 1st parameter as it's a 
-                             ; pointer to a registers_t  
-    call irq_handler
-    pop ebx                  ; Remove the saved ESP on the stack. Efficient to just pop it 
-                             ; into any register. You could have done: add esp, 4 as well
-    pop ebx
-    mov ds, bx
-    mov es, bx
-    mov fs, bx
-    mov gs, bx
-    popa
-    add esp, 8
-    sti
-    iret
+   pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
+
+   mov ax, ds           ; Lower 16-bits of eax = ds.
+   push eax             ; save the data segment descriptor
+
+   mov ax, 0x10         ; load the kernel data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   call irq_handler     ; Call handler
+
+                        ; After call of the handler function, we want to
+                        ; restore the state of registers
+   pop ebx              ; reload the original data segment descriptor
+   mov ds, bx
+   mov es, bx
+   mov fs, bx
+   mov gs, bx
+
+   popa                 ; Pops edi,esi,ebp... (Remove them from the stack)
+   add esp, 8           ; Cleans up the pushed error code and pushed ISR number
+   sti
+   iret                 ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP

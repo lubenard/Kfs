@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/30 18:17:55 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:48:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void display_boot_message() {
  */
 void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	(void)magic;
+	(void)mb_mmap;
 
 	/* Initialize terminal interface */
 	terminal_initialize();
@@ -72,7 +73,7 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	test[2] = 'd';
 	test[3] = '\0';
 	printk(KERN_NORMAL, "String is %s\n", test);*/
-	asm volatile ("int $0xE");
+	//asm volatile ("int $0xE");
 	//printk(KERN_NORMAL, "After malloc\n");
 	//display_boot_message();
 
