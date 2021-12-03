@@ -1,23 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memlib.h                                           :+:      :+:    :+:   */
+/*   calloc.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/17 00:16:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 18:57:18 by lubenard         ###   ########.fr       */
+/*   Created: 2021/10/04 13:38:02 by lubenard          #+#    #+#             */
+/*   Updated: 2021/11/23 17:40:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MEMLIB_H
-# define MEMLIB_H
+#include "malloc.h"
+#include "../../../../lib/strlib.h"
 
-# include <stddef.h>
-# include <stdint.h>
+void	*calloc(size_t nitems, size_t size) {
+	void	*ptr;
 
-void		*memset(void *s, int c, size_t n);
-void		*memcpy(void *s1, void const *s2, size_t n);
-void		*kmalloc(uint32_t size);
-
-#endif
+	size *= nitems;
+	if (!(ptr = real_malloc(size + 1)))
+		return (NULL);
+	bzero(ptr, size + 1);
+	return (ptr);
+}

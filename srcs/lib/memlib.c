@@ -6,11 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:24:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/11/25 15:55:06 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include "memlib.h"
+#include "iolib.h"
 
 void	*memset(void *s, int c, size_t n)
 {
@@ -19,8 +20,12 @@ void	*memset(void *s, int c, size_t n)
 
 	t = (char *)s;
 	i = 0;
-	while (i != (int)n)
+	if (!s)
+		return 0;
+	while (i != (int)n) {
+		//printk(KERN_NORMAL, "Should write at %p\n", &t[i++]);
 		t[i++] = c;
+	}
 	return (t);
 }
 

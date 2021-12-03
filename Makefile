@@ -2,20 +2,17 @@
 CC_C = clang
 CC_ASM = nasm
 
-<<<<<<< HEAD
-NAME = kfs-1.bin
-ISO_NAME = kfs-1.iso
-=======
-NAME = kfs-2.bin
-ISO_NAME = kfs-2.iso
->>>>>>> kfs_2_merge/master
+
+NAME = kfs-3.bin
+ISO_NAME = kfs-3.iso
 
 SRCDIR = srcs
 
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
 				kernel/idt/idt_asm.s \
-				kernel/isr/isr_asm.s
+				kernel/isr/isr_asm.s \
+				kernel/memory/paging_asm.s
 
 SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \
@@ -23,8 +20,10 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/gdt/gdt.c \
 			  kernel/idt/idt.c \
 			  kernel/isr/isr.c \
+			  kernel/isr/irqs/pit.c \
 			  lib/memlib.c \
 			  lib/strlib.c \
+			  lib/bitwiselib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
 			  lib/printk/fill_buffer.c \
@@ -36,14 +35,23 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/printk/flags/flag_x.c \
 			  lib/printk/flags/flag_p.c \
 			  io/io.c \
-<<<<<<< HEAD
-			  io/shell/shell.c
-=======
 			  io/shell/shell.c \
 			  io/shell/builtins/print_stack.c \
 			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c
->>>>>>> kfs_2_merge/master
+			  io/shell/shell.c \
+			  io/shell/builtins/print_stack.c \
+			  io/shell/builtins/shutdown.c \
+			  io/shell/builtins/kbd.c \
+			  kernel/memory/memory.c \
+			  kernel/memory/grub/grub.c \
+			  kernel/memory/page_directory.c \
+			  kernel/memory/pmm/pmm.c \
+			  kernel/memory/vmm/vmm.c \
+			  kernel/memory/vmm/malloc/malloc.c \
+			  kernel/memory/vmm/malloc/free.c \
+			  kernel/memory/vmm/malloc/calloc.c \
+			  kernel/memory/vmm/malloc/realloc.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
@@ -51,13 +59,14 @@ SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
 OBJ_C = $(SRCS_C:.c=.o)
 OBJ_ASM = $(SRCS_ASM:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror \
+CFLAGS = -Wall -Wextra -Werror -g3\
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
 		 -fno-exceptions \
 		 -fno-stack-protector \
 		 -nostdlib \
-		 -nodefaultlibs
+		 -nodefaultlibs \
+		 -mgeneral-regs-only
 
 all:  $(NAME)
 
@@ -98,8 +107,13 @@ fclean: clean
 
 re: fclean all
 
-launch: all
-	qemu-system-x86_64 -cdrom $(ISO_NAME)
+run: all
+	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
+
+run_debug: all
+	qemu-system-x86_64 -s -S -d int -m 256 -cdrom $(ISO_NAME)
+
+relaunch: fclean run
 
 .SILENT:
 

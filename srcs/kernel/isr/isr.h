@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:15:47 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 20:40:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,19 @@
 # define IRQ14 46
 # define IRQ15 47
 
+#define PANIC(msg) panic(msg, __FILE__, __LINE__);
+
 typedef struct registers
 {
-   int32_t ds; // Data segment selector
-   int32_t edi, esi, ebp, esp, ebx, edx, ecx, eax; // Pushed by pusha.
-   int32_t int_no, err_code; // Interrupt number and error code (if applicable)
-   int32_t eip, cs, eflags, useresp, ss; // Pushed by the processor automatically
+	int32_t ds; // Data segment selector
+	int32_t edi, esi, ebp, useless_value, ebx, edx, ecx, eax; // Pushed by pusha.
+	int32_t int_no, err_code; // Interrupt number and error code (if applicable)
+	int32_t eip, cs, eflags, esp, ss; // Pushed by the processor automatically
 } registers_t;
 
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(int8_t n, isr_t handler);
+
+void panic(const char *message, const char *file, unsigned int line);
 
 #endif

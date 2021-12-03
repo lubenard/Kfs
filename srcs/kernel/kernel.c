@@ -6,22 +6,21 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/03 18:39:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 17:48:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../drivers/vga/vga.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"
-#include "../io/io.h"
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
-
-#include "../lib/memlib.h"
+#include "memory/memory.h"
+#include "memory/grub/grub.h"
 #include "../lib/iolib.h"
-#include "../lib/strlib.h"
+#include "../lib/memlib.h"
+#include "memory/vmm/malloc/malloc.h"
 
->>>>>>> kfs_2_merge/master
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 # error "You are not using a cross-compiler, you will most certainly run into trouble"
@@ -40,8 +39,10 @@ void display_boot_message() {
 /*
  * First kernel called function
  */
-void k_main(void)
-{
+void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
+	(void)magic;
+	(void)mb_mmap;
+
 	/* Initialize terminal interface */
 	terminal_initialize();
 
@@ -54,7 +55,27 @@ void k_main(void)
 	/* Init kbd management */
 	init_kbd();
 
-	display_boot_message();
+	/* Enable memory management. Enable paging */
+	init_memory(mb_mmap);
+
+	/*printk(KERN_NORMAL, "Before malloc\n");
+	char *test = malloc(5000);
+	(void)test;
+	test[0] = 'a';
+	test[1] = 'b';
+	test[2] = 'c';
+	test[3] = '\0';
+	printk(KERN_NORMAL, "String is %s\n", test);*/
+	/*test = malloc(4);
+	(void)test;
+	test[0] = 'a';
+	test[1] = 'b';
+	test[2] = 'd';
+	test[3] = '\0';
+	printk(KERN_NORMAL, "String is %s\n", test);*/
+	//asm volatile ("int $0xE");
+	//printk(KERN_NORMAL, "After malloc\n");
+	//display_boot_message();
 
 	/* Init shell management */
 	init_shell();

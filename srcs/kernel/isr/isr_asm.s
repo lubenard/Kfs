@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/02 16:43:24 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/17 12:56:44 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/12/01 19:14:55 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -57,11 +57,11 @@ ISR_ERRCODE   13
 ISR_ERRCODE   14
 ISR_NOERRCODE 15
 ISR_NOERRCODE 16
-ISR_NOERRCODE 17
+ISR_ERRCODE 17
 ISR_NOERRCODE 18
 ISR_NOERRCODE 19
 ISR_NOERRCODE 20
-ISR_NOERRCODE 21
+ISR_ERRCODE 21
 ISR_NOERRCODE 22
 ISR_NOERRCODE 23
 ISR_NOERRCODE 24
@@ -69,8 +69,8 @@ ISR_NOERRCODE 25
 ISR_NOERRCODE 26
 ISR_NOERRCODE 27
 ISR_NOERRCODE 28
-ISR_NOERRCODE 29
-ISR_NOERRCODE 30
+ISR_ERRCODE 29
+ISR_ERRCODE 30
 ISR_NOERRCODE 31
 IRQ 0, 32
 IRQ 1, 33
@@ -93,9 +93,6 @@ IRQ 15,47
 extern isr_handler
 extern irq_handler
 
-; This is our common ISR stub. It saves the processor state, sets
-; up for kernel mode segments, calls the C-level fault handler,
-; and finally restores the stack frame.
 isr_common_stub:
    pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
 
@@ -108,7 +105,7 @@ isr_common_stub:
    mov fs, ax
    mov gs, ax
 
-   call isr_handler
+   call isr_handler     ; call C function isr_handler
 
    pop eax              ; reload the original data segment descriptor
    mov ds, ax

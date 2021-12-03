@@ -1,23 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memlib.h                                           :+:      :+:    :+:   */
+/*   bitwiselib.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/17 00:16:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 18:57:18 by lubenard         ###   ########.fr       */
+/*   Created: 2021/07/02 18:16:02 by lubenard          #+#    #+#             */
+/*   Updated: 2021/07/02 18:27:18 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MEMLIB_H
-# define MEMLIB_H
+#ifndef BITWISELIB_H
+# define BITWISELIB_H
 
-# include <stddef.h>
-# include <stdint.h>
-
-void		*memset(void *s, int c, size_t n);
-void		*memcpy(void *s1, void const *s2, size_t n);
-void		*kmalloc(uint32_t size);
+int setBit(unsigned int data, unsigned int pos);
+int clearBit(unsigned int data, unsigned int pos);
+int checkBit(unsigned int data, unsigned int pos);
+int extractBit(int number, int len, int start);
 
 #endif

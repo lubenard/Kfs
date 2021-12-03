@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:01:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/02 20:44:26 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "../../lib/iolib.h"
 #include "../../lib/memlib.h"
 #include "../../io/io.h"
+#include "../isr/irqs/irqs.h"
 
 struct idt_ptr_struct idt_ptr;
 struct idt32 idt_entries[256];
@@ -38,7 +39,7 @@ void init_idt()
 
 	memset(&idt_entries, 0, sizeof(struct idt32)*256);
 
-	idt_flush((int32_t)&idt_ptr);
+	idt_flush((uint32_t)&idt_ptr);
 
 	// Fill 32 first entrys
 	idt_set_gate(0, (int32_t)isr0, 0x08, 0x8E);
@@ -103,5 +104,6 @@ void init_idt()
 	idt_set_gate(47, (int32_t)irq15, 0x08, 0x8E);
 
 	printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
+	init_pit();
 }
 

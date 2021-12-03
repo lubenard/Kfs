@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   memlib.h                                           :+:      :+:    :+:   */
+/*   vmm.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/17 00:16:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/07/22 18:57:18 by lubenard         ###   ########.fr       */
+/*   Created: 2021/11/16 21:32:58 by lubenard          #+#    #+#             */
+/*   Updated: 2021/11/23 21:02:15 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MEMLIB_H
-# define MEMLIB_H
+#include "vmm.h"
+#include "../pmm/pmm.h"
 
-# include <stddef.h>
-# include <stdint.h>
+void munmap(void *ptr, unsigned int size) {
+	(void)ptr;
+	(void)size;
+	pmm_unset_pages(ptr, size);
+	return ;
+}
 
-void		*memset(void *s, int c, size_t n);
-void		*memcpy(void *s1, void const *s2, size_t n);
-void		*kmalloc(uint32_t size);
-
-#endif
+void *mmap(unsigned int size, int flags) {
+	(void)size;
+	(void)flags;
+	return pmm_next_fit(size, flags);
+}

@@ -6,7 +6,7 @@
 ;    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         ;
 ;                                                 +#+#+#+#+#+   +#+            ;
 ;    Created: 2021/05/17 00:20:13 by lubenard          #+#    #+#              ;
-;    Updated: 2021/05/17 14:42:04 by lubenard         ###   ########.fr        ;
+;    Updated: 2021/11/26 19:04:23 by lubenard         ###   ########.fr        ;
 ;                                                                              ;
 ; **************************************************************************** ;
 
@@ -56,13 +56,14 @@ _start:
 	; Sse introduce 70 new instructions.
 	; It fixed the bug of invalid opcode with keyboard IRQ
 	; See more here https://wiki.osdev.org/SSE
-	mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
-	and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
-	or ax, 0x2          ; set coprocessor monitoring  CR0.MP
-	mov cr0, eax
-	mov eax, cr4        ; cr4 too cannot be manipulated directly
-	or ax, 3 << 9       ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
-	mov cr4, eax
+	;mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
+	;and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM
+	;or ax, 0x2          ; set coprocessor monitoring  CR0.MP
+	;mov cr0, eax
+	;mov eax, cr4        ; cr4 too cannot be manipulated directly
+	;or ax, 3 << 9       ; set CR4.OSFXSR and CR4.OSXMMEXCPT at the same time
+	;mov cr4, eax
+
 	; The bootloader has loaded us into 32-bit protected mode on a x86
 	; machine. Interrupts are disabled. Paging is disabled. The processor
 	; state is as defined in the multiboot standard. The kernel has full
@@ -84,17 +85,21 @@ _start:
 	; environment where crucial features are offline. Note that the
 	; processor is not fully initialized yet: Features such as floating
 	; point instructions and instruction set extensions are not initialized
-	; yet. The GDT should be loaded here. Paging should be enabled here.
-	; C++ features such as global constructors and exceptions will require
-	; runtime support to work as well.
- 
+	; yet.
+
+	; We push eax and ebx on the stack to get infos about the memory map.
+	; Thankfully, grub is handling this for us.
+	; See more here: https://wiki.osdev.org/Detecting_Memory_(x86)#Memory_Map_Via_GRUB
+	; If grub is not present, we need to ask the bios via : INT 0x15, EAX = 0xE820
+	push eax
+	push ebx
 	; Enter the high-level kernel. The ABI requires the stack is 16-byte
 	; aligned at the time of the call instruction (which afterwards pushes
 	; the return pointer of size 4 bytes). The stack was originally 16-byte
 	; aligned above and we've since pushed a multiple of 16 bytes to the
 	; stack since (pushed 0 bytes so far) and the alignment is thus
 	; preserved and the call is well defined.
-    ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
+	; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
 	extern k_main
 	call k_main
 
