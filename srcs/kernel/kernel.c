@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 15:31:46 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/03 18:39:34 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
 
+#include "../lib/memlib.h"
+#include "../lib/iolib.h"
+#include "../lib/strlib.h"
+
+>>>>>>> kfs_2_merge/master
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
 # error "You are not using a cross-compiler, you will most certainly run into trouble"

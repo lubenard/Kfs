@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 17:35:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:36:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/03 18:39:17 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../../lib/iolib.h"
 #include "../../lib/memlib.h"
 
-GDTEntry_t gdt_entries[5];
+GDTEntry_t gdt_entries[7];
 
 /* Set the value of one GDT entry.
  * @param num the entry we fill (between 0 and 4)
@@ -54,11 +54,19 @@ void init_gdt()
 	// 0x92 -> 1001 0010 in binary: -> Ring 0, Data segment
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Kernel Data segment
 
+	// 0x96 -> 1001 0110 in binary: -> Ring 0, Data segment
+	// For more info about how acces byte is defined, have a look here:
+	// https://wiki.osdev.org/Global_Descriptor_Table
+	gdt_set_gate(3, 0, 0xFFFFFFFF, 0x96, 0xCF); // Kernel stack segment
+
 	// 0xFA -> 1111 1010 in binary: -> Ring 3, (11 in binary), Code segment
-	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User code segment
+	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User code segment
 
 	// 0xF2 -> 1111 0010 in binary: -> Ring 3, (11 in binary), Data segment
-	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User data segment
+	gdt_set_gate(5, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User data segment
+
+	// 0xF6 -> 1111 0110 in binary: -> Ring 3, Data segment
+	gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF6, 0xCF); // User stack segment
 
 	memcpy((char *)gdt_ptr.offset, (char *)gdt_entries, sizeof(GDTEntry_t) * 5);
 

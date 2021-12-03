@@ -2,8 +2,13 @@
 CC_C = clang
 CC_ASM = nasm
 
+<<<<<<< HEAD
 NAME = kfs-1.bin
 ISO_NAME = kfs-1.iso
+=======
+NAME = kfs-2.bin
+ISO_NAME = kfs-2.iso
+>>>>>>> kfs_2_merge/master
 
 SRCDIR = srcs
 
@@ -31,7 +36,14 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/printk/flags/flag_x.c \
 			  lib/printk/flags/flag_p.c \
 			  io/io.c \
+<<<<<<< HEAD
 			  io/shell/shell.c
+=======
+			  io/shell/shell.c \
+			  io/shell/builtins/print_stack.c \
+			  io/shell/builtins/shutdown.c \
+			  io/shell/builtins/kbd.c
+>>>>>>> kfs_2_merge/master
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))

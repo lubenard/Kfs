@@ -6,7 +6,6 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:51 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:24:53 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,4 +123,32 @@ int		atoi(char const *str)
 		i++;
 	}
 	return (output * mult);
+}
+
+char	*strcpy(char *dest, char const *src)
+{
+	int i;
+
+	i = 0;
+	while (src[i])
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
+}
+
+char	*strlcpy(char *dest, char *src, int size)
+{
+	int i;
+
+	i = 0;
+	while (src[i] && i != size)
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	dest[i] = '\0';
+	return (dest);
 }

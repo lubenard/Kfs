@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:17:58 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:19:07 by lubenard         ###   ########.fr       */
+/*   Updated: 2021/12/03 18:40:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ char	*strupper(char *str);
 int		strcmp(char const *s1, char const *s2);
 int		strncmp(const char *s1, const char *s2, size_t n);
 int		atoi(char const *str);
-
+char	*strcpy(char *dest, char const *src);
+char	*strlcpy(char *dest, char *src, int size);
 #endif
