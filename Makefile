@@ -38,10 +38,6 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/shell.c \
 			  io/shell/builtins/print_stack.c \
 			  io/shell/builtins/shutdown.c \
-			  io/shell/builtins/kbd.c
-			  io/shell/shell.c \
-			  io/shell/builtins/print_stack.c \
-			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/grub/grub.c \
