@@ -3,8 +3,8 @@ CC_C = clang
 CC_ASM = nasm
 
 
-NAME = kfs-3.bin
-ISO_NAME = kfs-3.iso
+NAME = kfs-4.bin
+ISO_NAME = kfs-4.iso
 
 SRCDIR = srcs
 
