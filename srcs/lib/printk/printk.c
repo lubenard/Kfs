@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 19:26:18 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:01:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/05 17:52:53 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,12 @@ void printk(int info_type, const char *str, ...) {
 	if (info_type == KERN_INFO) {
 		terminal_set_fg_color(VGA_COLOR_CYAN);
 		terminal_writestr("[INFO] ");
-	}
-	else if (info_type == KERN_ERROR) {
+	} else if (info_type == KERN_ERROR) {
 		terminal_set_fg_color(VGA_COLOR_RED);
 		terminal_writestr("[ERROR] ");
+	} else if (info_type == KERN_WARNING) {
+		terminal_set_fg_color(VGA_COLOR_BROWN);
+		terminal_writestr("[WARNING] ");
 	}
 	if (str != NULL) {
 		va_start(ap, str);
