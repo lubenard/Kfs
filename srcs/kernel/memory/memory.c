@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 18:09:27 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/07 15:36:12 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,21 +38,37 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
 
 	// Getting the size of the memory via grub.
-	nframes = ((map_entry->len_low - get_kernel_size()) / 0x1000); // Ox1000 is 4096 in hexa (Size of one page)
+	// nframes is the number of frames (aka blocks of 4096)
+	nframes = (map_entry->len_low / 0x1000); // Ox1000 is 4096 in hexa (Size of one page)
 
-	printk(KERN_NORMAL, "Should require no more than %d pages without kernel, origninaly %d\n", nframes, (map_entry->len_low / 0x1000));
-	printk(KERN_NORMAL, "%d pages = %d tables\n", (map_entry->len_low / 0x1000), (map_entry->len_low / 0x1000) / 1024);
-
-	printk(KERN_INFO, "Memory should begin at %p, end_kernel_addr at %p", roundUp3((char *)end_kernel_addr + 1, 4096), end_kernel_addr);
-
-	printk(KERN_INFO, "%d page directory needed + %d pages table entry needed + %d frames", nframes / 1024, nframes, nframes % 4096);
 	printk(KERN_INFO, "Kernel is %d bytes, aka %d pages, aka %d page table", get_kernel_size(), get_kernel_size() / 4096, (get_kernel_size() / 4096) / 1024);
-	printk(KERN_INFO, "Pmm should take %d pages, aka %d page table", nframes / 4096, (nframes / 4096) / 1024);
 
-	init_pd_and_map_kernel((void*)roundUp3((char *)end_kernel_addr + 1, 4096));
+	printk(KERN_INFO, "nframes is %d pages, aka %d page table", nframes, nframes / 1024);
+
+	void *start_pd = (void *)roundUp3((char *)end_kernel_addr + 1, 4096);
+
+	printk(KERN_INFO, "Page directory should begin at %p and end at %p", start_pd, (char *)start_pd + (nframes * sizeof(uint32_t)));
+
+	/*uint32_t *end_pt = start_pd;
+
+	int test_block = 0;
+	for (uint32_t j = 0; j < nframes; j++){
+		if (end_pt >= (uint32_t *)0x400000 && test_block == 0) {
+			printk(KERN_INFO, "Superior from %d", j);
+			test_block = 1;
+		}
+		end_pt++;
+	}
+	printk(KERN_INFO, "Check Page tables end at %p", end_pt );*/
+
+	//printk(KERN_INFO, "Pmm should take %d pages, aka %d page table and start at %p and end at %p", nframes / 4096, (nframes / 4096) / 1024, (void *)roundUp3((char *)end_kernel_addr + 1 + ((nframes / 1024) * 4096) + 1, 4096), (char *)roundUp3((char *)end_kernel_addr + 1 + ((nframes / 1024) * 4096) + 1, 4096) + nframes);
+
+	init_pd_and_map_kernel((void*)roundUp3((char *)end_kernel_addr + 1, 4096), nframes);
+
+	printk(KERN_INFO, "Page directory should begin at %p and end at %p", start_pd, (char *)start_pd + (nframes * sizeof(uint32_t)));
 
 	/* Init physical memory manager */
-	create_pmm_array((void *)roundUp3((char *)end_kernel_addr + 1 + ((nframes / 1024) * 4096) + 1, 4096), nframes);
+	create_pmm_array((void *)start_pd + (nframes * sizeof(uint32_t)) + 1, nframes);
 
 	// USED FOR TEST
 	/*map_page((void*)0x400000);

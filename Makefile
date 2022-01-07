@@ -104,10 +104,13 @@ fclean: clean
 re: fclean all
 
 run: all
-	qemu-system-x86_64 -m 256 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
+
+run_max_memory: all
+	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
 
 run_debug: all
-	qemu-system-x86_64 -s -S -d int -m 256 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
 
 relaunch: fclean run
 

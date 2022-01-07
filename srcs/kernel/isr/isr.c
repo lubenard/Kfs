@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 20:43:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/05 16:17:20 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ static const char *interrupt_message[] = {
 };
 
 void page_fault_handler(registers_t regs) {
-
 	/* Getting faulty adress from cr2 register */
 	uint32_t faulting_address;
 	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
@@ -64,6 +63,8 @@ void page_fault_handler(registers_t regs) {
 	if (regs.err_code & 0x8)
 		printk(KERN_ERROR, "Bits reserved !"); // Overwritten CPU-reserved bits of page entry?
 	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
+	// Will not be needed once process are implemented
+	PANIC(interrupt_message[regs.int_no]);
 }
 
 /*

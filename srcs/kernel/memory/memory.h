@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 17:58:24 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/07 14:21:16 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void init_memory();
 
 void map_page(void *addr);
 void unmap_page(void *addr);
-void init_pd_and_map_kernel(void *start_addr);
+void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
+int check_mapping(void *addr);
 
 /* ASM called functions */
 extern void enable_paging(unsigned int *);

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 19:38:31 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 18:04:39 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/05 16:19:02 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
 		//if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
 			//printk(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x, size %d %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high);
-			printk(KERN_INFO, "Start Addr: %x - %x | Length: %d - %d | Size: %x | Type: %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high, entry->size, entry->type);
+			//printk(KERN_INFO, "Start Addr: %x - %x | Length: %d - %d | Size: %x | Type: %d", entry->addr_low, entry->addr_high, entry->len_low, entry->len_high, entry->size, entry->type);
 			// Temp ret ? only returning after 1rst free section found
 			//return entry;
 			if (!ret_entry && entry->type == MULTIBOOT_MEMORY_AVAILABLE && (entry->addr_low != 0 || entry->addr_high != 0))

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 19:06:31 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/07 16:00:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,36 @@ size_t roundUp2(void *a, size_t b) {
 	return (1 + ((size_t)a - 1) / b) * b;
 }
 
+size_t roundUpDiff2(void *a, size_t b) {
+	return (size_t)roundUp2(a, b) - (size_t)a;
+}
+void check_mapping_pmm(void *pmm_array, unsigned int page_number) {
+	if ((char *)pmm_array + page_number > (char*)0x3FF000) {
+		printk(KERN_INFO, "PMM is not in a mapped area (%p), should map it first.", pmm_array);
+		unsigned int unmapped_pmm = page_number - roundUpDiff2(pmm_array, 4096);
+		printk(KERN_INFO, "We need to map %d pages for PMM", unmapped_pmm / 4096);
+		void *start_mapping = (void*)roundUp2(pmm_array, 4096);
+		for (unsigned int j = 0; j < (unmapped_pmm / 4096) + 1; j++) {
+			map_page(start_mapping + (4096 * j));
+		}
+	} else
+		printk(KERN_INFO, "PMM is contained in a mapped area (before 0x3FF000).\nStart at %p, end at %p", pmm_array, (char*)pmm_array + page_number);
+}
+
 void create_pmm_array(void *start_addr, unsigned int page_number) {
+	printk(KERN_INFO, "Pmm infos is stored at %p", start_addr);
 	pmm_infos = start_addr;
 	pmm_infos->pmm_page_number = page_number;
 	pmm_infos->pmm_last_index = 0;
 	pmm_infos->available_pages_number = page_number;
 	pmm_array = (char*)start_addr + sizeof(t_pmm) + 1;
 	pmm_infos->pmm_memory_start = (void*)roundUp2((char *)pmm_array + page_number + 1, 4096);
-	printk(KERN_INFO, "Initialised pmm at %p with size %d, end at %p", pmm_array, page_number, (char*)pmm_array + page_number);
+	printk(KERN_INFO, "Pmm will be init at %p with size %d, end at %p", pmm_array, page_number, (char*)pmm_array + page_number);
+	check_mapping_pmm(pmm_array, page_number);
 	// Set all blocks to free.
 	for (unsigned int i = 0; i < page_number; i++)
 		pmm_array[i] = PMM_BLOCK_FREE;
-	printk(KERN_INFO, "Pmm Initialised, memory start at %p", pmm_infos->pmm_memory_start);
+	printk(KERN_INFO, "Pmm Initialised, at %p memory start at %p", pmm_array, pmm_infos->pmm_memory_start);
 }
 
 void set_block_status(unsigned int index, char new_block_status) {
