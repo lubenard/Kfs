@@ -6,32 +6,17 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/27 13:21:51 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/07 17:07:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "malloc.h"
 #include "../vmm.h"
 
-//TODO: Used for ft_memcpy, clean it later
 #include "../../../../lib/memlib.h"
-t_alloc *g_curr_node = 0;
-
 #include "../../../../lib/iolib.h"
-// DEBUG ONLY
-#include "../../../../lib/strlib.h"
 
-t_block *curr_block_start;
-t_block *curr_block_end;
-
-// END DEBUG ONLY
-size_t roundUp(void *a, size_t b) {
-	return (1 + ((size_t)a - 1) / b) * b;
-}
-
-size_t roundUpDiff(void *a, size_t b) {
-	return (size_t)roundUp(a, b) - (size_t)a;
-}
+t_alloc *g_curr_node = 0;
 
 t_alloc *init_node(size_t size_requested) {
 	t_block *bloc;
@@ -47,9 +32,6 @@ t_alloc *init_node(size_t size_requested) {
 	bloc->next = NULL;
 	bloc->prev = (g_curr_node) ? g_curr_node->block : NULL;
 	bloc->total_size = size_requested - 1;
-
-	curr_block_start = bloc;
-	curr_block_end = (t_block *)((char *)bloc + bloc->total_size);
 
 	node->size = bloc->total_size - STRUCT_SIZE - 1;
 	node->buffer_overflow = MAGIC_NUMBER;

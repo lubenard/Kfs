@@ -6,15 +6,33 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:32 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 15:55:06 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/01/07 17:09:13 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "memlib.h"
-#include "iolib.h"
 
-void	*memset(void *s, int c, size_t n)
-{
+/**
+ * Return the next 'aligned' address on b.
+ * Param void *a is the base address.
+ * Param size_t b is the alignement wanted.
+ * Exemple: a= 0x123456, b= 4096
+ * Return:  124000
+ * Cast the return as a pointer
+ */
+size_t roundUp(void *a, size_t b) {
+	return (1 + ((size_t)a - 1) / b) * b;
+}
+
+/**
+ * Return the diff between given address (a), and next aligned address based on b
+ * Parameter are the same as roundUp function
+ */
+size_t roundUpDiff(void *a, size_t b) {
+	return (size_t)roundUp(a, b) - (size_t)a;
+}
+
+void	*memset(void *s, int c, size_t n) {
 	char	*t;
 	int		i;
 
@@ -23,14 +41,12 @@ void	*memset(void *s, int c, size_t n)
 	if (!s)
 		return 0;
 	while (i != (int)n) {
-		//printk(KERN_NORMAL, "Should write at %p\n", &t[i++]);
 		t[i++] = c;
 	}
 	return (t);
 }
 
-void	*memcpy(void *s1, void const *s2, size_t n)
-{
+void	*memcpy(void *s1, void const *s2, size_t n) {
 	int		i;
 	char	*t1;
 	char	*t2;
