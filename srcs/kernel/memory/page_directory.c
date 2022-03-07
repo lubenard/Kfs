@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/07 16:52:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:42:29 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,16 @@ void unmap_page(void *addr) {
 		uint32_t *page_table_addr = (void*)((page_directory[pdindex] >> 8) << 8);
 		//printk(KERN_INFO, "page_addr is %x, origninaly %x", page_table_addr, page_directory[pdindex]);
 		if (page_table_addr[ptindex] & (1 << 0)) {
-			printk(KERN_INFO, "ptindex present");
+			printd(KERN_INFO, "ptindex present");
 			flush_tlb_addr((void*)((page_table_addr[ptindex] >> 8) << 8));
 			// Reset given ptindex in Page Directory
 			page_table_addr[ptindex] = 0x00000000;
 			//printk(KERN_INFO, "page_table_addr[%d] = 0x00000000", ptindex);
 		} else
-			printk(KERN_WARNING, "ptindex not present for %x", (k + ptindex) * 0x1000);
+			printd(KERN_WARNING, "ptindex not present for %x", (k + ptindex) * 0x1000);
 	}
 	else
-		printk(KERN_WARNING, "pdindex NOT present");
+		printd(KERN_WARNING, "pdindex NOT present");
 }
 
 void map_page(void *addr) {
@@ -68,7 +68,7 @@ void map_page(void *addr) {
 		//printk(KERN_INFO, "pdindex present");
 		//printk(KERN_INFO, "page_addr is %p, origninaly %p", page_table, page_directory[pdindex]);
 		if (page_table[ptindex] & (1 << 0)) {
-			printk(KERN_WARNING, "Map page : ptindex present, page already mapped");
+			printd(KERN_WARNING, "Map page : ptindex present, page already mapped");
 			return ;
 		} else {
 			//printk(KERN_INFO, "ptindex not present, mapping for %p at page_table[%d]", (k + ptindex) * 0x1000, ptindex);
@@ -92,7 +92,7 @@ int check_mapping(void *addr) {
 	int k;
 	unsigned long pdindex = (unsigned long)addr >> 22;
 	unsigned long ptindex = (unsigned long)addr >> 12 & 0x03FF;
-	printk(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
+	printd(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
 
 	k = pdindex * 1024;
 	uint32_t *page_table = (uint32_t*)page_directory_start + k;
@@ -136,17 +136,17 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	}
 
 	page_directory[0] = ((unsigned int)page_table) | 3; // attributes: supervisor level, read/write, present
-	printk(KERN_INFO, "First page table is located after completion at %p", page_table);
+	printd(KERN_INFO, "First page table is located after completion at %p", page_table);
 
-	printk(KERN_INFO, "Page directory is at %p", &page_directory);
-	printk(KERN_INFO, "Mapped until %p", (i - 1) * 0x1000);
+	printd(KERN_INFO, "Page directory is at %p", &page_directory);
+	printd(KERN_INFO, "Mapped until %p", (i - 1) * 0x1000);
 
 	enable_paging(page_directory);
 
 	// If the Page Directory is bigger than what was proviously mapped
 	if ((uint32_t *)start_addr + nframes >= (uint32_t*)0x400000) {
 		// Number of pages i need to allocate for page directory.
-		printk(KERN_INFO, "We need to map %d pages for Page Direcrory", (nframes - ((uint32_t*)0x400000 - (uint32_t*)start_addr)) / 1024);
+		printd(KERN_INFO, "We need to map %d pages for Page Direcrory", (nframes - ((uint32_t*)0x400000 - (uint32_t*)start_addr)) / 1024);
 
 		// How can we know how much we need to map for Page Directory ?
 		// We are talking about the type of datas to STORE the pages (uint32_t),

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/22 00:11:13 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/05 17:49:06 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:26:38 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,6 @@
 # define KERN_WARNING 3
 
 void	printk(int info_type, const char *str, ...);
+void	printd(int info_type, const char *str, ...);
 
 #endif

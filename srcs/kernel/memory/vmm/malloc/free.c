@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/28 11:21:03 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/07 17:08:14 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:34:39 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void	real_free(void *ptr) {
 			check_block_to_free(node_ptr);
 		}
 	} else
-		printk(KERN_NORMAL, "Invalid free\n");
+		printk(KERN_WARNING, "Invalid free\n");
 }
 
 void free(void *ptr) {

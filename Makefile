@@ -103,13 +103,21 @@ fclean: clean
 
 re: fclean all
 
-run: all
+run:
+	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 0/' srcs/lib/printk/include/printk.h
+	rm $(NAME)
+	rm -f srcs/lib/printk/printk.o
+	make
 	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
 
 run_max_memory: all
 	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
 
-run_debug: all
+run_debug:
+	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
+	rm $(NAME)
+	rm -f srcs/lib/printk/printk.o
+	make
 	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
 
 relaunch: fclean run

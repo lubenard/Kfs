@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/07 17:07:05 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:34:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ void	*real_malloc(size_t size) {
 		g_curr_node = tmp2_g_curr_node;
 		tmp2_g_curr_node = 0;
 	}
-	printk(KERN_INFO, "Return from malloc is %p with size %d", (char *)return_node_ptr + STRUCT_SIZE + 1, return_node_ptr->size);
+	printd(KERN_INFO, "Return from malloc is %p with size %d", (char *)return_node_ptr + STRUCT_SIZE + 1, return_node_ptr->size);
 	return ((char *)return_node_ptr + STRUCT_SIZE + 1);
 }
 

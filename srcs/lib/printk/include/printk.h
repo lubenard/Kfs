@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:34:34 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:03:27 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:12:56 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define FT_PRINTF_PREC		16
 # define FT_PRINTF_STAR		32
 # define FT_PRINTF_ZERO		64
+
+# define DEBUG_LOG 1
 
 typedef struct	s_output
 {

@@ -6,13 +6,26 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/26 19:26:18 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/05 17:52:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 10:30:28 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdarg.h>
 #include "include/printk.h"
 #include "../../drivers/vga/vga.h"
+
+/*
+ * Printf variant for debug
+ */
+void printd(int info_type, const char *str, ...) {
+	va_list args;
+
+	if (DEBUG_LOG) {
+		va_start(args, str);
+		printk(info_type, str, args);
+		va_end(args);
+	}
+}
 
 /*
  * We are forced to pass va_list with address or it will only print one arg.
