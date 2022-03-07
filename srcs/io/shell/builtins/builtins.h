@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:19:15 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:12:00 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:40:15 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ typedef struct s_command {
 	uint32_t	esp;
 	uint32_t	ebp;
 	char		**command;
-	// Should be casted to shell_t
+	// Should be casted to t_shell
 	void		*current_shell;
 }	t_command;
 

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 15:23:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:34:21 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ unsigned short is_key_multiple;
  */
 char *set_language(int language)
 {
-	kbd_language = language - 1;
+	kbd_language = language;
 	return (g_kbd_list[kbd_language]);
 }
 
@@ -204,13 +204,13 @@ void get_key(registers_t regs)
 
 /*
  * Init keyboard.
- * Set default map to 2 (Azerty mapping)
+ * Set default map to 1 (Azerty mapping)
  * and register getkey into IRQ system
  */
 void init_kbd()
 {
-	printk(KERN_INFO, "Kbd init");
+	printk(KERN_INFO, "Keyboard init");
 	is_key_multiple = 0;
-	set_language(2);
+	set_language(1);
 	register_interrupt_handler(1, &get_key);
 }

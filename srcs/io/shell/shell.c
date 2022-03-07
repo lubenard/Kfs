@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:09:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:39:42 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 uint32_t esp;
 uint32_t ebp;
 
-void move_command_hist_up(shell_t *shell, unsigned short limit) {
+void move_command_hist_up(t_shell *shell, unsigned short limit) {
 	unsigned short i = 0;
 	while (i < limit) {
 		strlcpy(shell->cmd_line[i], shell->cmd_line[i + 1],
@@ -47,7 +47,7 @@ int		search_builtin(char *command) {
 /*
  * Decide witch command should be launched based on input
  */
-void	handle_input(shell_t *shell) {
+void	handle_input(t_shell *shell) {
 	int builtin_index = 0;
 	t_command *command_struc;
 	char **current_line = ft_strsplit(shell->cmd_line[shell->cmd_hist_curr], ' ');
@@ -85,7 +85,7 @@ void	handle_input(shell_t *shell) {
 /*
  * Handle arrow keys
  */
-void handle_special_keys(shell_t *shell, kbd_event_t key) {
+void handle_special_keys(t_shell *shell, kbd_event_t key) {
 	short rel_pos = 0;
 	if (key.key_typed_raw_two == 0x4D || key.key_typed_raw_two == 0x4B) {
 		if (key.key_typed_raw_two == 0x4D) // Right arrow
@@ -135,7 +135,7 @@ void change_active_shell(terminal_t *terminal,
 /*
  * Get the whole screen into a backup buffer
  */
-void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
+void copy_screen_into_buffer(t_shell *shell, vga_screen_t datas) {
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
 	for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
 		shell->buffer[i] = screen_buffer[i];
@@ -148,11 +148,11 @@ void copy_screen_into_buffer(shell_t *shell, vga_screen_t datas) {
  * Change active shell
  * Restore new active shell datas and screen_buffer
  */
-void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
+void load_shell(terminal_t *terminal, unsigned short new_t_shello_load) {
 	vga_screen_t datas = get_screen_datas();
 	copy_screen_into_buffer(terminal->active_shell, datas);
 	terminal_clear();
-	change_active_shell(terminal, new_shell_to_load);
+	change_active_shell(terminal, new_t_shello_load);
 	uint16_t *screen_buffer = (uint16_t*) 0xB8000;
 	if (terminal->active_shell->is_shell_init) {
 		for (int i = 0; i < VGA_WIDTH * VGA_HEIGHT; i++)
@@ -173,7 +173,7 @@ void load_shell(terminal_t *terminal, unsigned short new_shell_to_load) {
 /*
  * Useful when deleting character into the line
  */
-void move_input_buffer_left(shell_t *shell) {
+void move_input_buffer_left(t_shell *shell) {
 	int i = shell->cursor_pos - 1;
 	while (i != SHELL_CMD_SIZE - 2) {
 		shell->cmd_line[shell->cmd_hist_curr][i] = shell->cmd_line[shell->cmd_hist_curr][i + 1];
@@ -184,7 +184,7 @@ void move_input_buffer_left(shell_t *shell) {
 /*
  * Useful when inserting character into the line
  */
-void move_input_buffer_right(shell_t *shell) {
+void move_input_buffer_right(t_shell *shell) {
 	int i = SHELL_CMD_SIZE - 2;
 	while (i != shell->cursor_pos - 1) {
 		shell->cmd_line[shell->cmd_hist_curr][i + 1] = shell->cmd_line[shell->cmd_hist_curr][i];
@@ -251,14 +251,14 @@ void	init_shell() {
 	asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
 	asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
 	terminal_t terminal;
-	shell_t first;
-	shell_t second;
-	shell_t third;
+	t_shell first;
+	t_shell second;
+	t_shell third;
 
-	memset(&first, 0, sizeof(shell_t));
-	memset(&second, 0, sizeof(shell_t));
+	memset(&first, 0, sizeof(t_shell));
+	memset(&second, 0, sizeof(t_shell));
 	// Cause weird bug, make crash
-	//memset(&third, 0, sizeof(shell_t));
+	//memset(&third, 0, sizeof(t_shell));
 	terminal.first = &first;
 	terminal.second = &second;
 	terminal.third = &third;

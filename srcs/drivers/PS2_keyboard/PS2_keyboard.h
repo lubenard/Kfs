@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 15:22:52 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:33:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ char *set_language(int language);
 void get_last_typed_key(kbd_event_t *key);
 void init_kbd();
 
-static char *g_kbd_list[] = {"AZERTY", "QWERTY"};
+static char *g_kbd_list[] = {"QWERTY", "AZERTY", 0};
 
 #endif

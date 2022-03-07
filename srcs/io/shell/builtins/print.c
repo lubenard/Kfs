@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:10:58 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:00:31 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:39:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void print_stack(uint32_t esp, uint32_t ebp) {
 	}
 }
 
-void print_history(shell_t *shell) {
+void print_history(t_shell *shell) {
 	int i = 0;
 	int j = 1;
 	while (i != 4) {
@@ -70,5 +70,5 @@ void print(t_command *command) {
 	if (strcmp(command->command[1], "stack") == 0)
 		print_stack(command->esp, command->ebp);
 	else if (strcmp(command->command[1], "history") == 0)
-		print_history((shell_t *)command->current_shell);
+		print_history((t_shell *)command->current_shell);
 }
