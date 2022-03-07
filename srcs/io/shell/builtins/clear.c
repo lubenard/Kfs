@@ -1,23 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   echo.c                                             :+:      :+:    :+:   */
+/*   clear.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/07 11:27:09 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 16:28:07 by lubenard         ###   ########.fr       */
+/*   Created: 2022/03/07 17:07:41 by lubenard          #+#    #+#             */
+/*   Updated: 2022/03/07 17:09:09 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../../lib/iolib.h"
+#include "../../../drivers/vga/vga.h"
 #include "builtins.h"
 
-void echo(t_command *command) {
-	int i = 1;
-
-	while (command->command[i]) {
-		printk(KERN_NORMAL, "%s ", command->command[i++]);
-	}
-	printk(KERN_NORMAL, "\n");
+void clear(t_command *command) {
+	(void)command;
+	terminal_clear();
 }

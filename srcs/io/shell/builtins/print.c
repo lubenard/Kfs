@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   print_stack.c                                      :+:      :+:    :+:   */
+/*   print.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:10:58 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 14:17:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:00:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "../../../lib/strlib.h"
 #include "../../../lib/iolib.h"
 #include "../../../drivers/vga/vga.h"
+#include "builtins.h"
+#include "../shell.h"
 
 void int_into_str_hex(unsigned int addr, char *result, int size) {
 	int		len;
@@ -52,4 +54,21 @@ void print_stack(uint32_t esp, uint32_t ebp) {
 		esp += 10;
 		printk(KERN_NORMAL, "\n");
 	}
+}
+
+void print_history(shell_t *shell) {
+	int i = 0;
+	int j = 1;
+	while (i != 4) {
+		if (strlen(shell->cmd_line[i]) > 0)
+			printk(KERN_NORMAL, "[%d] %s\n", j++, shell->cmd_line[i]);
+		i++;
+	}
+}
+
+void print(t_command *command) {
+	if (strcmp(command->command[1], "stack") == 0)
+		print_stack(command->esp, command->ebp);
+	else if (strcmp(command->command[1], "history") == 0)
+		print_history((shell_t *)command->current_shell);
 }

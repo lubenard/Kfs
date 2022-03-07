@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:17:58 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 19:35:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 09:17:57 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,4 +25,5 @@ int		strncmp(const char *s1, const char *s2, size_t n);
 int		atoi(char const *str);
 char	*strcpy(char *dest, char const *src);
 char	*strlcpy(char *dest, char *src, int size);
+char	**ft_strsplit(char const *s, char c);
 #endif

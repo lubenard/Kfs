@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/25 16:17:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:09:59 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,10 @@
 #include "../io.h"
 #include "shell.h"
 #include "builtins/builtins.h"
+#include "../../kernel/memory/vmm/malloc/malloc.h"
 
 uint32_t esp;
 uint32_t ebp;
-
-void print_help() {
-	terminal_writestr("Commands available:\n");
-	terminal_writestr("\thelp - print this help\n");
-	terminal_writestr("\tkbd language - set kbd map: 1 for QWERTY, 2 for AZERTY\n");
-	terminal_writestr("\tprint_stack - Print the current stack\n");
-	terminal_writestr("\tprint_hist - Print the shell history\n");
-	terminal_writestr("\techo - echo the content\n");
-	terminal_writestr("\tclear - clear the screen\n");
-	terminal_writestr("\tshutdown - shutdown the computer\n");
-	terminal_writestr("\treboot - reboot the computer\n");
-}
 
 void move_command_hist_up(shell_t *shell, unsigned short limit) {
 	unsigned short i = 0;
@@ -44,42 +33,41 @@ void move_command_hist_up(shell_t *shell, unsigned short limit) {
 	memset(shell->cmd_line[limit], 0, SHELL_CMD_SIZE);
 }
 
-void print_history(shell_t *shell) {
-	int i = 0;
-	int j = 1;
-	while (i != 4) {
-		if (strlen(shell->cmd_line[i]) > 0)
-			printk(KERN_NORMAL, "[%d] %s\n", j++, shell->cmd_line[i]);
-		i++;
+int		search_builtin(char *command) {
+	int j = 0;
+	while (builtins_names[j]) {
+		if (strcmp(command, builtins_names[j]) == 0) {
+			return j;
+		}
+		j++;
 	}
+	return -1;
 }
 
 /*
  * Decide witch command should be launched based on input
  */
 void	handle_input(shell_t *shell) {
-	char *current_cmd;
+	int builtin_index = 0;
+	t_command *command_struc;
+	char **current_line = ft_strsplit(shell->cmd_line[shell->cmd_hist_curr], ' ');
 
-	current_cmd = shell->cmd_line[shell->cmd_hist_curr];
-	if (strcmp(current_cmd, "help") == 0)
-		print_help();
-	else if (strncmp(current_cmd, "kbd language", 12) == 0)
-		change_kbd_map(current_cmd);
-	else if (strcmp(current_cmd, "clear") == 0)
-		terminal_clear();
-	else if (strcmp(current_cmd, "shutdown") == 0)
-		shutdown();
-	else if (strcmp(current_cmd, "reboot") == 0)
-		reboot();
-	else if (strcmp(current_cmd, "print_stack") == 0)
-		print_stack(esp, ebp);
-	else if (strncmp(current_cmd, "echo", 4) == 0)
-		printk(KERN_NORMAL, "%s\n", &current_cmd[5]);
-	else if (strncmp(current_cmd, "print_history", 4) == 0)
-		print_history(shell);
-	else {
-		printk(KERN_ERROR, "Command not found: %s", current_cmd);
-		print_help();
+	if ((builtin_index = search_builtin(current_line[0])) == -1) {
+		printk(KERN_ERROR, "Could not find command named: %s", current_line[0]);
+		// Help is expecting a structure, but is not using it.
+		// Passing 0 is fine
+		help(0);
+	} else {
+		if (!(command_struc = malloc(sizeof(t_command)))) {
+			printk(KERN_ERROR, "Malloc failed for %s", current_line[0]);
+		} else {
+			command_struc->esp = esp;
+			command_struc->ebp = ebp;
+			command_struc->command = current_line;
+			command_struc->current_shell = shell;
+
+			g_builtins_array[builtin_index](command_struc);
+		}
 	}
 	if (shell->cmd_hist_size > 0)
 		shell->cmd_hist_size--;
@@ -259,6 +247,7 @@ void wait_for_input(terminal_t terminal) {
  * Init shell
  */
 void	init_shell() {
+	//Useful to get stack trace for later
 	asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
 	asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
 	terminal_t terminal;

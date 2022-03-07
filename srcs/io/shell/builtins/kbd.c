@@ -6,26 +6,29 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 15:11:23 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 15:15:12 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 17:02:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../lib/strlib.h"
 #include "../../../lib/iolib.h"
 #include "../../../drivers/PS2_keyboard/PS2_keyboard.h"
+#include "builtins.h"
 
 /*
  * Command in charge for changing kbd map
  */
-void	change_kbd_map(char *cmd_line) {
-	unsigned short new_language;
-	if (!(new_language = atoi(&cmd_line[13])))
-		printk(KERN_ERROR, "Bad input: please enter valid numbers");
-	else {
-		if (new_language > 0 && new_language < 3)
-			printk(KERN_INFO, "Keyboard layout is now %s", set_language(new_language));
-		else
-			printk(KERN_INFO, "Invalid option: 1 for QWERTY map, 2 for AZERTY map");
+void kbd(t_command *command) {
+	int i = 0;
+	char error = 0;
+	while (g_kbd_list[i]) {
+		if (strcmp(command->command[1], g_kbd_list[i]) == 0)
+			error = i;
+		i++;
 	}
+	if (error == 0) {
+		printk(KERN_ERROR, "Invalid option: can only be QWERTY or AZERTY");
+		return;
+	}
+	printk(KERN_INFO, "Keyboard layout is now %s", set_language(error));
 }
-

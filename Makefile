@@ -36,9 +36,12 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/printk/flags/flag_p.c \
 			  io/io.c \
 			  io/shell/shell.c \
-			  io/shell/builtins/print_stack.c \
+			  io/shell/builtins/print.c \
+			  io/shell/builtins/echo.c \
+			  io/shell/builtins/help.c \
 			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c \
+			  io/shell/builtins/clear.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/grub/grub.c \
 			  kernel/memory/page_directory.c \
@@ -105,7 +108,7 @@ re: fclean all
 
 run:
 	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 0/' srcs/lib/printk/include/printk.h
-	rm $(NAME)
+	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
 	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
@@ -115,7 +118,7 @@ run_max_memory: all
 
 run_debug:
 	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
-	rm $(NAME)
+	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
 	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)

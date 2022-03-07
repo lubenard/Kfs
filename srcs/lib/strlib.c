@@ -6,11 +6,12 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:24:51 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/19 19:21:39 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 09:05:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stddef.h>
+#include "../kernel/memory/vmm/malloc/malloc.h"
 
 size_t strlen(const char *str)
 {
@@ -140,6 +141,21 @@ char	*strcpy(char *dest, char const *src)
 	return (dest);
 }
 
+size_t		ft_strlen(char const *s)
+{
+	size_t i;
+
+	i = 0;
+	if (!s)
+		return (0);
+	while (*s)
+	{
+		s++;
+		i++;
+	}
+	return (i);
+}
+
 char	*strlcpy(char *dest, char *src, int size)
 {
 	int i;
@@ -152,4 +168,95 @@ char	*strlcpy(char *dest, char *src, int size)
 	}
 	dest[i] = '\0';
 	return (dest);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	int		i;
+	char	*t;
+
+	i = 0;
+	t = (char *)s;
+	while (i != (int)n)
+		t[i++] = '\0';
+}
+
+char	*ft_strnew(size_t n)
+{
+	char	*dest;
+
+	if (!(dest = (char *)malloc(sizeof(char) * (n + 1))))
+		return (NULL);
+	ft_bzero(dest, n + 1);
+	return (dest);
+}
+
+// StrSplit
+static int		countwords(char const *s, char c)
+{
+	size_t	compteur;
+	size_t	i;
+
+	i = 0;
+	compteur = 0;
+	while (i < ft_strlen(s))
+	{
+		if (i == 0 && s[i] != c)
+			compteur++;
+		if (s[i] == c && s[i + 1] != c && s[i + 1] != '\0')
+			compteur++;
+		i++;
+	}
+	return (compteur);
+}
+
+static int		return_i(char const *str, int i, char c)
+{
+	while (str[i] == c)
+		i++;
+	return (i);
+}
+
+static int		countchar(char const *str, int i, char c)
+{
+	int nbrchar;
+
+	nbrchar = 0;
+	i = return_i(str, i, c);
+	while (str[i])
+	{
+		if (str[i] && str[i] != c)
+			nbrchar++;
+		else
+			return (nbrchar);
+		i++;
+	}
+	return (nbrchar);
+}
+
+char			**ft_strsplit(char const *s, char c)
+{
+	char	**ret;
+	int		j;
+	int		i;
+	int		k;
+	int		nbr_words;
+
+	j = 0;
+	i = 0;
+	nbr_words = countwords(s, c);
+	if (!s || !(ret = (char **)malloc(sizeof(char *) * (nbr_words + 1))))
+		return (0);
+	while (j < nbr_words)
+	{
+		i = return_i(s, i, c);
+		k = 0;
+		if (!(ret[j] = ft_strnew(countchar(s, i, c) + 1)))
+			return (0);
+		while (s[i] && s[i] != c)
+			ret[j][k++] = s[i++];
+		j++;
+	}
+	ret[j] = NULL;
+	return (ret);
 }

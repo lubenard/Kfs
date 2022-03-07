@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 17:32:28 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/07 15:23:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,6 @@ static const char *kbd_languages_up[] = {
 	azertAsciiTableUp
 };
 
-static char *locale_code_kbd[] = {
-	"QWERTY",
-	"AZERTY"
-};
-
 int kbd_language;
 int shift_status = 0;
 kbd_event_t last_typed_key;
@@ -81,7 +76,7 @@ unsigned short is_key_multiple;
 char *set_language(int language)
 {
 	kbd_language = language - 1;
-	return (locale_code_kbd[kbd_language]);
+	return (g_kbd_list[kbd_language]);
 }
 
 /*
