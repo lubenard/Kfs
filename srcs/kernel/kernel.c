@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/08 18:55:54 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:26:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,9 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	display_boot_message();
 
 	/* Init shell management */
-	//init_shell();
+	init_shell();
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;*/
-	printk(KERN_NORMAL, "Test %.3d ahahahah %.3o\n", -10, 10);
 	//asm volatile ("int $0xE");
 }

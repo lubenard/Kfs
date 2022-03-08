@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/08 14:13:48 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 23:07:46 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void panic(const char *message, const char *file, unsigned int line) {
 	// Registers are in this order:
 	//				eax, ebx, ecx, edx, esi, edi, esp, ebp, eip
 	char *registers_names_e[] = {/*"eax",*/ "EBX",/* "ecx", "edx",*/ "ESI", "EDI", "ESP", "EBP", "EIP", 0};
-	//char *registers_names_cr[] = {"cr0", "cr1", "cr2", "cr3", "cr4", 0};
+	char *registers_names_cr[] = {"cr0", "cr1", "cr2", "cr3", "cr4", 0};
 	int registers_e[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int registers_cr[] = {0, 0, 0, 0, 0};
 	int i = 0;
@@ -56,14 +56,22 @@ void panic(const char *message, const char *file, unsigned int line) {
 	asm volatile ("mov %%ebp, %0" : "=r"(registers_e[7]));
 	//asm("\t movl %%eip,%0" : "=r"(registers[8]));
 
-	asm volatile ("mov %%cr0, %0" : "=r"(registers_cr[9]));
+	asm volatile ("mov %%cr0, %0" : "=r"(registers_cr[0]));
 	//asm volatile ("mov %%cr1, %0" : "=r"(registers[10]));
-	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[11]));
-	asm volatile ("mov %%cr3, %0" : "=r"(registers_cr[12]));
-	asm volatile ("mov %%cr4, %0" : "=r"(registers_cr[13]));
+	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[1]));
+	asm volatile ("mov %%cr3, %0" : "=r"(registers_cr[2]));
+	asm volatile ("mov %%cr4, %0" : "=r"(registers_cr[3]));
 
 	while (registers_names_e[i] != 0) {
 		printk(KERN_NORMAL, "%s: %.8x ", registers_names_e[i], registers_e[i]);
+		if ((i + 1) % 3 == 0)
+			printk(KERN_NORMAL, "\n");
+		i++;
+	}
+	printk(KERN_NORMAL, "\n");
+	i = 0;
+	while (registers_names_cr[i] != 0) {
+		printk(KERN_NORMAL, "%s: %.8x ", registers_names_cr[i], registers_cr[i]);
 		if ((i + 1) % 3 == 0)
 			printk(KERN_NORMAL, "\n");
 		i++;
