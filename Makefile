@@ -22,10 +22,12 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/isr/isr.c \
 			  kernel/isr/irqs/pit.c \
 			  lib/memlib.c \
+			  lib/intlib.c \
 			  lib/strlib.c \
 			  lib/bitwiselib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
+			  lib/printk/minwidth.c \
 			  lib/printk/fill_buffer.c \
 			  lib/printk/flags/flag_c.c \
 			  lib/printk/flags/flag_di.c \
@@ -69,7 +71,7 @@ CFLAGS = -Wall -Wextra -Werror -g3\
 
 all:  $(NAME)
 
-$(NAME): $(OBJ_C) $(OBJ_ASM)
+$(NAME): $(OBJ_ASM) $(OBJ_C)
 	@printf "\033[33mLinking of $(NAME)...\033[0m"
 	@$(CC_C) -m32 -T linker.ld -o $(NAME) -ffreestanding -O2 -nostdlib $(OBJ_ASM) $(OBJ_C) -lgcc
 	@printf "\033[32m[✓]\033[0m\n"
@@ -121,7 +123,7 @@ run_debug:
 	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
-	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
+	qemu-system-i386 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
 
 relaunch: fclean run
 

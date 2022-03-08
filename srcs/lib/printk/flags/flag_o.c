@@ -6,13 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 17:57:08 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/16 23:06:03 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:55:07 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/printk.h"
 
-unsigned long long	convert_into_octal(unsigned int value)
+unsigned int	convert_into_octal(unsigned int value)
 {
 	unsigned int	i;
 	unsigned int	octal_num;
@@ -30,10 +30,13 @@ unsigned long long	convert_into_octal(unsigned int value)
 
 void	flag_o(const char *str, int *i, va_list *ap, t_output *output)
 {
-	unsigned long long arg;
+	unsigned int octal_arg;
+	int minwidth;
 
-	(void)str;
-	arg = convert_into_octal(va_arg(*ap, unsigned int));
-	fill_buffer_nbr_u(output, arg);
+	octal_arg = convert_into_octal(va_arg(*ap, unsigned int));
+	minwidth = get_minwidth_size(str, i);
+	if (minwidth)
+		apply_minwidth_uint(output, minwidth, &octal_arg);
+	fill_buffer_nbr_u(output, octal_arg);
 	(*i)++;
 }

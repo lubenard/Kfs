@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:44:02 by lubenard          #+#    #+#             */
-/*   Updated: 2021/05/17 00:03:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 22:58:19 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ int replace(const char *str, int *i, va_list *ap, t_output *output)
 	int j;
 
 	(*i)++;
-	if ((j = strchri("csdixX%pou", str[find_flag(str, *i)])) >= 0)
+	if ((j = strchri("csdixX%pou", str[find_flag(str, *i)])) >= 0) {
 		g_pointer_array[j](str, i, ap, output);
-	else
+	} else
 		fill_buffer(output, str[*i], i);
 	return (0);
 }

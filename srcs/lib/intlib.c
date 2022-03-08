@@ -1,26 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   flag_di.c                                          :+:      :+:    :+:   */
+/*   intlib.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/27 18:28:21 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/08 17:55:10 by lubenard         ###   ########.fr       */
+/*   Created: 2022/03/08 17:34:55 by lubenard          #+#    #+#             */
+/*   Updated: 2022/03/08 18:12:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/printk.h"
+int intlen(int n) {
+	long int	nbr;
+	int			i;
 
-void	flag_di(const char *str, int *i, va_list *ap, t_output *output)
-{
-	int arg;
-	int minwidth;
+	nbr = n;
+	i = 0;
+	if (nbr < 0)
+		nbr = nbr * -1;
+	while (nbr / 10 > 0) {
+		i++;
+		nbr = nbr / 10;
+	}
+	if (n < 0)
+		return (i + 2);
+	else
+		return (i + 1);
+}
 
-	arg = va_arg(*ap, int);
-	minwidth = get_minwidth_size(str, i);
-	if (minwidth)
-		apply_minwidth_int(output, minwidth, &arg);
-	fill_buffer_nbr(output, arg);
-	(*i)++;
+int uintlen(unsigned int n) {
+	unsigned int	nbr;
+	int				i;
+
+	nbr = n;
+	i = 0;
+	while (nbr / 10 > 0) {
+		i++;
+		nbr = nbr / 10;
+	}
+	return (i + 1);
 }

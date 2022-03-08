@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/05 17:53:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:55:54 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void display_boot_message() {
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
+#include <stdint.h>
+
 /*
  * First kernel called function
  */
@@ -58,25 +60,14 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
 
-	/*printk(KERN_NORMAL, "Before malloc\n");
-	char *test = malloc(5000);
-	(void)test;
-	test[0] = 'a';
-	test[1] = 'b';
-	test[2] = 'c';
-	test[3] = '\0';
-	printk(KERN_NORMAL, "String is %s\n", test);*/
-	/*test = malloc(4);
-	(void)test;
-	test[0] = 'a';
-	test[1] = 'b';
-	test[2] = 'd';
-	test[3] = '\0';
-	printk(KERN_NORMAL, "String is %s\n", test);*/
 	//asm volatile ("int $0xE");
-	//printk(KERN_NORMAL, "After malloc\n");
-	//display_boot_message();
+	display_boot_message();
 
 	/* Init shell management */
-	init_shell();
+	//init_shell();
+	/*uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t do_page_fault = *ptr;
+	(void)do_page_fault;*/
+	printk(KERN_NORMAL, "Test %.3d ahahahah %.3o\n", -10, 10);
+	//asm volatile ("int $0xE");
 }

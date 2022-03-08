@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/05 16:17:20 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 14:13:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,45 @@
  */
 
 void panic(const char *message, const char *file, unsigned int line) {
+	// Why is there some commented registers ?
+	// Some registers are called callee-saved and caller-saved registry.
+	// We want the caller-save registry.
+	// See here for more:
+	// https://en.wikipedia.org/wiki/X86_calling_conventions#Caller-saved_(volatile)_registers
+	// Registers are in this order:
+	//				eax, ebx, ecx, edx, esi, edi, esp, ebp, eip
+	char *registers_names_e[] = {/*"eax",*/ "EBX",/* "ecx", "edx",*/ "ESI", "EDI", "ESP", "EBP", "EIP", 0};
+	//char *registers_names_cr[] = {"cr0", "cr1", "cr2", "cr3", "cr4", 0};
+	int registers_e[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	int registers_cr[] = {0, 0, 0, 0, 0};
+	int i = 0;
+
 	// Disable cli
 	asm volatile("cli");
 	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
+	// Save registers value
+	//asm volatile ("mov %%eax, %0" : "=r"(registers[0]));
+	asm volatile ("mov %%ebx, %0" : "=r"(registers_e[1]));
+	//asm volatile ("mov %%ecx, %0" : "=r"(registers[2]));
+	//asm volatile ("mov %%edx, %0" : "=r"(registers[3]));
+	asm volatile ("mov %%esi, %0" : "=r"(registers_e[4]));
+	asm volatile ("mov %%edi, %0" : "=r"(registers_e[5]));
+	asm volatile ("mov %%esp, %0" : "=r"(registers_e[6]));
+	asm volatile ("mov %%ebp, %0" : "=r"(registers_e[7]));
+	//asm("\t movl %%eip,%0" : "=r"(registers[8]));
+
+	asm volatile ("mov %%cr0, %0" : "=r"(registers_cr[9]));
+	//asm volatile ("mov %%cr1, %0" : "=r"(registers[10]));
+	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[11]));
+	asm volatile ("mov %%cr3, %0" : "=r"(registers_cr[12]));
+	asm volatile ("mov %%cr4, %0" : "=r"(registers_cr[13]));
+
+	while (registers_names_e[i] != 0) {
+		printk(KERN_NORMAL, "%s: %.8x ", registers_names_e[i], registers_e[i]);
+		if ((i + 1) % 3 == 0)
+			printk(KERN_NORMAL, "\n");
+		i++;
+	}
 	// Infinite loop to stop the kernel
 	for (;;);
 }

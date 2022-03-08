@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:34:34 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 10:12:56 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/08 18:28:23 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define FT_PRINTF_STAR		32
 # define FT_PRINTF_ZERO		64
 
-# define DEBUG_LOG 1
+# define DEBUG_LOG 0
 
 typedef struct	s_output
 {
@@ -64,6 +64,15 @@ void			flag_percent(const char *str, int *i, va_list *ap,
 void			flag_p(const char *str, int *i, va_list *ap, t_output *output);
 void			flag_o(const char *str, int *i, va_list *ap, t_output *output);
 void			flag_u(const char *str, int *i, va_list *ap, t_output *output);
+
+/*
+** Special functions
+*/
+
+int				get_minwidth_size(const char *str, int *i);
+void			apply_minwidth_int(t_output *output, int minwidth, int *arg);
+void			apply_minwidth_uint(t_output *output, int minwidth, unsigned int *arg);
+void			apply_minwidth_hex(t_output *output, int minwidth, char ret[17]);
 
 /*
 ** Array of pointer
