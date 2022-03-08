@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:34:21 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/09 00:44:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../../io/io.h"
 #include "PS2_keyboard.h"
 #include "../../lib/iolib.h"
+#include "../../kernel/memory/vmm/malloc/malloc.h"
 
 static const char qwertAsciiTable[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -69,6 +70,58 @@ int kbd_language;
 int shift_status = 0;
 kbd_event_t last_typed_key;
 unsigned short is_key_multiple;
+kbd_listener_t *listener_head = 0;
+
+kbd_listener_t *new_listener_node(kbd_listener_t *listener) {
+	kbd_listener_t *new_node;
+	if (!(new_node = malloc(sizeof(kbd_listener_t)))) {
+		return 0;
+	}
+	new_node->listener = listener->listener;
+	new_node->next = 0;
+	new_node->prev = 0;
+	return new_node;
+}
+
+void append_kbd_listener(kbd_listener_t *listener) {
+	kbd_listener_t *new_node;
+	kbd_listener_t *item = listener_head;
+
+	new_node = new_listener_node(listener);
+	while (item->next)
+		item = item->next;
+	item->next = new_node;
+	new_node->prev = item;
+}
+
+/*
+** Unregister keyboard listener
+*/
+void unregister_kbd_listener(kbd_listener_t *listener) {
+	kbd_listener_t *item = listener_head;
+
+	while (item) {
+		if (item->listener = listener->listener) {
+			if (item->prev == 0)
+				listener_head = item->next;
+			if (item->next)
+				item->next->prev = item->prev;
+			if (item->prev)
+				item->prev->next = item->next;
+			free(item);
+		}
+	}
+}
+
+/*
+** Register keyboard listener
+*/
+void register_kbd_listener(kbd_listener_t *listener) {
+	if (listener_head == 0)
+		listener_head = new_listener_node(listener);
+	else
+		append_kbd_listener(listener);
+}
 
 /*
  * Set keyboard map
@@ -94,6 +147,17 @@ char translate_key(uint8_t scancode) {
 	return (keycode);
 }
 
+void send_last_key_typed(kbd_event_t last_key_typed) {
+	kbd_listener_t *item = listener_head;
+	void (*function_pointer)(kbd_event_t *kbd_event);
+
+	while (item) {
+		function_pointer = item->listener;
+		function_pointer(&last_key_typed);
+		item = item->next;
+	}
+}
+
 /*
  * Fill the last_key_typed structure.
  * This structure will be used by shell to get the last key typed
@@ -104,6 +168,7 @@ void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
 	last_typed_key.key_typed_raw = scancode;
 	last_typed_key.key_typed_raw_two = scancode_two;
 	last_typed_key.is_key_special = is_key_special;
+	send_last_key_typed(last_typed_key);
 }
 
 /*

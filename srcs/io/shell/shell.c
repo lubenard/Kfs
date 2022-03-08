@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:39:42 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/09 00:51:45 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,12 @@ void wait_for_input(terminal_t terminal) {
 		}
 	}
 }
+
+/*static struct kbd_listener listener_callback = {
+	.prev = 0,
+	.listener = &wait_for_input,
+
+};*/
 
 /*
  * Init shell

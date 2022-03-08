@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:33:23 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/09 00:40:18 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,15 @@ typedef struct kbd_event {
 	short is_key_special;
 }				kbd_event_t;
 
+typedef struct kbd_listener {
+	struct kbd_listener *prev;
+	void (*listener)(kbd_event_t *kbd_event);
+	struct kbd_listener *next;
+}				kbd_listener_t;
+
 char *set_language(int language);
 void get_last_typed_key(kbd_event_t *key);
+void register_kbd_listener(kbd_listener_t *listener);
 void init_kbd();
 
 static char *g_kbd_list[] = {"QWERTY", "AZERTY", 0};
