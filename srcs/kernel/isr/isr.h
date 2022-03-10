@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 20:40:48 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:30:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # define IRQ14 46
 # define IRQ15 47
 
-#define PANIC(msg) panic(msg, __FILE__, __LINE__);
+#define PANIC(regs, msg) panic(regs, msg, __FILE__, __LINE__);
 
 typedef struct registers
 {
@@ -45,6 +45,6 @@ typedef struct registers
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(int8_t n, isr_t handler);
 
-void panic(const char *message, const char *file, unsigned int line);
+void panic(registers_t regs, const char *message, const char *file, unsigned int line);
 
 #endif

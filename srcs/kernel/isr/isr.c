@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/08 23:07:46 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/10 16:52:11 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
  * 1  1  1 - User process tried to write a page and caused a protection fault
  */
 
-void panic(const char *message, const char *file, unsigned int line) {
+void panic(registers_t regs, const char *message, const char *file, unsigned int line) {
 	// Why is there some commented registers ?
 	// Some registers are called callee-saved and caller-saved registry.
 	// We want the caller-save registry.
@@ -36,9 +36,7 @@ void panic(const char *message, const char *file, unsigned int line) {
 	// https://en.wikipedia.org/wiki/X86_calling_conventions#Caller-saved_(volatile)_registers
 	// Registers are in this order:
 	//				eax, ebx, ecx, edx, esi, edi, esp, ebp, eip
-	char *registers_names_e[] = {/*"eax",*/ "EBX",/* "ecx", "edx",*/ "ESI", "EDI", "ESP", "EBP", "EIP", 0};
 	char *registers_names_cr[] = {"cr0", "cr1", "cr2", "cr3", "cr4", 0};
-	int registers_e[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int registers_cr[] = {0, 0, 0, 0, 0};
 	int i = 0;
 
@@ -46,30 +44,17 @@ void panic(const char *message, const char *file, unsigned int line) {
 	asm volatile("cli");
 	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
 	// Save registers value
-	//asm volatile ("mov %%eax, %0" : "=r"(registers[0]));
-	asm volatile ("mov %%ebx, %0" : "=r"(registers_e[1]));
-	//asm volatile ("mov %%ecx, %0" : "=r"(registers[2]));
-	//asm volatile ("mov %%edx, %0" : "=r"(registers[3]));
-	asm volatile ("mov %%esi, %0" : "=r"(registers_e[4]));
-	asm volatile ("mov %%edi, %0" : "=r"(registers_e[5]));
-	asm volatile ("mov %%esp, %0" : "=r"(registers_e[6]));
-	asm volatile ("mov %%ebp, %0" : "=r"(registers_e[7]));
-	//asm("\t movl %%eip,%0" : "=r"(registers[8]));
 
 	asm volatile ("mov %%cr0, %0" : "=r"(registers_cr[0]));
-	//asm volatile ("mov %%cr1, %0" : "=r"(registers[10]));
-	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[1]));
-	asm volatile ("mov %%cr3, %0" : "=r"(registers_cr[2]));
-	asm volatile ("mov %%cr4, %0" : "=r"(registers_cr[3]));
+	//asm volatile ("mov %%cr1, %0" : "=r"(registers_cr[1]));
+	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[2]));
+	asm volatile ("mov %%cr3, %0" : "=r"(registers_cr[3]));
+	asm volatile ("mov %%cr4, %0" : "=r"(registers_cr[4]));
 
-	while (registers_names_e[i] != 0) {
-		printk(KERN_NORMAL, "%s: %.8x ", registers_names_e[i], registers_e[i]);
-		if ((i + 1) % 3 == 0)
-			printk(KERN_NORMAL, "\n");
-		i++;
-	}
-	printk(KERN_NORMAL, "\n");
-	i = 0;
+	printk(KERN_NORMAL, "EAX: %.8x EBX: %.8x ECX: %.8x\n", regs.eax, regs.ebx, regs.ecx);
+	printk(KERN_NORMAL, "EDX: %.8x ESI: %.8x EDI: %.8x\n", regs.edx, regs.esi, regs.edi);
+	printk(KERN_NORMAL, "ESP: %.8x EBP: %.8x EIP: %.8x\n\n", regs.esp, regs.ebp, regs.eip);
+
 	while (registers_names_cr[i] != 0) {
 		printk(KERN_NORMAL, "%s: %.8x ", registers_names_cr[i], registers_cr[i]);
 		if ((i + 1) % 3 == 0)
@@ -93,10 +78,13 @@ static const char *interrupt_message[] = {
 	"Unknown interrupt exception", "Triple fault",
 };
 
-void page_fault_handler(registers_t regs) {
-	/* Getting faulty adress from cr2 register */
+void print_faulty_address() {
 	uint32_t faulting_address;
 	asm volatile("mov %%cr2, %0" : "=r" (faulting_address));
+	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
+}
+
+void page_fault_handler(registers_t regs) {
 
 	if (!(regs.err_code & 0x1))
 		printk(KERN_ERROR, "Page not present !"); // Page not present
@@ -106,9 +94,9 @@ void page_fault_handler(registers_t regs) {
 		printk(KERN_ERROR, "User-mode !"); // Processor was in user-mode?
 	if (regs.err_code & 0x8)
 		printk(KERN_ERROR, "Bits reserved !"); // Overwritten CPU-reserved bits of page entry?
-	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
-	// Will not be needed once process are implemented
-	PANIC(interrupt_message[regs.int_no]);
+	print_faulty_address();
+	// Will not be needed for EVERY page fault once process are implemented
+	PANIC(regs, interrupt_message[regs.int_no]);
 }
 
 /*
@@ -120,13 +108,24 @@ void isr_handler(registers_t regs) {
 		interrupt_message[regs.int_no]);
 	else
 		printk(KERN_ERROR, "Received interrupt: %d", regs.int_no);
+
+	if (regs.int_no == 0
+		|| (regs.int_no >= 5 && regs.int_no <= 7)
+		|| (regs.int_no >= 11 && regs.int_no <= 13)
+		|| regs.int_no == 16 || regs.int_no == 17
+		|| regs.int_no == 18) {
+			print_faulty_address();
+		}
+
 	// 14 -> Page fault error code
 	if (regs.int_no == 14)
 		page_fault_handler(regs);
 	// Should be only FATAL errors
 	if (regs.int_no == 0x8 || regs.int_no == 0x12) {
-		PANIC(interrupt_message[regs.int_no]);
+		PANIC(regs, interrupt_message[regs.int_no]);
 	}
+	// to remove when implementing processus. this is to avoid getting infinite interrupts
+	while (1) {}
 }
 
 void *irq_routines[16] = {
@@ -148,13 +147,12 @@ void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);
 
-	//printk(KERN_ERROR, "IRQ fired %d", regs.int_no);
+	//printk(KERN_INFO, "IRQ fired %d", regs.int_no);
 	if (regs.int_no >= 32) {
 		if (irq_routines[regs.int_no - 32] != 0) {
 			handler = irq_routines[regs.int_no - 32];
 			handler(regs);
 		} /*else {
-			
 			//printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);
 		}*/
 	}
