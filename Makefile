@@ -22,6 +22,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/isr/isr.c \
 			  kernel/isr/irqs/pit.c \
 			  lib/memlib.c \
+			  lib/iolib.c \
 			  lib/intlib.c \
 			  lib/strlib.c \
 			  lib/bitwiselib.c \
@@ -113,7 +114,7 @@ run:
 	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
-	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -serial file:log.txt -m 512 -cdrom $(ISO_NAME)
 
 run_max_memory: all
 	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)

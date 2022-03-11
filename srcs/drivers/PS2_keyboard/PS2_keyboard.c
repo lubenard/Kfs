@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 00:37:41 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 10:59:50 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,12 @@ char translate_key(uint8_t scancode) {
 
 void send_last_key_typed(kbd_event_t last_key_typed) {
 	kbd_listener_t *item = listener_head;
-	void (*function_pointer)(kbd_event_t kbd_event);
+	void (*function_pointer)(kbd_event_t *kbd_event);
 
 	while (item) {
-		printd(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
+		printk(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
 		function_pointer = item->listener;
-		function_pointer(last_key_typed);
+		function_pointer(&last_key_typed);
 		item = item->next;
 	}
 }

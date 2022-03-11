@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:12:16 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:40:50 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 11:47:37 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,8 @@ typedef struct s_terminal {
 }				terminal_t;
 
 void init_shell();
+
+//TODO: To remove later
+void check_term_struct();
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 10:33:40 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 10:32:07 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void check_mapping_pmm(void *pmm_array, unsigned int page_number) {
 }
 
 void create_pmm_array(void *start_addr, unsigned int page_number) {
-	printd(KERN_INFO, "Pmm infos is stored at %p", start_addr);
+	printk(KERN_INFO, "Pmm infos is stored at %p", start_addr);
 	pmm_infos = start_addr;
 	pmm_infos->pmm_page_number = page_number;
 	pmm_infos->pmm_last_index = 0;

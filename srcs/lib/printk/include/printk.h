@@ -27,7 +27,7 @@
 # define FT_PRINTF_STAR		32
 # define FT_PRINTF_ZERO		64
 
-# define DEBUG_LOG 1
+# define DEBUG_LOG 0
 
 typedef struct	s_output
 {
