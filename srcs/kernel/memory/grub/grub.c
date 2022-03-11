@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 19:38:31 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/05 16:19:02 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 00:12:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@
 
 multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	if (!(mb_mmap->flags & (1 << 6))) {
-		PANIC("Couldn't get a Memory map !");
+		//PANIC("Couldn't get a Memory map !");
+		printk(KERN_ERROR, "Couldn't get a Memory map !");
 	}
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
 	multiboot_memory_map_t* ret_entry = 0;

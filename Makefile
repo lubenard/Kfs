@@ -123,7 +123,7 @@ run_debug:
 	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
-	qemu-system-i386 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
 
 relaunch: fclean run
 

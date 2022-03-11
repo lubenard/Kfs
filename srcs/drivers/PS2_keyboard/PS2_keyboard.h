@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 17:01:06 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/09 00:40:18 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/09 15:44:17 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ typedef struct kbd_event {
 
 typedef struct kbd_listener {
 	struct kbd_listener *prev;
-	void (*listener)(kbd_event_t *kbd_event);
+	void (*listener)(kbd_event_t kbd_event);
 	struct kbd_listener *next;
 }				kbd_listener_t;
 

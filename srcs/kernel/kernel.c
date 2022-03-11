@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/09 00:22:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/09 15:42:24 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,6 @@ void display_boot_message() {
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
-#include <stdint.h>
-
-void test(kbd_event_t *kbd_event) {
-	printk(KERN_INFO, "heyyyyyyyy %c", kbd_event->key_typed);
-}
-
-static struct kbd_listener kbd_callback = {
-	.listener = &test,
-	.next = 0,
-};
-
 /*
  * First kernel called function
  */
@@ -69,12 +58,13 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
 
-	//asm volatile ("int $0xE");
 	display_boot_message();
 
-	register_kbd_listener(&kbd_callback);
 	/* Init shell management */
 	init_shell();
+
+	while (1) {}
+
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;*/

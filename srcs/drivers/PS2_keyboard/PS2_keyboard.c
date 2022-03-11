@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/09 00:44:03 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 00:37:41 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ kbd_listener_t *new_listener_node(kbd_listener_t *listener) {
 	if (!(new_node = malloc(sizeof(kbd_listener_t)))) {
 		return 0;
 	}
+	printk(KERN_INFO, "Return from malloc is %p", new_node);
 	new_node->listener = listener->listener;
 	new_node->next = 0;
 	new_node->prev = 0;
@@ -101,15 +102,17 @@ void unregister_kbd_listener(kbd_listener_t *listener) {
 	kbd_listener_t *item = listener_head;
 
 	while (item) {
-		if (item->listener = listener->listener) {
-			if (item->prev == 0)
+		if (item->listener == listener->listener) {
+			if (item == listener_head)
 				listener_head = item->next;
 			if (item->next)
 				item->next->prev = item->prev;
 			if (item->prev)
 				item->prev->next = item->next;
 			free(item);
+			break;
 		}
+		return;
 	}
 }
 
@@ -149,11 +152,12 @@ char translate_key(uint8_t scancode) {
 
 void send_last_key_typed(kbd_event_t last_key_typed) {
 	kbd_listener_t *item = listener_head;
-	void (*function_pointer)(kbd_event_t *kbd_event);
+	void (*function_pointer)(kbd_event_t kbd_event);
 
 	while (item) {
+		printd(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
 		function_pointer = item->listener;
-		function_pointer(&last_key_typed);
+		function_pointer(last_key_typed);
 		item = item->next;
 	}
 }
@@ -169,6 +173,12 @@ void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
 	last_typed_key.key_typed_raw_two = scancode_two;
 	last_typed_key.is_key_special = is_key_special;
 	send_last_key_typed(last_typed_key);
+	// Reset last typed key
+	last_typed_key.key_typed = 0;
+	last_typed_key.key_typed_raw = 0;
+	last_typed_key.key_typed_raw_two = 0;
+	last_typed_key.is_key_special = 0;
+
 }
 
 /*
@@ -274,8 +284,8 @@ void get_key(registers_t regs)
  */
 void init_kbd()
 {
-	printk(KERN_INFO, "Keyboard init");
 	is_key_multiple = 0;
 	set_language(1);
 	register_interrupt_handler(1, &get_key);
+	printk(KERN_INFO, "Keyboard init");
 }
