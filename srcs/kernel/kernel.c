@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 11:58:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/11 14:28:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,17 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 
 	//display_boot_message();
 
-	/* Init shell management */
-	//init_shell();
-
 	init_com_port(0x3F8);
 
-	serial_writestring(0x3F8, "This is a test");
+	/* Init shell management */
+	init_shell();
+
+	check_term_struct();
+
+	printk(KERN_INFO, "JUST BEFORE INFINITE LOOP");
 
 	while (1) { /*check_term_struct();*/ }
+
 
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;

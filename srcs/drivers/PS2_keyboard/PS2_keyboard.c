@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 10:59:50 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/11 11:50:28 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 #include "PS2_keyboard.h"
 #include "../../lib/iolib.h"
 #include "../../kernel/memory/vmm/malloc/malloc.h"
+
+//TODO: Remove when finished
+#include "../../io/shell/shell.h"
 
 static const char qwertAsciiTable[] = {
 	0, 0, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
@@ -154,12 +157,16 @@ void send_last_key_typed(kbd_event_t last_key_typed) {
 	kbd_listener_t *item = listener_head;
 	void (*function_pointer)(kbd_event_t *kbd_event);
 
+	check_term_struct();
 	while (item) {
+		printk(KERN_INFO, "SENDING DATAS");
+		check_term_struct();
 		printk(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
 		function_pointer = item->listener;
 		function_pointer(&last_key_typed);
 		item = item->next;
 	}
+	printk(KERN_INFO, "FINISHED SENDING DATAS");
 }
 
 /*
@@ -168,17 +175,19 @@ void send_last_key_typed(kbd_event_t last_key_typed) {
  */
 void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
 						short is_key_special) {
+	(void)scancode;
+	(void)scancode_two;
+	(void)is_key_special;
 	last_typed_key.key_typed = translate_key(scancode);
 	last_typed_key.key_typed_raw = scancode;
 	last_typed_key.key_typed_raw_two = scancode_two;
 	last_typed_key.is_key_special = is_key_special;
-	send_last_key_typed(last_typed_key);
+	//send_last_key_typed(last_typed_key);
 	// Reset last typed key
-	last_typed_key.key_typed = 0;
+	/*last_typed_key.key_typed = 0;
 	last_typed_key.key_typed_raw = 0;
 	last_typed_key.key_typed_raw_two = 0;
-	last_typed_key.is_key_special = 0;
-
+	last_typed_key.is_key_special = 0;*/
 }
 
 /*
@@ -258,6 +267,7 @@ void get_last_typed_key(kbd_event_t *key)
 void get_key(registers_t regs)
 {
 	(void)regs;
+	//check_term_struct();
 	/* Read from the keyboard's data buffer */
     uint16_t scancode = inb(0x60);
 

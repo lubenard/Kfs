@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/10 16:52:11 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 18:05:16 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 #include "../../io/io.h"
 #include "../../drivers/vga/vga.h"
 #include "../../io/shell/builtins/builtins.h"
+
+//TODO: Remove when unneeded
+#include "../../io/shell/shell.h"
 
 /*
  * US RW  P - Description
@@ -147,10 +150,14 @@ void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);
 
+	//printk(KERN_INFO, "IRQ LANCE numero: %d -----------", regs.int_no);
+	//check_term_struct();
 	//printk(KERN_INFO, "IRQ fired %d", regs.int_no);
 	if (regs.int_no >= 32) {
 		if (irq_routines[regs.int_no - 32] != 0) {
 			handler = irq_routines[regs.int_no - 32];
+			if (regs.int_no == 1)
+				printk(KERN_INFO, "AHAH ! IRQ LANCE numéro: %d", regs.int_no);
 			handler(regs);
 		} /*else {
 			//printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);

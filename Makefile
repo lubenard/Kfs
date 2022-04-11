@@ -119,12 +119,19 @@ run:
 run_max_memory: all
 	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
 
+run_debug_gdb:
+	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
+	rm -f $(NAME)
+	rm -f srcs/lib/printk/printk.o
+	make
+	qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)
+
 run_debug:
 	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
 	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
-	qemu-system-x86_64 -s -S -d int -m 4096 -cdrom $(ISO_NAME)
+	qemu-system-x86_64 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
 
 relaunch: fclean run
 

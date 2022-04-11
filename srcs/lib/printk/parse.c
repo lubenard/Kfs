@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 16:44:02 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/08 22:58:19 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/03/11 16:36:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ int parsing(const char *str, va_list *ap)
 			fill_buffer(&output, str[i], &i);
 	}
 	terminal_writestr(output.buffer);
+	serial_writestring(0x3F8, output.buffer);
 	output.size_string += strlen(output.buffer);
 	output.j = 0;
 	bzero(output.buffer, PRINTF_BUFF_SIZE);

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:47:20 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 10:38:47 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/11 12:29:56 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,19 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	printk(KERN_INFO, "Kernel is %d bytes, aka %d pages, aka %d page table", get_kernel_size(), get_kernel_size() / 4096, (get_kernel_size() / 4096) / 1024);
 	printk(KERN_INFO, "Kernel start at %p, and end at %p", start_kernel_addr, end_kernel_addr);
 
+	//printd(KERN_INFO, "nframes is %d pages, aka %d page table", nframes, nframes / 1024);
 	printd(KERN_INFO, "nframes is %d pages, aka %d page table", nframes, nframes / 1024);
 
 	void *start_pd = (void *)roundUp((char *)end_kernel_addr + 1, 4096);
 
-	printk(KERN_INFO, "Page directory should begin at %p and end at %p", start_pd, (char *)start_pd + (nframes * sizeof(uint32_t)));
+	void *end_pd = (char *)start_pd + (nframes * sizeof(uint32_t));
 
-	init_pd_and_map_kernel((void*)roundUp((char *)end_kernel_addr + 1, 4096), nframes);
+	printk(KERN_INFO, "Page tables should begin at %p and end at %p", start_pd, end_pd);
+
+	init_pd_and_map_kernel(start_pd, nframes);
 
 	/* Init physical memory manager */
-	create_pmm_array((void *)start_pd + (nframes * sizeof(uint32_t)) + 1, nframes);
+	create_pmm_array(end_pd + 1, nframes);
 
 	// USED FOR TEST
 	/*map_page((void*)0x400000);

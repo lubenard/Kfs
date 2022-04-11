@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 10:42:29 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/11 14:21:31 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void unmap_page(void *addr) {
 	int k;
 	// Check if pointer is aligned on 4096
 	if (((uintptr_t)addr % 4096) != 0) {
-		printk(KERN_INFO, "Pointer is not aligned !");
+		printk(KERN_WARNING, "Pointer is not aligned !");
 		return;
 	}
 	unsigned long pdindex = (unsigned long)addr >> 22;
@@ -113,7 +113,7 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 
 	// Check if pointer is aligned on 4096
 	if (((uintptr_t)start_addr % 4096) != 0) {
-		printk(KERN_INFO, "Pointer is not aligned !");
+		printk(KERN_WARNING, "Pointer is not aligned !");
 		return;
 	}
 
@@ -132,6 +132,7 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	 * We map from 0x0 to 0x400000
 	 */
 	for (i = 0; i < 1024; i++) {
+		if (i == 0 || i == 1023) { printd(KERN_INFO, "First page table: i = %d, addr = %p", i, &(page_table[i])); }
 		page_table[i] = (i * 0x1000) | 3; // attributes: supervisor level, read/write, present.
 	}
 
@@ -139,7 +140,7 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	printd(KERN_INFO, "First page table is located after completion at %p", page_table);
 
 	printd(KERN_INFO, "Page directory is at %p", &page_directory);
-	printd(KERN_INFO, "Mapped until %p", (i - 1) * 0x1000);
+	printd(KERN_INFO, "Mapped until %p", i * 0x1000);
 
 	enable_paging(page_directory);
 

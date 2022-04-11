@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:10:58 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/07 17:39:59 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/11 12:24:17 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void int_into_str_hex(unsigned int addr, char *result, int size) {
 	}
 }
 
-void print_stack(uint32_t esp, uint32_t ebp) {
+void shell_print_stack(uint32_t esp, uint32_t ebp) {
 	int i;
 	char *addr;
 	char hex[3];
@@ -56,7 +56,7 @@ void print_stack(uint32_t esp, uint32_t ebp) {
 	}
 }
 
-void print_history(t_shell *shell) {
+void shell_print_history(t_shell *shell) {
 	int i = 0;
 	int j = 1;
 	while (i != 4) {
@@ -66,9 +66,9 @@ void print_history(t_shell *shell) {
 	}
 }
 
-void print(t_command *command) {
+void shell_print(t_command *command) {
 	if (strcmp(command->command[1], "stack") == 0)
-		print_stack(command->esp, command->ebp);
+		shell_print_stack(command->esp, command->ebp);
 	else if (strcmp(command->command[1], "history") == 0)
-		print_history((t_shell *)command->current_shell);
+		shell_print_history((t_shell *)command->current_shell);
 }
