@@ -1,12 +1,25 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
+#    Updated: 2022/04/14 15:45:00 by lubenard         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 #Using clang because it cross compile by default, no need to compile own toolchain
 CC_C = clang
 CC_ASM = nasm
-
 
 NAME = kfs-4.bin
 ISO_NAME = kfs-4.iso
 
 SRCDIR = srcs
+
+DEBUG_LOG = 0
 
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
@@ -109,29 +122,41 @@ fclean: clean
 
 re: fclean all
 
-run:
-	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 0/' srcs/lib/printk/include/printk.h
+# This rule has not for goal to be called.
+# Ajust the debug log and avoid calling huge rules like 're',
+# just delete what is needed
+recompile_run:
+	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG $(DEBUG_LOG)/' srcs/lib/printk/include/printk.h
 	rm -f $(NAME)
 	rm -f srcs/lib/printk/printk.o
 	make
-	qemu-system-x86_64 -serial file:log.txt -m 512 -cdrom $(ISO_NAME)
 
-run_max_memory: all
+run:
+	$(eval DEBUG_LOG=0)
+	make recompile_run
+	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
+
+run_max_memory:
+	$(eval DEBUG_LOG=0)
+	make recompile_run
 	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
 
-run_debug_gdb:
-	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
-	rm -f $(NAME)
-	rm -f srcs/lib/printk/printk.o
-	make
-	qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)
-
 run_debug:
-	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG 1/' srcs/lib/printk/include/printk.h
-	rm -f $(NAME)
-	rm -f srcs/lib/printk/printk.o
-	make
+	$(eval DEBUG_LOG=1)
+	make recompile_run
 	qemu-system-x86_64 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
+
+run_debug_gdb:
+	$(eval DEBUG_LOG=1)
+	make recompile_run
+	xdotool type "gdb $(NAME) -ex 'set architecture i386:x86-64' -ex 'target remote localhost:1234'"
+	xdotool key Return
+	# Open new tab and connect gdb to qemu
+	set WID=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)"| awk '{print $5}'`
+	xdotool windowfocus $WID
+	xdotool key ctrl+shift+t
+	xdotool type "qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
+	xdotool key Return
 
 relaunch: fclean run
 
