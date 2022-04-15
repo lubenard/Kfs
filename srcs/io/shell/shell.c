@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/11 14:35:54 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/14 14:31:50 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,14 @@ terminal_t *terminal = 0;
 
 void check_term_struct() {
 	if (terminal != 0) {
-	printk(KERN_INFO, "-------------------------------");
-	printk(KERN_INFO, "terminal is located at %p", terminal);
-	printk(KERN_INFO, "terminal->active is located at %p", terminal->active_shell);
-	printk(KERN_INFO, "terminal->first is located at %p", terminal->first);
-	printk(KERN_INFO, "terminal->active->cmd_size= %d", terminal->active_shell->cmd_size);
-	printk(KERN_INFO, "-------------------------------");
+		printk(KERN_INFO, "-------------------------------");
+		printk(KERN_INFO, "terminal is located at %p", &terminal);
+		printk(KERN_INFO, "terminal->active is located at %p", terminal->active_shell);
+		printk(KERN_INFO, "terminal->first is located at %p", terminal->first);
+		printk(KERN_INFO, "terminal->second is located at %p", terminal->second);
+		printk(KERN_INFO, "terminal->third is located at %p", terminal->third);
+		printk(KERN_INFO, "terminal->active->cmd_size= %d", terminal->active_shell->cmd_size);
+		printk(KERN_INFO, "-------------------------------");
 	}
 }
 
@@ -264,9 +266,9 @@ void wait_for_input(kbd_event_t *key) {
 	//while (1) {}
 }
 
-static struct kbd_listener listener_callback = {
+/*static struct kbd_listener listener_callback = {
 	.listener = &wait_for_input,
-};
+};*/
 
 /*
  * Init shell
@@ -280,31 +282,32 @@ void	init_shell() {
 	t_shell second;
 	t_shell third;
 
-	//memset(&real_term, 0, sizeof(terminal_t));
-	//memset(&first, 0, sizeof(t_shell));
-	//memset(&second, 0, sizeof(t_shell));
+	memset(&real_term, 0, sizeof(terminal_t));
+	memset(&first, 0, sizeof(t_shell));
+	memset(&second, 0, sizeof(t_shell));
 	// Cause weird bug, make crash
-	//memset(&third, 0, sizeof(t_shell));
+	memset(&third, 0, sizeof(t_shell));
 	printk(KERN_INFO, "Terminal is located at %p", &real_term);
-	printk(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", &first, (char*)&first + sizeof(t_shell), sizeof(t_shell));
-	printk(KERN_INFO, "function wait_for_input is located at %p", &wait_for_input);
+	printd(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", &first, (char*)&first + sizeof(t_shell), sizeof(t_shell));
+	printd(KERN_INFO, "Second shell is located at %p, and end at %p (size is %d)", &second, (char*)&second + sizeof(t_shell), sizeof(t_shell));
+	printd(KERN_INFO, "Third shell is located at %p, and end at %p (size is %d)", &third, (char*)&third + sizeof(t_shell), sizeof(t_shell));
+	printd(KERN_INFO, "function wait_for_input is located at %p", &wait_for_input);
 	real_term.first = &first;
 	real_term.second = &second;
 	real_term.third = &third;
 	real_term.first->is_shell_init = 1;
 	real_term.active_shell = &first;
-	printk(KERN_INFO, "First shell is located at %p", real_term.active_shell);
+	printk(KERN_INFO, "First shell is located at %p", &(real_term.active_shell));
 	real_term.first = &first;
 	real_term.active_shell->cursor_pos = 0;
 	real_term.active_shell->cmd_hist_size = 4;
 	real_term.active_shell->cmd_hist_curr = 4;
 	real_term.active_shell->start_cmd_line = terminal_writestr("Shell > ");
 	terminal = &real_term;
-	//check_term_struct();
-	(void)second;
+	check_term_struct();
 	printk(KERN_INFO, "Before registration");
-	register_kbd_listener(&listener_callback);
+	//register_kbd_listener(&listener_callback);
 	printk(KERN_INFO, "After registration");
-	//check_term_struct();
-	(void)second;
+	check_term_struct();
+	printk(KERN_INFO, "End init shell");
 }
