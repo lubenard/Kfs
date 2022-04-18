@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/04/14 15:45:00 by lubenard         ###   ########.fr        #
+#    Updated: 2022/04/15 13:54:41 by lubenard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -126,37 +126,34 @@ re: fclean all
 # Ajust the debug log and avoid calling huge rules like 're',
 # just delete what is needed
 recompile_run:
-	sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG $(DEBUG_LOG)/' srcs/lib/printk/include/printk.h
-	rm -f $(NAME)
-	rm -f srcs/lib/printk/printk.o
-	make
+	@printf "Recompiling Header... Debug = $(DEBUG_LOG)\n"
+	@sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG $(DEBUG_LOG)/' srcs/lib/printk/include/printk.h
+	@rm -f $(NAME)
+	@rm -f srcs/lib/printk/printk.o
+	@make
 
 run:
-	$(eval DEBUG_LOG=0)
-	make recompile_run
-	qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
+	@make recompile_run DEBUG_LOG=0
+	@qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
 
 run_max_memory:
-	$(eval DEBUG_LOG=0)
-	make recompile_run
-	qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
+	@make recompile_run DEBUG_LOG=0
+	@qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
 
 run_debug:
-	$(eval DEBUG_LOG=1)
-	make recompile_run
-	qemu-system-x86_64 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
+	@make recompile_run DEBUG_LOG=1
+	@qemu-system-x86_64 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
 
 run_debug_gdb:
-	$(eval DEBUG_LOG=1)
-	make recompile_run
-	xdotool type "gdb $(NAME) -ex 'set architecture i386:x86-64' -ex 'target remote localhost:1234'"
-	xdotool key Return
+	@make recompile_run DEBUG_LOG=1
+	@xdotool type "gdb $(NAME) -ex 'set architecture i386:x86-64' -ex 'target remote localhost:1234' -e ./gdb_commands.txt"
+	@xdotool key Return
 	# Open new tab and connect gdb to qemu
-	set WID=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)"| awk '{print $5}'`
-	xdotool windowfocus $WID
-	xdotool key ctrl+shift+t
-	xdotool type "qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
-	xdotool key Return
+	@set WID=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)"| awk '{print $5}'`
+	@xdotool windowfocus $WID
+	@xdotool key ctrl+shift+t
+	@xdotool type "qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
+	@xdotool key Return
 
 relaunch: fclean run
 

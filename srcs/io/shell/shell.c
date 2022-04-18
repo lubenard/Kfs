@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/14 14:31:50 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/15 15:20:36 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,9 @@ void check_term_struct() {
 		printk(KERN_INFO, "terminal->third is located at %p", terminal->third);
 		printk(KERN_INFO, "terminal->active->cmd_size= %d", terminal->active_shell->cmd_size);
 		printk(KERN_INFO, "-------------------------------");
+		return ;
 	}
+	printk(KERN_WARNING, "Terminal is 0");
 }
 
 void move_command_hist_up(t_shell *shell, unsigned short limit) {
@@ -275,39 +277,46 @@ void wait_for_input(kbd_event_t *key) {
  */
 void	init_shell() {
 	//Useful to get stack trace for later
-	asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
-	asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
-	terminal_t real_term;
-	t_shell first;
-	t_shell second;
-	t_shell third;
-
-	memset(&real_term, 0, sizeof(terminal_t));
-	memset(&first, 0, sizeof(t_shell));
-	memset(&second, 0, sizeof(t_shell));
+	//asm volatile ("movl %%esp,%0" : "=r"(esp) ::);
+	//asm volatile ("movl %%ebp,%0" : "=r"(ebp) ::);
+	t_shell *first;
+	t_shell *second;
+	t_shell *third;
+	
+	if (!(terminal = malloc(sizeof(terminal_t)))) {
+		printk(KERN_ERROR, "Could not malloc for terminal_t struct");
+		return ;
+	}
+	if (!(first = malloc(sizeof(t_shell))) ||
+		!(second = malloc(sizeof(t_shell))) ||
+		!(third = malloc(sizeof(t_shell)))) {
+		printk(KERN_ERROR, "Could not malloc for t_shell struct");
+		return ;
+	}
+	/*memset(terminal, 0, sizeof(terminal_t));
+	memset(first, 0, sizeof(t_shell));
+	memset(second, 0, sizeof(t_shell));
 	// Cause weird bug, make crash
-	memset(&third, 0, sizeof(t_shell));
-	printk(KERN_INFO, "Terminal is located at %p", &real_term);
-	printd(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", &first, (char*)&first + sizeof(t_shell), sizeof(t_shell));
-	printd(KERN_INFO, "Second shell is located at %p, and end at %p (size is %d)", &second, (char*)&second + sizeof(t_shell), sizeof(t_shell));
-	printd(KERN_INFO, "Third shell is located at %p, and end at %p (size is %d)", &third, (char*)&third + sizeof(t_shell), sizeof(t_shell));
+	memset(third, 0, sizeof(t_shell));
+	printd(KERN_INFO, "Terminal is located at %p, and point to %p", &terminal, terminal);
+	printd(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", first, (char*)first + sizeof(t_shell), sizeof(t_shell));
+	printd(KERN_INFO, "Second shell is located at %p, and end at %p (size is %d)", second, (char*)second + sizeof(t_shell), sizeof(t_shell));
+	printd(KERN_INFO, "Third shell is located at %p, and end at %p (size is %d)", third, (char*)third + sizeof(t_shell), sizeof(t_shell));
 	printd(KERN_INFO, "function wait_for_input is located at %p", &wait_for_input);
-	real_term.first = &first;
-	real_term.second = &second;
-	real_term.third = &third;
-	real_term.first->is_shell_init = 1;
-	real_term.active_shell = &first;
-	printk(KERN_INFO, "First shell is located at %p", &(real_term.active_shell));
-	real_term.first = &first;
-	real_term.active_shell->cursor_pos = 0;
-	real_term.active_shell->cmd_hist_size = 4;
-	real_term.active_shell->cmd_hist_curr = 4;
-	real_term.active_shell->start_cmd_line = terminal_writestr("Shell > ");
-	terminal = &real_term;
+	terminal->first = first;
+	terminal->second = second;
+	terminal->third = third;
+	first->is_shell_init = 1;
+	terminal->active_shell = first;
+	printk(KERN_INFO, "First shell is located at %p", terminal->active_shell);
+	terminal->active_shell->cursor_pos = 0;
+	terminal->active_shell->cmd_hist_size = 4;
+	terminal->active_shell->cmd_hist_curr = 4;
+	terminal->active_shell->start_cmd_line = terminal_writestr("Shell > ");
 	check_term_struct();
 	printk(KERN_INFO, "Before registration");
-	//register_kbd_listener(&listener_callback);
+	register_kbd_listener(&listener_callback);
 	printk(KERN_INFO, "After registration");
 	check_term_struct();
-	printk(KERN_INFO, "End init shell");
+	printk(KERN_INFO, "End init shell");*/
 }

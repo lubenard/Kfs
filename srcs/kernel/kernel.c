@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/14 17:17:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/15 13:35:20 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,19 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	(void)mb_mmap;
 
 	/* Initialize terminal interface */
-	//terminal_initialize();
+	terminal_initialize();
 
 	/* Initialize GDT (Global descriptor table) */
-	//init_gdt();
+	init_gdt();
 
 	/* Initialize IDT (Interruptor descriptor table) */
-	//init_idt();
+	init_idt();
 
 	/* Init kbd management */
-	//init_kbd();
+	init_kbd();
 
 	/* Enable memory management. Enable paging */
-	//init_memory(mb_mmap);
+	init_memory(mb_mmap);
 
 	//display_boot_message();
 

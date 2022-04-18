@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/11 11:50:28 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/15 14:12:18 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,12 +182,12 @@ void set_last_key_typed(uint16_t scancode, uint16_t scancode_two,
 	last_typed_key.key_typed_raw = scancode;
 	last_typed_key.key_typed_raw_two = scancode_two;
 	last_typed_key.is_key_special = is_key_special;
-	//send_last_key_typed(last_typed_key);
+	send_last_key_typed(last_typed_key);
 	// Reset last typed key
-	/*last_typed_key.key_typed = 0;
+	last_typed_key.key_typed = 0;
 	last_typed_key.key_typed_raw = 0;
 	last_typed_key.key_typed_raw_two = 0;
-	last_typed_key.is_key_special = 0;*/
+	last_typed_key.is_key_special = 0;
 }
 
 /*

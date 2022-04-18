@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/26 13:50:12 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 00:36:02 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/04/15 17:50:28 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,7 @@ void	*real_malloc(size_t size) {
 	if (size == 0)
 		return NULL;
 	if (!g_curr_node) {
+		printd(KERN_INFO, "Creating malloc linked list");
 		if (!create_link_new_node(size))
 			return NULL;
 	}
@@ -140,13 +141,14 @@ void	*real_malloc(size_t size) {
 		g_curr_node = tmp2_g_curr_node;
 		tmp2_g_curr_node = 0;
 	}
-	printk(KERN_INFO, "Return from malloc is %p with size %d", (char *)return_node_ptr + STRUCT_SIZE + 1, return_node_ptr->size);
+	printd(KERN_INFO, "Return from malloc is %p with size %d", (char *)return_node_ptr + STRUCT_SIZE + 1, return_node_ptr->size);
 	return ((char *)return_node_ptr + STRUCT_SIZE + 1);
 }
 
 void	*malloc(size_t size) {
 	void *return_ptr;
 
+	printd(KERN_INFO, "Asked malloc with size %d", size);
 	return_ptr = real_malloc(size);
 	return return_ptr;
 }
