@@ -97,7 +97,7 @@ $(NAME): $(OBJ_ASM) $(OBJ_C)
 
 %.o : %.s
 	@printf "\033[36mCompilation de $<...\033[0m"
-	@$(CC_ASM) -felf32 $< -o $@
+	@$(CC_ASM) -f elf32 $< -o $@
 	@printf "\033[32m[✓]\033[0m\n"
 
 %.o : %.c
@@ -134,25 +134,25 @@ recompile_run:
 
 run:
 	@make recompile_run DEBUG_LOG=0
-	@qemu-system-x86_64 -m 512 -cdrom $(ISO_NAME)
+	@qemu-system-i386 -m 512 -cdrom $(ISO_NAME)
 
 run_max_memory:
 	@make recompile_run DEBUG_LOG=0
-	@qemu-system-x86_64 -m 4096 -cdrom $(ISO_NAME)
+	@qemu-system-i386 -m 4096 -cdrom $(ISO_NAME)
 
 run_debug:
 	@make recompile_run DEBUG_LOG=1
-	@qemu-system-x86_64 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
+	@qemu-system-i386 -serial file:log.txt -d int -m 4096 -cdrom $(ISO_NAME)
 
 run_debug_gdb:
 	@make recompile_run DEBUG_LOG=1
-	@xdotool type "gdb $(NAME) -ex 'set architecture i386:x86-64' -ex 'target remote localhost:1234' -e ./gdb_commands.txt"
+	@xdotool type "gdb $(NAME) -ex 'target remote localhost:1234' -e ./gdb_commands.txt"
 	@xdotool key Return
 	# Open new tab and connect gdb to qemu
 	@set WID=`xprop -root | grep "_NET_ACTIVE_WINDOW(WINDOW)"| awk '{print $5}'`
 	@xdotool windowfocus $WID
 	@xdotool key ctrl+shift+t
-	@xdotool type "qemu-system-x86_64 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
+	@xdotool type "qemu-system-i386 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
 	@xdotool key Return
 
 relaunch: fclean run

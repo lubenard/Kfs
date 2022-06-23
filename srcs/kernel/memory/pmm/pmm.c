@@ -28,7 +28,8 @@ void check_mapping_pmm(void *pmm_array, unsigned int page_number) {
 		printd(KERN_INFO, "We need to map %d pages for PMM", unmapped_pmm / 4096);
 		void *start_mapping = (void*)roundUp(pmm_array, 4096);
 		for (unsigned int j = 0; j < (unmapped_pmm / 4096) + 1; j++) {
-			map_page(start_mapping + (4096 * j));
+            printd(KERN_INFO, "Mapping %p", start_mapping + (4096 * j));
+            map_page(start_mapping + (4096 * j));
 		}
 	} else
 		printd(KERN_INFO, "PMM is contained in a mapped area (before 0x3FF000).\nStart at %p, end at %p", pmm_array, (char*)pmm_array + page_number);
@@ -61,7 +62,7 @@ char get_block_status(unsigned int index) {
 
 void *pmm_next_fit(unsigned int size, int flags) {
 	(void)flags;
-	unsigned wanted_page_number = (size / 4097) + 1;
+	unsigned wanted_page_number = (size / 4096);
 	unsigned int available_pages = 0;
 	printd(KERN_INFO, "Wanted page_number is %d", wanted_page_number);
 	if (wanted_page_number > pmm_infos->available_pages_number) {

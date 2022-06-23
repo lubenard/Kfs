@@ -22,9 +22,11 @@ t_alloc *init_node(size_t size_requested) {
 	t_block *bloc;
 	t_alloc *node;
 
-	size_requested += TOTAL_STRUCT_SIZE + 1;
+    printd(KERN_INFO, "Init node : size_requested is %d", size_requested);
+    size_requested += TOTAL_STRUCT_SIZE + 1;
 	size_requested = (size_requested / PAGESIZE + 1) * PAGESIZE;
-	bloc = mmap(size_requested, 0);
+    printd(KERN_INFO, "Init node : size_requested to mmap is %d", size_requested);
+    bloc = mmap(size_requested, 0);
 	node = (t_alloc *)((char *)bloc + STRUCT_BLOCK_SIZE + 1);
 	if (!bloc || bloc == 0)
 		return 0;

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/15 15:20:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/06/20 11:40:41 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,12 +293,12 @@ void	init_shell() {
 		printk(KERN_ERROR, "Could not malloc for t_shell struct");
 		return ;
 	}
-	/*memset(terminal, 0, sizeof(terminal_t));
+	memset(terminal, 0, sizeof(terminal_t));
 	memset(first, 0, sizeof(t_shell));
 	memset(second, 0, sizeof(t_shell));
 	// Cause weird bug, make crash
 	memset(third, 0, sizeof(t_shell));
-	printd(KERN_INFO, "Terminal is located at %p, and point to %p", &terminal, terminal);
+	/*printd(KERN_INFO, "Terminal is located at %p, and point to %p", &terminal, terminal);
 	printd(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", first, (char*)first + sizeof(t_shell), sizeof(t_shell));
 	printd(KERN_INFO, "Second shell is located at %p, and end at %p (size is %d)", second, (char*)second + sizeof(t_shell), sizeof(t_shell));
 	printd(KERN_INFO, "Third shell is located at %p, and end at %p (size is %d)", third, (char*)third + sizeof(t_shell), sizeof(t_shell));
