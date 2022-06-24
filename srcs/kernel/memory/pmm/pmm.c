@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 10:32:07 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/06/23 23:41:24 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ void *pmm_next_fit(unsigned int size, int flags) {
 
 		if (available_pages == wanted_page_number) {
 			for (unsigned int j = 0; j < wanted_page_number; j++) {
-				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000));
+				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
+				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
 			pmm_infos->available_pages_number -= wanted_page_number;

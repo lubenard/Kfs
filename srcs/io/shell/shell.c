@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/06/20 11:40:41 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/06/23 23:43:26 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,9 +268,9 @@ void wait_for_input(kbd_event_t *key) {
 	//while (1) {}
 }
 
-/*static struct kbd_listener listener_callback = {
+static struct kbd_listener listener_callback = {
 	.listener = &wait_for_input,
-};*/
+};
 
 /*
  * Init shell
@@ -298,7 +298,7 @@ void	init_shell() {
 	memset(second, 0, sizeof(t_shell));
 	// Cause weird bug, make crash
 	memset(third, 0, sizeof(t_shell));
-	/*printd(KERN_INFO, "Terminal is located at %p, and point to %p", &terminal, terminal);
+	printd(KERN_INFO, "Terminal is located at %p, and point to %p", &terminal, terminal);
 	printd(KERN_INFO, "First shell is located at %p, and end at %p (size is %d)", first, (char*)first + sizeof(t_shell), sizeof(t_shell));
 	printd(KERN_INFO, "Second shell is located at %p, and end at %p (size is %d)", second, (char*)second + sizeof(t_shell), sizeof(t_shell));
 	printd(KERN_INFO, "Third shell is located at %p, and end at %p (size is %d)", third, (char*)third + sizeof(t_shell), sizeof(t_shell));
@@ -318,5 +318,5 @@ void	init_shell() {
 	register_kbd_listener(&listener_callback);
 	printk(KERN_INFO, "After registration");
 	check_term_struct();
-	printk(KERN_INFO, "End init shell");*/
+	printk(KERN_INFO, "End init shell");
 }

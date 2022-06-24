@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/11 14:21:31 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/06/23 23:05:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,8 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 		//   2 is in binary 10
 		page_directory[i] = 0x00000002;
 	}
+
+	printd(KERN_INFO, "Page directory[1023] %p", page_directory[1023]);
 
 	/*
 	 * Mapping 4 first mb (including kernel)
