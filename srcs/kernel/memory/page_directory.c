@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/26 17:47:16 by lubenard          #+#    #+#             */
-/*   Updated: 2022/06/23 23:05:22 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 13:29:00 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,30 @@ void map_page(void *addr) {
 
 	unsigned long pdindex = (unsigned long)addr >> 22;
 	unsigned long ptindex = (unsigned long)addr >> 12 & 0x03FF;
-	printk(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
+	printd(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
 
 	k = pdindex * 1024;
 	uint32_t *page_table = (uint32_t*)page_directory_start + k;
 
 	if (page_directory[pdindex] & (1 << 0)) {
-		printk(KERN_INFO, "pdindex present");
-		printk(KERN_INFO, "Page table should be located at %p, origninaly %p", page_table, page_directory[pdindex]);
+		printd(KERN_INFO, "Page directory index present");
+		printd(KERN_INFO, "Page table should be located at %p, origninaly %p", page_table, page_directory[pdindex]);
 		if (page_table[ptindex] & (1 << 0)) {
 			printd(KERN_WARNING, "Map page : ptindex present, page already mapped");
 			return ;
 		} else {
-			printk(KERN_INFO, "ptindex not present, mapping from %p to %p at page_table[%d]", (k + ptindex) * 0x1000, ((k + ptindex) * 0x1000) + 0x1000, ptindex);
+			printd(KERN_INFO, "Page table at %d not present, mapping from %p to %p", ptindex, (k + ptindex) * 0x1000, ((k + ptindex) * 0x1000) + 0x1000);
 			page_table[ptindex] = (k + ptindex) * 0x1000 | 3;
 			flush_tlb_addr((void *)((k + ptindex) * 0x1000));
 		}
 	} else {
-		printk(KERN_INFO, "pdindex NOT present, k = %d", k);
+		printd(KERN_INFO, "Page directory index NOT present, k = %d", k);
 		flush_tlb_addr((void*)((k + ptindex) * 0x1000));
 		for (unsigned int i = 0; i < 1024; i++) {
 			page_table[i] = 0x00000000;
 		}
 		page_table[ptindex] = ((k + ptindex) * 0x1000) | 3;
-		printk(KERN_INFO, "added page_directory[%d] + mapped page table at addr %p", pdindex, page_table);
+		printd(KERN_INFO, "added page_directory[%d] + mapped page table at addr %p", pdindex, page_table);
 		flush_tlb_addr(page_table);
 		page_directory[pdindex] = ((unsigned int)page_table) | 3;
 	}
@@ -160,15 +160,15 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	printd(KERN_INFO, "Page directory is at %p", &page_directory);
 	printd(KERN_INFO, "Mapped until %p", i * 0x1000);
 
-    printd(KERN_INFO, "JUST BEFORE page_directory[0] %p", page_directory[0]);
-    printd(KERN_INFO, "Page directory is %p", page_directory);
+	printd(KERN_INFO, "JUST BEFORE page_directory[0] %p", page_directory[0]);
+	printd(KERN_INFO, "Page directory is %p", page_directory);
 
-    enable_paging(page_directory);
+	enable_paging(page_directory);
 
-    printd(KERN_INFO, "Page directory is %p", page_directory);
+	printd(KERN_INFO, "Page directory is %p", page_directory);
 
 
-    printd(KERN_INFO, "JUST AFTER page_directory[0] %p", page_directory[0]);
+	printd(KERN_INFO, "JUST AFTER page_directory[0] %p", page_directory[0]);
 
     // If the Page Directory is bigger than what was proviously mapped
 	if ((uint32_t *)start_addr + nframes >= (uint32_t*)0x400000) {
@@ -189,5 +189,5 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 		for (i = 0; i < (int)((nframes - ((uint32_t*)0x400000 - (uint32_t*)start_addr)) / 1024) + 1; i++)
 			map_page((char *)0x400000 + 0x1000 * i);
 	}
-    printd(KERN_INFO, "page_directory[0] %p", page_directory[0]);
+	printd(KERN_INFO, "page_directory[0] %p", page_directory[0]);
 }

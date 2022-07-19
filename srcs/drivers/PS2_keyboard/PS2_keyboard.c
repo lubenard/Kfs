@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:53 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/15 14:12:18 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 12:46:44 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ kbd_listener_t *new_listener_node(kbd_listener_t *listener) {
 	if (!(new_node = malloc(sizeof(kbd_listener_t)))) {
 		return 0;
 	}
-	printk(KERN_INFO, "Return from malloc is %p", new_node);
+	//printk(KERN_INFO, "Return from malloc is %p", new_node);
 	new_node->listener = listener->listener;
 	new_node->next = 0;
 	new_node->prev = 0;
@@ -157,16 +157,16 @@ void send_last_key_typed(kbd_event_t last_key_typed) {
 	kbd_listener_t *item = listener_head;
 	void (*function_pointer)(kbd_event_t *kbd_event);
 
-	check_term_struct();
+	//check_term_struct();
 	while (item) {
-		printk(KERN_INFO, "SENDING DATAS");
-		check_term_struct();
-		printk(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
+		//printk(KERN_INFO, "SENDING DATAS");
+		//check_term_struct();
+		//printk(KERN_INFO, "Sending character '%d' item to %p with next being %p", last_key_typed.key_typed , item->listener, item->next);
 		function_pointer = item->listener;
 		function_pointer(&last_key_typed);
 		item = item->next;
 	}
-	printk(KERN_INFO, "FINISHED SENDING DATAS");
+	//printk(KERN_INFO, "FINISHED SENDING DATAS");
 }
 
 /*
@@ -270,6 +270,8 @@ void get_key(registers_t regs)
 	//check_term_struct();
 	/* Read from the keyboard's data buffer */
     uint16_t scancode = inb(0x60);
+
+	//printd(KERN_INFO, "Key pressed");
 
 	/* If the top bit of the byte we read from the keyboard is
 	 *  set, that means that a key has just been released

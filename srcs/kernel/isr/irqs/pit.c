@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 20:31:46 by lubenard          #+#    #+#             */
-/*   Updated: 2021/12/02 20:46:28 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 14:41:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,8 @@ void init_pit() {
 	uint8_t l = (uint8_t)(divisor & 0xFF);
 	uint8_t h = (uint8_t)((divisor>>8) & 0xFF);
 
-   // Send the frequency divisor.
-   outb(0x40, l);
-   outb(0x40, h);
+	// Send the frequency divisor.
+	outb(0x40, l);
+	outb(0x40, h);
+	printk(KERN_INFO, "PIT has been initialised");
 }

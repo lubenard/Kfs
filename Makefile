@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/04/15 13:54:41 by lubenard         ###   ########.fr        #
+#    Updated: 2022/07/19 14:08:09 by lubenard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/shell.c \
 			  io/shell/builtins/print.c \
 			  io/shell/builtins/echo.c \
+			  io/shell/builtins/uptime.c \
 			  io/shell/builtins/help.c \
 			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c \

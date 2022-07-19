@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:19:15 by lubenard          #+#    #+#             */
-/*   Updated: 2022/04/11 12:24:45 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 14:41:25 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef struct s_command {
 void help(t_command *command);
 void clear(t_command *command);
 void echo(t_command *command);
+void uptime(t_command *command);
 void shell_print(t_command *command);
 void kbd(t_command *command);
 void shutdown(t_command *command);
@@ -33,9 +34,9 @@ void reboot(t_command *command);
 
 // Last element is 0 to avoid overflows
 static const char *builtins_names[] = {"help", "kbd", "clear", "shutdown", "reboot",
-							"print", "echo", 0};
+							"print", "echo", "uptime", 0};
 
 static void (*g_builtins_array[])(t_command *command) = {help, kbd, clear, shutdown, reboot,
-							shell_print, echo};
+							shell_print, echo, uptime};
 
 #endif

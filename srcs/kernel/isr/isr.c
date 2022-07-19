@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/11 18:05:16 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 13:43:34 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ void panic(registers_t regs, const char *message, const char *file, unsigned int
 	// Disable cli
 	asm volatile("cli");
 	printk(KERN_ERROR, "KERNEL PANIC ! '%s' at %s:%d", message, file, line);
-	// Save registers value
 
+	// Save registers value
 	asm volatile ("mov %%cr0, %0" : "=r"(registers_cr[0]));
 	//asm volatile ("mov %%cr1, %0" : "=r"(registers_cr[1]));
 	asm volatile ("mov %%cr2, %0" : "=r"(registers_cr[2]));

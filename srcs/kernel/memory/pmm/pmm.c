@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2022/06/23 23:41:24 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/07/19 13:27:34 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,9 @@ void pmm_unset_pages(void *ptr, unsigned int size) {
 	(void)size;
 	unsigned int pages = (size / 4097) + 1;
 	unsigned int index = ((char *)ptr - (char *)pmm_infos->pmm_memory_start) / 4096;
-	printk(KERN_INFO, "Index should be %d", index);
+	printd(KERN_INFO, "Index should be %d", index);
 	for (unsigned int i = 0; i < pages; i++) {
-		printk(KERN_INFO, "Releasing page at index %d", index + i);
+		printd(KERN_INFO, "Releasing page at index %d", index + i);
 		pmm_array[index + i] = PMM_BLOCK_FREE;
 		unmap_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000));
 	}
