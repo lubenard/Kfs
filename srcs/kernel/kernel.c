@@ -20,6 +20,7 @@
 #include "../lib/iolib.h"
 #include "../lib/memlib.h"
 #include "memory/vmm/malloc/malloc.h"
+#include "../drivers/bios/bios.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -60,21 +61,18 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 
 	//display_boot_message();
 
+	/* Enable debug log via port */
 	init_com_port(0x3F8);
+
+	/* Init rtc to get date from bios - WIP */
+	//init_rtc();
 
 	/* Init shell management */
 	init_shell();
 
 	while (1) {}
 
-	//check_term_struct();
-
-	//printk(KERN_INFO, "JUST BEFORE INFINITE LOOP");
-
-	//int i = 0;
-
-	//while (i != 10) { check_term_struct();i++; }
-
+	// Voluntary Page fault, do not uncomment
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;*/

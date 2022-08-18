@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 15:39:44 by lubenard          #+#    #+#             */
-/*   Updated: 2022/01/07 14:21:16 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/18 01:40:44 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,23 @@ typedef struct page {
 	uint32_t frame      : 20;  // Frame address (shifted right 12 bits)
 } page_t;
 
+typedef struct s_memory_infos {
+	// Thoses values are in bytes;
+	unsigned long size;
+	unsigned long used_size;
+} t_memory_infos;
+
 void init_memory();
+void init_memory_infos();
 
 void map_page(void *addr);
 void unmap_page(void *addr);
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
 int check_mapping(void *addr);
+
+
+void update_memory_infos(unsigned long size, unsigned long used_size);
+t_memory_infos *get_memory_infos();
 
 /* ASM called functions */
 extern void enable_paging(unsigned int *);

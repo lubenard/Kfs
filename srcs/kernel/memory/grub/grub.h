@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 19:38:48 by lubenard          #+#    #+#             */
-/*   Updated: 2021/11/16 15:25:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/18 01:58:53 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,10 @@ typedef struct multiboot_info {
 
 struct multiboot_mmap_entry {
 	uint32_t size;
+	// This is a splitted uint64_t
 	uint32_t addr_low;
 	uint32_t addr_high;
+	// This is a splitted uint64_t
 	uint32_t len_low;
 	uint32_t len_high;
 	uint32_t type;
