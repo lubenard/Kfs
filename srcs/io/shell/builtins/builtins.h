@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/19 14:19:15 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 14:41:25 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/19 20:22:48 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,18 @@ void shell_print(t_command *command);
 void kbd(t_command *command);
 void shutdown(t_command *command);
 void reboot(t_command *command);
+void date(t_command *command);
 
 // Last element is 0 to avoid overflows
-static const char *builtins_names[] = {"help", "kbd", "clear", "shutdown", "reboot",
-							"print", "echo", "uptime", 0};
+static const char *builtins_names[] = {
+	"help", "kbd", "clear", "shutdown", "reboot",
+	"print", "echo", "uptime", "date",
+	0 // Do not place anything after this 0
+};
 
-static void (*g_builtins_array[])(t_command *command) = {help, kbd, clear, shutdown, reboot,
-							shell_print, echo, uptime};
+static void (*g_builtins_array[])(t_command *command) = {
+	help, kbd, clear, shutdown, reboot,
+	shell_print, echo, uptime, date
+};
 
 #endif

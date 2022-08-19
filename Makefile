@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/08/18 23:51:08 by luca             ###   ########.fr        #
+#    Updated: 2022/08/19 20:23:28 by luca             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,11 +30,11 @@ SRC_FILES_ASM = kernel/boot.s \
 SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \
 			  drivers/PS2_keyboard/PS2_keyboard.c \
-			  drivers/bios/rtc.c \
 			  kernel/gdt/gdt.c \
 			  kernel/idt/idt.c \
 			  kernel/isr/isr.c \
 			  kernel/isr/irqs/pit.c \
+			  kernel/isr/irqs/rtc.c \
 			  lib/memlib.c \
 			  lib/iolib.c \
 			  lib/intlib.c \
@@ -60,6 +60,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/shutdown.c \
 			  io/shell/builtins/kbd.c \
 			  io/shell/builtins/clear.c \
+			  io/shell/builtins/date.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/memory_infos.c \
 			  kernel/memory/grub/grub.c \

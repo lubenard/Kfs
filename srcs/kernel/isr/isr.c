@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/19 02:45:16 by luca             ###   ########.fr       */
+/*   Updated: 2022/08/19 19:13:08 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,23 +187,23 @@ void irq_handler(registers_t regs) {
 
 	void (*handler)(registers_t r);
 
-	//printk(KERN_INFO, "IRQ LANCE numero: %d -----------", regs.int_no);
+	//printk(KERN_INFO, "IRQ fired numero: %d", regs.int_no - 32);
 	if (regs.int_no >= 32) {
 		if (irq_routines[regs.int_no - 32] != 0) {
 			handler = irq_routines[regs.int_no - 32];
-			if (regs.int_no == 1)
-				printk(KERN_INFO, "AHAH ! IRQ LANCE numéro: %d", regs.int_no);
 			handler(regs);
-		} /*else {
+		} else {
 			printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);
-		}*/
+		}
 	}
 	// Send an EOI (end of interrupt) signal to the PICs.
 	// If this interrupt involved the slave.
 	if (regs.int_no - 32 >= 8) {
+		//printd(KERN_INFO, "Send reset signal to slave");
 		// Send reset signal to slave.
 		outb(0xA0, 0x20);
 	}
+	//printd(KERN_INFO, "Send reset signal to master");
 	// Send reset signal to master.
 	outb(0x20, 0x20);
 }

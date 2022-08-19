@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/18 13:49:40 by luca             ###   ########.fr       */
+/*   Updated: 2022/08/19 20:20:36 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@
 #include "../lib/iolib.h"
 #include "../lib/memlib.h"
 #include "memory/vmm/malloc/malloc.h"
-#include "../drivers/bios/bios.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -63,9 +62,6 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 
 	/* Enable debug log via port */
 	init_com_port(0x3F8);
-
-	/* Init rtc to get date from bios - WIP */
-	init_rtc();
 
 	/* Init shell management */
 	init_shell();
