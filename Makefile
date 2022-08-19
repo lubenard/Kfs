@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/08/19 20:23:28 by luca             ###   ########.fr        #
+#    Updated: 2022/08/20 01:29:35 by luca             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -70,7 +70,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/vmm/malloc/malloc.c \
 			  kernel/memory/vmm/malloc/free.c \
 			  kernel/memory/vmm/malloc/calloc.c \
-			  kernel/memory/vmm/malloc/realloc.c
+			  kernel/memory/vmm/malloc/realloc.c \
+			  kernel/processes/processes.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
