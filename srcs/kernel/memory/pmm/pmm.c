@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/09 17:23:38 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 13:27:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/18 01:47:36 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,14 @@ void check_mapping_pmm(void *pmm_array, unsigned int page_number) {
 		printd(KERN_INFO, "We need to map %d pages for PMM", unmapped_pmm / 4096);
 		void *start_mapping = (void*)roundUp(pmm_array, 4096);
 		for (unsigned int j = 0; j < (unmapped_pmm / 4096) + 1; j++) {
-            printd(KERN_INFO, "Mapping %p", start_mapping + (4096 * j));
-            map_page(start_mapping + (4096 * j));
+			printd(KERN_INFO, "Mapping %p", start_mapping + (4096 * j));
+			map_page(start_mapping + (4096 * j));
 		}
 	} else
 		printd(KERN_INFO, "PMM is contained in a mapped area (before 0x3FF000).\nStart at %p, end at %p", pmm_array, (char*)pmm_array + page_number);
 }
 
-void create_pmm_array(void *start_addr, unsigned int page_number) {
+void *create_pmm_array(void *start_addr, unsigned int page_number) {
 	printk(KERN_INFO, "Pmm infos is stored at %p", start_addr);
 	pmm_infos = start_addr;
 	pmm_infos->pmm_page_number = page_number;
@@ -49,6 +49,7 @@ void create_pmm_array(void *start_addr, unsigned int page_number) {
 	for (unsigned int i = 0; i < page_number; i++)
 		pmm_array[i] = PMM_BLOCK_FREE;
 	printd(KERN_INFO, "Pmm Initialised, at %p memory start at %p", pmm_array, pmm_infos->pmm_memory_start);
+	return pmm_infos->pmm_memory_start;
 }
 
 void set_block_status(unsigned int index, char new_block_status) {
