@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/09 13:54:18 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/19 20:18:26 by luca             ###   ########.fr       */
+/*   Updated: 2022/08/19 22:00:37 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,29 +79,34 @@ void	get_datetime_from_rtc() {
 	//printk(KERN_INFO, "Date from bios is currently: %d/%d/%d @ %d:%d:%d", cmos_date.day, cmos_date.month, cmos_date.year, cmos_date.hour, cmos_date.minute, cmos_date.second);
 }
 
+/*
+ * Enable Non-maskable interrupts
+ */
 void nmi_enable() {
-	outb(0x70, inb(0x70) & 0x7F);
-	inb(0x71);
+	outb(CMOS_ADDRESS, inb(0x70) & 0x7F);
+	inb(CMOS_DATA);
 }
 
+/*
+ * Disable Non-maskable interrupts
+ */
 void nmi_disable() {
-	outb(0x70, inb(0x70) | 0x80);
-	inb(0x71);
+	outb(CMOS_ADDRESS, inb(0x70) | 0x80);
+	inb(CMOS_DATA);
 }
 
 void init_rtc() {
 	register_interrupt_handler(8, &get_datetime_from_rtc);
-	//asm volatile ("int $0x28");
-	nmi_disable();
 
+	nmi_disable();
 	asm volatile ("cli");
-	outb(0x70, 0x8B); // Select register B
-	char prev = inb(0x71);	// read the current value of register B
-	outb(0x70, 0x8B);		// set the index again (a read will reset the index to register D)
+	outb(CMOS_ADDRESS, 0x8B); // Select register B
+	char prev = inb(CMOS_DATA);	// read the current value of register B
+	outb(CMOS_ADDRESS, 0x8B);		// set the index again (a read will reset the index to register D)
 	printk(KERN_INFO, "RTC: %x, but passed %x", prev, prev | 0x10);
 	// Write the previous value with 0x10.
 	// This set the bit 4 (UIE) in register B of RTC register
-	outb(0x71, prev | 0x10);
+	outb(CMOS_DATA, prev | 0x10);
 	asm volatile ("sti");
 	// Enable nmi (Non masquable interrupts)
 	nmi_enable();
