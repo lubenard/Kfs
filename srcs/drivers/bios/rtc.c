@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/09 13:54:18 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/09 14:44:35 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/19 03:01:00 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,25 @@ void	get_datetime_from_rtc() {
 	if (!(registerB & 0x02) && (hour & 0x80)) {
 		hour = ((hour & 0x7F) + 12) % 24;
 	}
-	printk(KERN_INFO, "Date is currently: %d/%d/%d @ %d:%d:%d", day, month, year, hour, minute, second);
+	printk(KERN_INFO, "Date from bios is currently: %d/%d/%d @ %d:%d:%d", day, month, year, hour, minute, second);
 }
 
-/*void init_rtc() {
+void init_rtc() {
+	//get_datetime_from_rtc();
 	register_interrupt_handler(8, &get_datetime_from_rtc);
-	nmi_disable();
+	//asm volatile ("int $0x28");
+	//nmi_disable();
 	// Disable interrupts
-	asm volatile ("cli");
-	outb(0x70, 0x8A);	// select Status Register A, and disable NMI (by setting the 0x80 bit)
+	/*asm volatile ("cli");
+	outb(0x70, 0x0b);	// select Status Register A, and disable NMI (by setting the 0x80 bit)
 	outb(0x71, 0x20);
 	outb(0x70, 0x8B);			// select register A, and disable NMI
 	char prev = inb(0x71);		// read the current value of register B
 	outb(0x70, 0x8B);			// set the index again (a read will reset the index to register D)
 	outb(0x71, prev | 0x40);	// write the previous value ORed with 0x40. This turns on bit 6 of register B
 	// Enable interrupts
-	asm volatile ("sti");
+	asm volatile ("sti");*/
 	// Enable nmi (Non masquable interrupts)
-	nmi_enable();
+	//nmi_enable();*/
 	printk(KERN_INFO, "RTC initialised");
-}*/
+}

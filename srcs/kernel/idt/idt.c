@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/21 21:45:15 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 14:40:30 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/19 03:04:18 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,16 +75,33 @@ void init_idt()
 	idt_set_gate(30, (int32_t)isr30, 0x08, 0x8E);
 	idt_set_gate(31, (int32_t)isr31, 0x08, 0x8E);
 
+	unsigned char a1;
+	unsigned char a2;
+
+	a1 = inb(0x21);
+	a2 = inb(0xA1);
+
+	// Remap PIC
+	// Start initialisation sequence
 	outb(0x20, 0x11);
 	outb(0xA0, 0x11);
+
+	// Master PIC vector offset
 	outb(0x21, 0x20);
+	// Slave PIC vector offset
 	outb(0xA1, 0x28);
+
+	// Tell master PIC there is a slave pic at IRQ2 (0000 0100)
 	outb(0x21, 0x04);
+	// Tell Slave PIC its cascade identity (0000 0010)
 	outb(0xA1, 0x02);
+
 	outb(0x21, 0x01);
 	outb(0xA1, 0x01);
-	outb(0x21, 0x0);
-	outb(0xA1, 0x0);
+
+	// Restore saved masks
+	outb(0x21, a1);
+	outb(0xA1, a2);
 
 	idt_set_gate(32, (int32_t)irq0, 0x08, 0x8E);
 	idt_set_gate(33, (int32_t)irq1, 0x08, 0x8E);

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 13:43:34 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/19 02:45:16 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,43 @@ void register_interrupt_handler(int8_t n, isr_t handler) {
 }
 
 /*
+ * Clear bit from IMR, restoring irq triggering
+ */
+void irq_clear_mask(unsigned char IRQline) {
+	uint16_t port;
+	uint8_t value;
+
+	if (IRQline < 8) {
+		port = 0x21;
+	} else {
+		port = 0xA1;
+		IRQline -= 8;
+	}
+	value = inb(port) & ~(1 << IRQline);
+	outb(port, value);
+}
+
+/*
+ * This set a flag on IMR (Interrupt Mask Register)
+ * Calling this function DISABLE interrupt
+ * From osdev:
+ * When a bit is set, the PIC ignores the request and continues normal operation
+ */
+void irq_set_mask(unsigned char IRQline) {
+	uint16_t port;
+	uint8_t value;
+
+	if (IRQline < 8) {
+		port = 0x21;
+	} else {
+		port = 0xA1;
+		IRQline -= 8;
+	}
+	value = inb(port) | (1 << IRQline);
+	outb(port, value);
+}
+
+/*
  * This gets called from our ASM interrupt handler
  */
 void irq_handler(registers_t regs) {
@@ -151,8 +188,6 @@ void irq_handler(registers_t regs) {
 	void (*handler)(registers_t r);
 
 	//printk(KERN_INFO, "IRQ LANCE numero: %d -----------", regs.int_no);
-	//check_term_struct();
-	//printk(KERN_INFO, "IRQ fired %d", regs.int_no);
 	if (regs.int_no >= 32) {
 		if (irq_routines[regs.int_no - 32] != 0) {
 			handler = irq_routines[regs.int_no - 32];
@@ -160,7 +195,7 @@ void irq_handler(registers_t regs) {
 				printk(KERN_INFO, "AHAH ! IRQ LANCE numéro: %d", regs.int_no);
 			handler(regs);
 		} /*else {
-			//printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);
+			printk(KERN_ERROR, "Unhandled IRQ ! IRQ code : %d", regs.int_no - 32);
 		}*/
 	}
 	// Send an EOI (end of interrupt) signal to the PICs.

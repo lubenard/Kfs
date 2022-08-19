@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 11:58:58 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/18 13:49:40 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	init_com_port(0x3F8);
 
 	/* Init rtc to get date from bios - WIP */
-	//init_rtc();
+	init_rtc();
 
 	/* Init shell management */
 	init_shell();

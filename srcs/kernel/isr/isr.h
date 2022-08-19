@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:44:38 by lubenard          #+#    #+#             */
-/*   Updated: 2022/03/10 16:30:30 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/08/19 02:32:24 by luca             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@ typedef struct registers
 
 typedef void (*isr_t)(registers_t);
 void register_interrupt_handler(int8_t n, isr_t handler);
+void irq_set_mask(unsigned char IRQline);
+void irq_clear_mask(unsigned char IRQline);
 
 void panic(registers_t regs, const char *message, const char *file, unsigned int line);
 
