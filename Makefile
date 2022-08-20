@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/08/20 01:29:35 by luca             ###   ########.fr        #
+#    Updated: 2022/08/20 17:31:10 by luca             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,6 +61,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/kbd.c \
 			  io/shell/builtins/clear.c \
 			  io/shell/builtins/date.c \
+			  io/shell/builtins/test_process.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/memory_infos.c \
 			  kernel/memory/grub/grub.c \
