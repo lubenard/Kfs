@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 17:13:10 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/20 18:06:45 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/13 18:13:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int function_test_1() {
 
 	while (i != 10) {
 		terminal_writestr("Hello from function test 1");
-		sleep(2);
+		//sleep(2);
 		i++;
 	}
 	return 0;
@@ -30,7 +30,7 @@ int function_test_2() {
 
 	while (i != 10) {
 		terminal_writestr("Hello from function test 2");
-		sleep(2);
+		//sleep(2);
 		i++;
 	}
 	return 0;
@@ -43,6 +43,4 @@ void test_process(t_command *command) {
 	terminal_writestr("Launched");
 	terminal_set_fg_color(VGA_COLOR_LIGHT_GREY);
 	terminal_writec('\n');
-	//exec_fn();
-	//exec_fn();
 }

@@ -6,9 +6,13 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 00:40:09 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/20 18:09:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/13 18:04:27 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+
+#ifndef PROCESSES_H
+# define PROCESSES_H
 
 # define SIGHUP 1
 # define SIGINT 2
@@ -19,10 +23,18 @@
 # define SIGTERM 15
 
 # define STATUS_RUN 1
-# define STATUS_ZOMBIE 2
-# define STATUS_THREAD 3
+# define STATUS_WAITING 2
+# define STATUS_ZOMBIE 3
+# define STATUS_THREAD 4
+# define STATUS_STOPED 5
+
+typedef struct s_signal_list {
+	unsigned short status;
+	struct s_signal_list *next;
+}				t_signal_list;
 
 typedef struct s_process {
+	char name[20];
 	unsigned long pid;
 	short status;
 	// There can be only one parent
@@ -36,6 +48,14 @@ typedef struct s_process {
 	void *heap_ptr;
 	unsigned long heap_size;
 
-	// Signals
+	t_signal_list *signals;
 	unsigned int ownerId;
+
+	// We use a next to use it as linked list
+	// TODO: Optimize ?
+	struct s_process *next;
 }			t_process;
+
+void register_kernel_as_process();
+
+#endif

@@ -6,10 +6,11 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/19 20:20:36 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/13 16:00:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "kernel.h"
 #include "../drivers/vga/vga.h"
 #include "gdt/gdt.h"
 #include "idt/idt.h"
@@ -30,6 +31,19 @@
 #if !defined(__i386__)
 # error "This kernel needs to be compiled with a ix86-elf compiler. You can use clang to compile."
 #endif
+
+t_kernel *kernel_struct;
+
+t_kernel *get_kernel_struct() {
+	return kernel_struct;
+}
+
+void init_kernel_struct() {
+	if (!(kernel_struct = malloc(sizeof(t_kernel)))) {
+		return;
+	}
+	kernel_struct->processes_list = 0;
+}
 
 void display_boot_message() {
 	terminal_writestr(" _ _ _     _\n| | | |___| |___ ___ _____ ___\n"
@@ -58,11 +72,14 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
 
-	//display_boot_message();
+	init_kernel_struct();
 
 	/* Enable debug log via port */
 	init_com_port(0x3F8);
 
+	register_kernel_as_process();
+
+	//display_boot_message();
 	/* Init shell management */
 	init_shell();
 

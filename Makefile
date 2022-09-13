@@ -6,7 +6,7 @@
 #    By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/04/14 14:52:43 by lubenard          #+#    #+#              #
-#    Updated: 2022/08/20 17:31:10 by luca             ###   ########.fr        #
+#    Updated: 2022/09/13 18:12:00 by lubenard         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -62,6 +62,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/clear.c \
 			  io/shell/builtins/date.c \
 			  io/shell/builtins/test_process.c \
+			  io/shell/builtins/top.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/memory_infos.c \
 			  kernel/memory/grub/grub.c \
@@ -72,7 +73,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/vmm/malloc/free.c \
 			  kernel/memory/vmm/malloc/calloc.c \
 			  kernel/memory/vmm/malloc/realloc.c \
-			  kernel/processes/processes.c
+			  kernel/processes/processes.c \
+			  kernel/processes/signals.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
