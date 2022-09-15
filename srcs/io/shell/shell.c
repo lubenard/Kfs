@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 00:19:47 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 13:34:04 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/15 14:33:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,7 +280,7 @@ void	init_shell() {
 	t_shell *first;
 	t_shell *second;
 	t_shell *third;
-	
+
 	if (!(terminal = malloc(sizeof(terminal_t)))) {
 		printk(KERN_ERROR, "Could not malloc for terminal_t struct");
 		return ;

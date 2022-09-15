@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/13 16:00:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:25:43 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	init_com_port(0x3F8);
 
 	register_kernel_as_process();
+
+	add_signal_to_pid(1, STATUS_WAITING);
 
 	//display_boot_message();
 	/* Init shell management */

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 00:40:09 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/13 18:04:27 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:09:10 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 # define STATUS_STOPED 5
 
 typedef struct s_signal_list {
-	unsigned short status;
+	unsigned short signal;
 	struct s_signal_list *next;
 }				t_signal_list;
 
@@ -56,6 +56,8 @@ typedef struct s_process {
 	struct s_process *next;
 }			t_process;
 
-void register_kernel_as_process();
+void		register_kernel_as_process();
+t_process	*find_process_by_pid(unsigned long pid);
+void		add_signal_to_pid(unsigned long pid, unsigned short signal);
 
 #endif
