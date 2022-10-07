@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/03/07 15:47:13 by lubenard          #+#    #+#             */
-/*   Updated: 2022/07/19 14:09:19 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/07 21:00:03 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,5 @@ void help(char **command) {
 	terminal_writestr("\tclear - clear the screen\n");
 	terminal_writestr("\tshutdown - shutdown the computer\n");
 	terminal_writestr("\treboot - reboot the computer\n");
+	terminal_writestr("\ttop - give infos about processes\n");
 }

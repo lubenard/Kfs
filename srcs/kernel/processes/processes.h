@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 00:40:09 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/15 16:09:10 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/16 16:42:33 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ typedef struct s_process {
 	struct s_process *next;
 }			t_process;
 
+typedef struct s_processes {
+	t_process *processes_list;
+	t_process *current_process;
+}				t_processes;
+
+
+void		init_processes();
 void		register_kernel_as_process();
 t_process	*find_process_by_pid(unsigned long pid);
 void		add_signal_to_pid(unsigned long pid, unsigned short signal);

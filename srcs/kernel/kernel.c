@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/15 16:25:43 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/16 16:26:57 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ void init_kernel_struct() {
 	if (!(kernel_struct = malloc(sizeof(t_kernel)))) {
 		return;
 	}
-	kernel_struct->processes_list = 0;
 }
 
 void display_boot_message() {
@@ -71,6 +70,8 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 
 	/* Enable memory management. Enable paging */
 	init_memory(mb_mmap);
+
+	init_processes();
 
 	init_kernel_struct();
 

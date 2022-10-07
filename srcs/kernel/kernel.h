@@ -1,12 +1,14 @@
 
 
-#ifndef KFS_KERNEL_H
-#define KFS_KERNEL_H
+#ifndef KERNEL_H
+#define KERNEL_H
 
 #include "processes/processes.h"
+#include "memory/memory.h"
 
 typedef struct s_kernel {
-    t_process *processes_list;
+	t_memory_infos *memory;
+    t_processes *processes;
 }               t_kernel;
 
 t_kernel *get_kernel_struct();

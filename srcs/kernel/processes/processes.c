@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 01:03:43 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/15 16:23:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/07 21:14:21 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void register_kernel_as_process() {
 	process->ownerId = 0;
 	process->signals = NULL;
 	printk(KERN_INFO, "Process created at %p", process);
-	kernel_struct->processes_list = process;
+	kernel_struct->processes->processes_list = process;
 }
 
 /*
@@ -43,7 +43,7 @@ void register_kernel_as_process() {
  */
 t_process *find_process_by_pid(unsigned long pid) {
 	t_kernel *kernel_struct = get_kernel_struct();
-	t_process *process = kernel_struct->processes_list;
+	t_process *process = kernel_struct->processes->processes_list;
 	t_process *childs = NULL;
 
 	while (process) {
@@ -63,7 +63,6 @@ t_process *find_process_by_pid(unsigned long pid) {
 	}
 	return NULL;
 }
-
 
 /*
  * Create a process
@@ -87,4 +86,23 @@ long create_process(char *name, t_process *parent, unsigned int ownerId) {
 	process->status = STATUS_RUN;
 	process->ownerId = ownerId;
 	return process->pid;
+}
+
+void destroy_process(unsigned int pid) {
+	t_process *killable_process;
+
+	killable_process = find_process_by_pid(pid);
+	// TODO: Handle memory allocated for process work
+	munmap(killable_process->stack_ptr, PAGESIZE);
+	free(killable_process);
+}
+
+void init_processes() {
+	t_kernel *kernel_struct = get_kernel_struct();
+	t_processes *processes_infos;
+
+	if (!(processes_infos = malloc(sizeof(t_processes)))) {
+		return ;
+	}
+	kernel_struct->processes = processes_infos;
 }

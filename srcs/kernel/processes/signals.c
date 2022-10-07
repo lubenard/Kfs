@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/12 16:06:41 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/15 18:05:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/09/16 15:59:30 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void add_signal_to_process(t_process *process, unsigned short signal) {
 	signal_struct->signal = signal;
 	signal_list = process->signals;
 	if (signal_list == NULL) {
-		printk(KERN_INFO, "Added signal as 1rst element of list");
+		printd(KERN_INFO, "Added signal as 1rst element of list");
 		process->signals = signal_struct;
 	} else {
 		// Go to end of linked list to add at end
-		printk(KERN_INFO, "Added signal as last element of list");
+		printd(KERN_INFO, "Added signal as last element of list");
 		while (signal_list->next) {
 			signal_list = signal_list->next;
 		}
@@ -42,13 +42,24 @@ void add_signal_to_process(t_process *process, unsigned short signal) {
 	}
 }
 
+/*
+ * Fork a process and return
+ * < 0 if creation is unsuccessfull
+ * 0 if created process is returned 
+ * > 0 if parent process is returned
+ */
+int fork() {
+	return 0;
+}
+
+
 void add_signal_to_pid(unsigned long pid, unsigned short signal) {
 	t_process *process = find_process_by_pid(pid);
 	if (process != NULL) {
-		printk(KERN_INFO, "Found process struct at addr %p", process);
+		printd(KERN_INFO, "Found process struct at addr %p", process);
 		add_signal_to_process(process, signal);
 	} else {
-		printk(KERN_WARNING, "Process not found for PID: %d", pid);
+		printd(KERN_WARNING, "Process not found for PID: %d", pid);
 	}
 }
 
