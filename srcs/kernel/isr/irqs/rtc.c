@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/09 13:54:18 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/19 22:00:37 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/09 14:23:05 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ void init_rtc() {
 	outb(CMOS_ADDRESS, 0x8B); // Select register B
 	char prev = inb(CMOS_DATA);	// read the current value of register B
 	outb(CMOS_ADDRESS, 0x8B);		// set the index again (a read will reset the index to register D)
-	printk(KERN_INFO, "RTC: %x, but passed %x", prev, prev | 0x10);
 	// Write the previous value with 0x10.
 	// This set the bit 4 (UIE) in register B of RTC register
 	outb(CMOS_DATA, prev | 0x10);

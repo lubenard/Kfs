@@ -93,6 +93,10 @@ _start:
 	; If grub is not present, we need to ask the bios via : INT 0x15, EAX = 0xE820
 	push eax
 	push ebx
+
+	; We need to setup ebp to null to avoid running into gargabe when getting stacktrace
+	xor ebp, ebp       ; Set %ebp to NULL
+
 	; Enter the high-level kernel. The ABI requires the stack is 16-byte
 	; aligned at the time of the call instruction (which afterwards pushes
 	; the return pointer of size 4 bytes). The stack was originally 16-byte

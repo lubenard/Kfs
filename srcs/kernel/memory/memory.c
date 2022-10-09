@@ -31,6 +31,8 @@ uint32_t get_kernel_size() {
 	return end_kernel_addr - start_kernel_addr;
 }
 
+#define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
+
 void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t nframes;
 
@@ -40,7 +42,32 @@ void init_memory(multiboot_info_t *mb_mmap) {
 	// nframes is the number of frames (aka blocks of 4096)
 	nframes = (map_entry->len_low / 0x1000); // Ox1000 is 4096 in hexa (Size of one page)
 
-	printk(KERN_INFO, "Memory is %d Gb and %d Mb", map_entry->len_low / GB, (map_entry->len_low % GB) / MB);
+    if (CHECK_FLAG (mb_mmap->flags, 4) && CHECK_FLAG (mb_mmap->flags, 5)) {
+        printk(KERN_INFO, "Both bits 4 and 5 are set.");
+    }
+
+    if (CHECK_FLAG (mb_mmap->flags, 4)) {
+        multiboot_aout_symbol_table_t *multiboot_aout_sym = &(mb_mmap->u.aout_sym);
+
+        printk(KERN_INFO, "multiboot_aout_symbol_table: tabsize = 0x%x, "
+                "strsize = 0x%x, addr = 0x%x",
+                (unsigned) multiboot_aout_sym->tabsize,
+                (unsigned) multiboot_aout_sym->strsize,
+                (unsigned) multiboot_aout_sym->addr);
+    }
+
+    if (CHECK_FLAG (mb_mmap->flags, 5)) {
+        multiboot_elf_section_header_table_t *multiboot_elf_sec = &(mb_mmap->u.elf_sec);
+
+        printk(KERN_INFO, "multiboot_elf_sec: num = %u, size = 0x%x,"
+                " addr = 0x%x, shndx = 0x%x",
+                (unsigned) multiboot_elf_sec->num, (unsigned) multiboot_elf_sec->size,
+                (unsigned) multiboot_elf_sec->addr, (unsigned) multiboot_elf_sec->shndx);
+
+
+    }
+
+    printk(KERN_INFO, "Memory is %d Gb and %d Mb", map_entry->len_low / GB, (map_entry->len_low % GB) / MB);
 
 	init_memory_infos();
 	update_memory_infos(map_entry->len_low, 0);

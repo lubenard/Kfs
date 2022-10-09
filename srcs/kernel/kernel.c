@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/20 18:02:32 by lubenard          #+#    #+#             */
-/*   Updated: 2022/09/16 16:26:57 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/09 14:53:12 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,11 +86,11 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	/* Init shell management */
 	init_shell();
 
-	while (1) {}
-
 	// Voluntary Page fault, do not uncomment
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;*/
 	//asm volatile ("int $0xE");
+
+	while (1) {}
 }

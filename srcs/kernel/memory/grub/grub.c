@@ -19,6 +19,9 @@ multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 		//PANIC("Couldn't get a Memory map !");
 		printk(KERN_ERROR, "Couldn't get a Memory map !");
 	}
+
+    printk(KERN_INFO, "symbols from multiboot infos are 0x%x, 0x%x", mb_mmap->u.aout_sym,mb_mmap->u.elf_sec);
+
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
 	multiboot_memory_map_t* ret_entry = 0;
 	while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {

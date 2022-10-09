@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/19 19:13:08 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/09 15:35:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,23 @@
 
 //TODO: Remove when unneeded
 #include "../../io/shell/shell.h"
+
+/* Assume, as is often the case, that EBP is the first thing pushed. If not, we are in trouble. */
+struct stackframe {
+  struct stackframe* ebp;
+  uint32_t eip;
+};
+
+void getStackTrace(unsigned int MaxFrames) {
+	struct stackframe *stk;
+	asm ("movl %%ebp,%0" : "=r"(stk) ::);
+	printk(KERN_ERROR, "Stack trace: from last to first call:");
+	for(unsigned int frame = 0; stk && frame < MaxFrames; ++frame) {
+		// Unwind to previous stack frame
+		printk(KERN_ERROR, "%d : 0x%x",frame, stk->eip);
+		stk = stk->ebp;
+	}
+}
 
 /*
  * US RW  P - Description
@@ -64,6 +81,8 @@ void panic(registers_t regs, const char *message, const char *file, unsigned int
 			printk(KERN_NORMAL, "\n");
 		i++;
 	}
+	printk(KERN_NORMAL, "\n\n");
+	getStackTrace(10);
 	// Infinite loop to stop the kernel
 	for (;;);
 }
