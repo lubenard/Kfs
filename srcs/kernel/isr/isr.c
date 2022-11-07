@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/02 16:26:33 by lubenard          #+#    #+#             */
-/*   Updated: 2022/10/09 15:35:22 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/13 15:10:22 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,19 @@ struct stackframe {
   uint32_t eip;
 };
 
+char* get_address_symbol(void *addr) {
+	// TODO; Impleent when understanding how ELF works
+	(void)addr;
+	return "Undefined";
+}
+
 void getStackTrace(unsigned int MaxFrames) {
 	struct stackframe *stk;
 	asm ("movl %%ebp,%0" : "=r"(stk) ::);
 	printk(KERN_ERROR, "Stack trace: from last to first call:");
 	for(unsigned int frame = 0; stk && frame < MaxFrames; ++frame) {
 		// Unwind to previous stack frame
-		printk(KERN_ERROR, "%d : 0x%x",frame, stk->eip);
+		printk(KERN_ERROR, "%d : 0x%x %s",frame, stk->eip, get_address_symbol((void *)stk->eip));
 		stk = stk->ebp;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/03 19:38:48 by lubenard          #+#    #+#             */
-/*   Updated: 2022/08/18 01:58:53 by lubenard         ###   ########.fr       */
+/*   Updated: 2022/10/11 12:47:20 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
  * This table is mainly comming from
  * https://www.gnu.org/software/grub/manual/multiboot/html_node/Boot-information-format.html_node
  */
+
+// MULTIBOOT V0.96 BELOW
 
 typedef struct multiboot_framebuffer_palette {
 	uint32_t framebuffer_palette_addr;
