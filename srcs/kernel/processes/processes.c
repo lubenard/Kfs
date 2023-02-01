@@ -6,7 +6,7 @@
 /*   By: lubenard <lubenard@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/08/20 01:03:43 by lubenard          #+#    #+#             */
-/*   Updated: 2022/10/07 21:14:21 by lubenard         ###   ########.fr       */
+/*   Updated: 2023/01/01 21:04:48 by lubenard         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,15 @@ t_process *find_process_by_pid(unsigned long pid) {
 		if (childs != NULL) {
 			while (childs) {
 				if (childs->pid == pid) {
-					return childs;
+                    printd(KERN_WARNING, "Return pid with name %s for given pid %d", childs->name, pid);
+                    return childs;
 				}
 				childs = childs->next;
 			}
 		}
 		process = process->next;
 	}
+    printd(KERN_WARNING, "No process found for given pid %d", pid);
 	return NULL;
 }
 
@@ -68,15 +70,18 @@ t_process *find_process_by_pid(unsigned long pid) {
  * Create a process
  * Return the pid of created process
  */
-long create_process(char *name, t_process *parent, unsigned int ownerId) {
+unsigned long create_process(char *name, t_process *parent, unsigned int ownerId) {
 	t_process	*process;
 	void		*start_memory;
 
 	(void)*parent;
+    printd(KERN_INFO, "Trying to create process...");
 	if (!(process = malloc(sizeof(t_process)))) {
+        printk(KERN_WARNING, "Error while allocating memory for t_process struct");
 		return -1;
 	}
 	if ((start_memory = mmap(PAGESIZE, 0)) == 0) {
+        printk(KERN_WARNING, "Error while allocating memory for process with mmap");
 		return -1;
 	}
 	strlcpy(process->name, name, 20);
@@ -102,7 +107,9 @@ void init_processes() {
 	t_processes *processes_infos;
 
 	if (!(processes_infos = malloc(sizeof(t_processes)))) {
+		printk(KERN_WARNING, "Could not allocate memory for new processes infos stucture !");
 		return ;
 	}
 	kernel_struct->processes = processes_infos;
+    printd(KERN_INFO, "Allocated struct process %p", kernel_struct->processes);
 }

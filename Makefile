@@ -86,6 +86,8 @@ CFLAGS = -Wall -Wextra -Werror -g3\
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
 		 -fno-exceptions \
+		 -fno-pic \
+		 -fno-pie \
 		 -fno-stack-protector \
 		 -nostdlib \
 		 -nodefaultlibs \
@@ -95,9 +97,9 @@ all:  $(NAME)
 
 $(NAME): $(OBJ_ASM) $(OBJ_C)
 	@printf "\033[33mLinking of $(NAME)...\033[0m"
-	@$(CC_C) -m32 -T linker.ld -o $(NAME) -ffreestanding -O2 -nostdlib $(OBJ_ASM) $(OBJ_C) -lgcc
+	@$(CC_C) -m32 -T linker.ld -o $(NAME) -fno-pic -fno-pie -nostartfiles -no-pie -ffreestanding -O2 -nostdlib $(OBJ_ASM) $(OBJ_C) -lgcc
 	@printf "\033[32m[✓]\033[0m\n"
-	@grub-file --is-x86-multiboot $(NAME)
+	@grub-file --is-x86-multiboot2 $(NAME)
 	@mkdir -p isodir/boot/grub
 	@cp $(NAME) isodir/boot/$(NAME)
 	@cp grub.cfg isodir/boot/grub/grub.cfg

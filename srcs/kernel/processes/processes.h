@@ -62,9 +62,10 @@ typedef struct s_processes {
 }				t_processes;
 
 
-void		init_processes();
-void		register_kernel_as_process();
-t_process	*find_process_by_pid(unsigned long pid);
-void		add_signal_to_pid(unsigned long pid, unsigned short signal);
+void		        init_processes();
+unsigned long		create_process(char *name, t_process *parent, unsigned int ownerId);
+void		        register_kernel_as_process();
+t_process	        *find_process_by_pid(unsigned long pid);
+void		        add_signal_to_pid(unsigned long pid, unsigned short signal);
 
 #endif

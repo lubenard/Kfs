@@ -14,14 +14,14 @@
 #include "../../../lib/iolib.h"
 #include "../../isr/isr.h"
 
-multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
+/*multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	if (!(mb_mmap->flags & (1 << 6))) {
 		//PANIC("Couldn't get a Memory map !");
 		printk(KERN_ERROR, "Couldn't get a Memory map !");
 		return 0;
 	}
 
-    printk(KERN_INFO, "symbols from multiboot infos are 0x%x, 0x%x", mb_mmap->u.aout_sym,mb_mmap->u.elf_sec);
+    printk(KERN_INFO, "symbols from multiboot infos are 0x%x, 0x%x", mb_mmap->u.aout_sym, mb_mmap->u.elf_sec);
 
 	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
 	multiboot_memory_map_t* ret_entry = 0;
@@ -41,5 +41,4 @@ multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
 	printd(KERN_INFO, "Ram returned for memory map is [addr_low 0x%x addr_high 0x%x | Length: %d - %d | Size: %x | Type: %d]",
 				ret_entry->addr_low, ret_entry->addr_high, ret_entry->len_low, ret_entry->len_high, ret_entry->size, ret_entry->type);
 	return ret_entry;
-}
-
+}*/

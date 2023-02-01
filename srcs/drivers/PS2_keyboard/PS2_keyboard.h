@@ -13,7 +13,7 @@
 #ifndef PS2_KEYBOARD_H
 # define PS2_KEYBOARD_H
 
-# include <stdint.h>
+typedef unsigned short          uint16_t;
 
 # define DELETE_KEY 0x0E
 # define F1_KEY 0x3B

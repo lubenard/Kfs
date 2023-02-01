@@ -52,9 +52,12 @@ void display_boot_message() {
 /*
  * First kernel called function
  */
-void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
+void k_main(unsigned long magic, unsigned long addr) {
 	(void)magic;
-	(void)mb_mmap;
+	(void)addr;
+
+    /* Enable debug log via port */
+    init_com_port(0x3F8);
 
 	/* Initialize terminal interface */
 	terminal_initialize();
@@ -69,22 +72,22 @@ void k_main(multiboot_info_t* mb_mmap, unsigned int magic) {
 	init_kbd();
 
 	/* Enable memory management. Enable paging */
-	init_memory(mb_mmap);
+	//init_memory(mb_mmap);
 
-	init_processes();
+    //init_kernel_struct();
 
-	init_kernel_struct();
+	//init_processes();
 
-	/* Enable debug log via port */
-	init_com_port(0x3F8);
+	//register_kernel_as_process();
 
-	register_kernel_as_process();
+	//add_signal_to_pid(1, STATUS_WAITING);
 
-	add_signal_to_pid(1, STATUS_WAITING);
+    //create_process("Test process", find_process_by_pid(1), 0);
+    //create_process("Test process 2", find_process_by_pid(1), 0);
 
 	//display_boot_message();
 	/* Init shell management */
-	init_shell();
+	//init_shell();
 
 	// Voluntary Page fault, do not uncomment
 	/*uint32_t *ptr = (uint32_t*)0xA0000000;

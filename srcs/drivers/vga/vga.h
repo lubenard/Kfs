@@ -13,7 +13,7 @@
 #ifndef VGA_H
 # define VGA_H
 
-# include <stddef.h>
+# include "../../lib/stddef.h"
 # include <stdint.h>
 
 /* Hardware text mode color constants. */

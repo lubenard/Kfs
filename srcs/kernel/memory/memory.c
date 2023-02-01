@@ -33,7 +33,6 @@ uint32_t get_kernel_size() {
 
 #define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
 
-
 typedef uint32_t Elf32_Word;
 typedef uint32_t Elf32_Addr;
 typedef uint32_t Elf32_Off;
@@ -51,9 +50,9 @@ typedef struct {
         Elf32_Word      sh_entsize;
 } Elf32_Shdr;
 
-static inline Elf32_Shdr *elf_sheader(multiboot_elf_section_header_table_t *hdr) {
+/*static inline Elf32_Shdr *elf_sheader(multiboot_elf_section_header_table_t *hdr) {
     return (Elf32_Shdr *)((int)hdr->addr + hdr->shndx);
-}
+}*/
 
 /*static inline Elf32_Shdr *elf_section(multiboot_elf_section_header_table_t *hdr, int idx) {
     return &elf_sheader(hdr)[idx];
@@ -69,7 +68,7 @@ static inline char *elf_lookup_string(multiboot_elf_section_header_table_t *hdr,
 	return strtab + offset;
 }*/
 
-void init_memory(multiboot_info_t *mb_mmap) {
+/*void init_memory(multiboot_info_t *mb_mmap) {
 	uint32_t nframes;
 
 	multiboot_memory_map_t *map_entry = get_memory_map_from_grub(mb_mmap);
@@ -132,7 +131,7 @@ void init_memory(multiboot_info_t *mb_mmap) {
 
 	init_pd_and_map_kernel(start_pd, nframes);
 
-	/* Init physical memory manager */
+	// Init physical memory manager
 	void *start_real_memory = create_pmm_array(end_pd + 1, nframes);
 
 	(void)start_real_memory;
@@ -141,11 +140,11 @@ void init_memory(multiboot_info_t *mb_mmap) {
 
 	printk(KERN_INFO, "Memory usage is %d MB %d KB", (get_memory_infos())->used_size / MB, (get_memory_infos()->used_size % MB) / 1024);
 	// USED FOR TEST
-	/*map_page((void*)0x400000);
+	map_page((void*)0x400000);
 	// Do not cause page fault
 	uint32_t *ptr1 = (uint32_t*)0x400000;
 	uint32_t not_page_fault = *ptr1;
-	(void)not_page_fault;*/
+	(void)not_page_fault;
 
 	//unmap_page((void*)0x400000);
-}
+}*/

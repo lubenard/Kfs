@@ -1,6 +1,6 @@
 /* The bootloader will look at this image and start execution at the symbol
    designated as the entry point. */
-ENTRY(_start)
+ENTRY(start)
  
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
@@ -18,14 +18,14 @@ SECTIONS
 	   Next we'll put the .text section. */
 	.text BLOCK(4K) : ALIGN(4K)
 	{
-		*(.multiboot)
+	    KEEP(*(.multiboot))
 		*(.text)
 	}
 
 	.idt BLOCK(4K): ALIGN(4K)
 	{
 		idt = .;
-		/* . = . + 0x1000; */
+		 . = . + 0x1000;
 	}
 
 	/* Read-only data. */

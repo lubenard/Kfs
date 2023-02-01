@@ -13,7 +13,8 @@
 #ifndef STRLIB_H
 # define STRLIB_H
 
-# include <stddef.h>
+# include "stddef.h"
+
 size_t	strlen(const char *str);
 int		isalpha(int c);
 int		strchri(const char *s, int c);

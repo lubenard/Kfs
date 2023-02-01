@@ -13,8 +13,6 @@
 #ifndef VMM_H
 # define VMM_H
 
-# include <stddef.h>
-
 void munmap(void *ptr, unsigned int size);
 void *mmap(unsigned int size, int flags);
 

@@ -13,7 +13,7 @@
 #ifndef MEMORY_H
 # define MEMORY_H
 
-# include <stdint.h>
+# include "grub/grub.h"
 
 # define INDEX_FROM_BIT(a) (a / (8 * 4))
 # define OFFSET_FROM_BIT(a) (a % (8 * 4))
@@ -31,7 +31,7 @@
  * See more here :
  * https://stackoverflow.com/questions/3186008/in-c-what-does-a-colon-mean-inside-a-declaration
  */
-typedef struct page {
+/*typedef struct page {
 	uint32_t present    : 1;   // Page present in memory
 	uint32_t rw         : 1;   // Read-only if clear, readwrite if set
 	uint32_t user       : 1;   // Supervisor level only if clear
@@ -39,7 +39,7 @@ typedef struct page {
 	uint32_t dirty      : 1;   // Has the page been written to since last refresh?
 	uint32_t unused     : 7;   // Amalgamation of unused and reserved bits
 	uint32_t frame      : 20;  // Frame address (shifted right 12 bits)
-} page_t;
+} page_t; */
 
 typedef struct s_memory_infos {
 	// Thoses values are in bytes;
@@ -47,12 +47,12 @@ typedef struct s_memory_infos {
 	unsigned long used_size;
 } t_memory_infos;
 
-void init_memory();
+//void init_memory(multiboot_info_t *mb_mmap);
 void init_memory_infos();
 
 void map_page(void *addr);
 void unmap_page(void *addr);
-void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
+//void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
 int check_mapping(void *addr);
 
 

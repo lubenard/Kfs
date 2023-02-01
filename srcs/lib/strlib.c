@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
 #include "../kernel/memory/vmm/malloc/malloc.h"
+#include "stddef.h"
 
 size_t strlen(const char *str)
 {

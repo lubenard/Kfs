@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdint.h>
 #include "../../kernel/isr/isr.h"
 #include "../../drivers/vga/vga.h"
 #include "../../io/io.h"
