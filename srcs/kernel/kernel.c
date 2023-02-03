@@ -72,13 +72,13 @@ void k_main(unsigned long magic, unsigned long addr) {
 	init_kbd();
 
 	/* Enable memory management. Enable paging */
-	//init_memory(mb_mmap);
+	init_memory(addr);
 
-    //init_kernel_struct();
+    init_kernel_struct();
 
-	//init_processes();
+	init_processes();
 
-	//register_kernel_as_process();
+	register_kernel_as_process();
 
 	//add_signal_to_pid(1, STATUS_WAITING);
 

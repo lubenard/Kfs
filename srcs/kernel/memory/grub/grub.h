@@ -13,198 +13,83 @@
 #ifndef GRUB_H
 # define GRUB_H
 
-#define MULTIBOOT_MEMORY_AVAILABLE              1
-#define MULTIBOOT_MEMORY_RESERVED               2
-#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
-#define MULTIBOOT_MEMORY_NVS                    4
-#define MULTIBOOT_MEMORY_BADRAM                 5
-
-/*
- * This table is mainly comming from
- * https://www.gnu.org/software/grub/manual/multiboot/html_node/Boot-information-format.html_node
- */
-
-// MULTIBOOT V0.96 BELOW
-
-/*typedef struct multiboot_framebuffer_palette {
-	uint32_t framebuffer_palette_addr;
-	uint16_t framebuffer_palette_num_colors;
-}			multiboot_framebuffer_palette_t;
-
-typedef struct multiboot_framebuffer {
-	uint8_t framebuffer_red_field_position;
-	uint8_t framebuffer_red_mask_size;
-	uint8_t framebuffer_green_field_position;
-	uint8_t framebuffer_green_mask_size;
-	uint8_t framebuffer_blue_field_position;
-	uint8_t framebuffer_blue_mask_size;
-}			multiboot_framebuffer_t; */
-
-/* The symbol table for a.out. */
-/*typedef struct multiboot_aout_symbol_table {
-	uint32_t tabsize;
-	uint32_t strsize;
-	uint32_t addr;
-	uint32_t reserved;
-}			multiboot_aout_symbol__SIZE_TYPE___table_t; */
-
-/* The section header table for ELF. */
-/*typedef struct multiboot_elf_section_header_table {
-	uint32_t num;__SIZE_TYPE____SIZE_TYPE__
-	uint32_t size;
-	uint32_t addr;
-	uint32_t shndx;
-}			multiboot_elf_section_header_table_t; */
-
-/* This pointer for this struct is supposed to be in framebuffer_palette_addr */
-/*struct multiboot_color {
-    multiboot_uint8_t red;
-    multiboot_uint8_t green;
-    multiboot_uint8_t blue;
-};*/
-
-// typedef struct multiboot_info {
-	/* Multiboot info version number */
-//	uint32_t flags;
-
-	/* Available memory from BIOS */
-//	uint32_t mem_lower;__SIZE_TYP__SIZE_TYPE__E__
-//	uint32_t mem_upper;
-
-	/* "root" partition */
-//	uint32_t boot_device;
-
-	/* Kernel command line */
-//	uint32_t cmdline;__SIZE_TYPE__
-
-	/* Boot-Module list */
-//	uint32_t mods_count;
-//	uint32_t mods_addr;__SIZE_TYPE__
-
-/*	union {
-		multiboot_aout_symbol_tab__SIZE_TYPE__le_t aout_sym;
-		multiboot_elf_section_header_table_t elf_sec;
-	} u; */
-
-	/* Memory Mapping buffer */
-//	uint32_t mmap_length;
-//	uint32_t mmap_addr;
-
-	/* Drive Info buffer */
-//	uint32_t drives_length;
-//	uint32_t drives_addr;
-
-	/* ROM configuration table */
-//	uint32_t config_table;
-
-	/* Boot Loader Name */
-//	uint32_t boot_loader_name;
-
-	/* APM table */
-//	uint32_t apm_table;
-
-	/* Video */
-/*	uint32_t vbe_control_info;__S__SIZE_TYPE____SIZE_TYPE____SIZE_TYPE__IZE_TYPE__
-	uint32_t vbe_mode_info;
-	uint16_t vbe_mode;
-	uint16_t vbe_interface_seg;
-	uint16_t vbe_interface_off;
-	uint16_t vbe_interface_len;__SIZE_TYPE__
-
-	uint64_t framebuffer_addr;
-	uint32_t framebuffer_pitch;
-	uint32_t framebuffer_width;
-	uint32_t framebuffer_height;
-	uint8_t framebuffer_bpp;
-	uint8_t framebuffer_type;
-
-	union {
-		multiboot_framebuffer_palette_t framebuffer_palette;
-		multiboot_framebuffer_t framebuffer;
-	};
-} multiboot_info_t; */
-
-/*struct multiboot_mmap_entry {
-	uint32_t size;
-	// This is a splitted uint64_t
-	uint32_t addr_low;
-	uint32_t addr_high;
-	// This is a splitted uint64_t
-	uint32_t len_low;
-	uint32_t len_high;
-	uint32_t type;
-} __attribute__((packed));
-typedef struct multiboot_mmap_entry multiboot_memory_map_t; */
-
-//multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap);
-
-/* Grub v2.0 specifications */
-/*  How many bytes from the start__SIZE_TYPE__ of the file we search for the header. */
-#define MULTIBOOT_SEARCH                        32768
-#define MULTIBOOT_HEADER_ALIGN                  8
+/* Multiboot v2.0 specifications */
+/*  How many bytes from the start of the file we search for the header. */
+# define MULTIBOOT_SEARCH                        32768
+# define MULTIBOOT_HEADER_ALIGN                  8
 
 /*  The magic field should contain this. */
-#define MULTIBOOT2_HEADER_MAGIC                 0xe85250d6
+# define MULTIBOOT2_HEADER_MAGIC                 0xe85250d6
 
 /*  This should be in %eax. */
-#define MULTIBOOT2_BOOTLOADER_MAGIC             0x36d76289
+# define MULTIBOOT2_BOOTLOADER_MAGIC             0x36d76289
 
 /*  Alignment of multiboot modules. */
-#define MULTIBOOT_MOD_ALIGN                     0x00001000
+# define MULTIBOOT_MOD_ALIGN                     0x00001000
 
-/*  Alignment of the multiboot in__SIZE_TYPE__fo structure. */
-#define MULTIBOOT_INFO_ALIGN     __SIZE_TYPE__               0x00000008
+/*  Alignment of the multiboot info structure. */
+# define MULTIBOOT_INFO_ALIGN                    0x00000008
 
 /*  Flags set in the 'flags' member of the multiboot header. */
 
-#define MULTIBOOT_TAG_ALIGN                  8
-#define MULTIBOOT_TAG_TYPE_END               0
-#define MULTIBOOT_TAG_TYPE_CMDLINE           1
-#define MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME  2
-#define MULTIBOOT_TAG_TYPE_MODULE            3
-#define MULTIBOOT_TAG_TYPE_BASIC___SIZE_TYPE__MEMINFO     4
-#define MULTIBOOT_TAG_TYPE_BOOTDEV           5
-#define MULTIBOOT_TAG_TYPE_MMAP              6
-#define MULTIBOOT_TAG_TYPE_VBE               7
-#define MULTIBOOT_TAG_TYPE_FRAMEBUFFER       8
-#define MULTIBOOT_TAG_TYPE_ELF_SECTIONS      9
-#define MULTIBOOT_TAG_TYPE_APM               10
-#define MULTIBOOT_TAG_TYPE_EFI32 __SIZE_TYPE__            11
-#define MULTIBOOT_TAG_TYPE_EFI64             12
-#define MULTIBOOT_TAG_TYPE_SMBIOS            13
-#define MULTIBOOT_TAG_TYPE_ACPI_OLD          14
-#define MULTIBOOT_TAG_TYPE_ACPI_NEW          15
-#define MULTIBOOT_TAG_TYPE_NETWORK           16
-#define MULTIBOOT_TAG_TYPE_EFI_MMAP          17
-#define MULTIBOOT_TAG_TYPE_EFI_BS            18
-#define MULTIBOOT_TAG_TYPE_EFI32_IH          19
-#define MULTIBOOT_TAG_TYPE_EFI64_IH          20
-#define MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR    21
+# define MULTIBOOT_TAG_ALIGN                  8
+# define MULTIBOOT_TAG_TYPE_END               0
+# define MULTIBOOT_TAG_TYPE_CMDLINE           1
+# define MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME  2
+# define MULTIBOOT_TAG_TYPE_MODULE            3
+# define MULTIBOOT_TAG_TYPE_BASIC_MEMINFO     4
+# define MULTIBOOT_TAG_TYPE_BOOTDEV           5
+# define MULTIBOOT_TAG_TYPE_MMAP              6
+# define MULTIBOOT_TAG_TYPE_VBE               7
+# define MULTIBOOT_TAG_TYPE_FRAMEBUFFER       8
+# define MULTIBOOT_TAG_TYPE_ELF_SECTIONS      9
+# define MULTIBOOT_TAG_TYPE_APM               10
+# define MULTIBOOT_TAG_TYPE_EFI32             11
+# define MULTIBOOT_TAG_TYPE_EFI64             12
+# define MULTIBOOT_TAG_TYPE_SMBIOS            13
+# define MULTIBOOT_TAG_TYPE_ACPI_OLD          14
+# define MULTIBOOT_TAG_TYPE_ACPI_NEW          15
+# define MULTIBOOT_TAG_TYPE_NETWORK           16
+# define MULTIBOOT_TAG_TYPE_EFI_MMAP          17
+# define MULTIBOOT_TAG_TYPE_EFI_BS            18
+# define MULTIBOOT_TAG_TYPE_EFI32_IH          19
+# define MULTIBOOT_TAG_TYPE_EFI64_IH          20
+# define MULTIBOOT_TAG_TYPE_LOAD_BASE_ADDR    21
 
-#define MULTIBOOT_HEADER_TAG_END  0
-#define MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST  1
-#define MULTIBOOT_HEADER_TAG_ADDRESS  2
-#define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS  3
-#define MULTIBOOT_HEADER_TAG_CONSOLE_FLAGS  4
-#define MULTIBOOT_HEADER_TAG_FRAMEBUFFER  5
-#define MULTIBOOT_HEADER_TAG_MODULE_ALIGN  6
-#define MULTIBOOT_HEADER_TAG_EFI_BS        7
-#define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS_EFI32  8
-#define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS_EFI64  9
-#define MULTIBOOT_HEADER_TAG_RELOCATABLE  10
+# define MULTIBOOT_HEADER_TAG_END  0
+# define MULTIBOOT_HEADER_TAG_INFORMATION_REQUEST  1
+# define MULTIBOOT_HEADER_TAG_ADDRESS  2
+# define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS  3
+# define MULTIBOOT_HEADER_TAG_CONSOLE_FLAGS  4
+# define MULTIBOOT_HEADER_TAG_FRAMEBUFFER  5
+# define MULTIBOOT_HEADER_TAG_MODULE_ALIGN  6
+# define MULTIBOOT_HEADER_TAG_EFI_BS        7
+# define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS_EFI32  8
+# define MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS_EFI64  9
+# define MULTIBOOT_HEADER_TAG_RELOCATABLE  10
 
-#define MULTIBOOT_ARCHITECTURE_I386  0
-#define MULTIBOOT_ARCHITECTURE_MIPS32  4
-#define MULTIBOOT_HEADER_TAG_OPTIONAL 1
+# define MULTIBOOT_ARCHITECTURE_I386  0
+# define MULTIBOOT_ARCHITECTURE_MIPS32  4
+# define MULTIBOOT_HEADER_TAG_OPTIONAL 1
 
-#define MULTIBOOT_LOAD_PREFERENCE_NONE 0
-#define MULTIBOOT_LOAD_PREFERENCE_LOW 1
-#define MULTIBOOT_LOAD_PREFERENCE_HIGH 2
+# define MULTIBOOT_LOAD_PREFERENCE_NONE 0
+# define MULTIBOOT_LOAD_PREFERENCE_LOW 1
+# define MULTIBOOT_LOAD_PREFERENCE_HIGH 2
 
-#define MULTIBOOT_CONSOLE_FLAGS_CONSOLE_REQUIRED 1
-#define MULTIBOOT_CONSOLE_FLAGS_EGA_TEXT_SUPPORTED 2
+# define MULTIBOOT_CONSOLE_FLAGS_CONSOLE_REQUIRED 1
+# define MULTIBOOT_CONSOLE_FLAGS_EGA_TEXT_SUPPORTED 2
 
-#ifndef ASM_FILE
+# define MULTIBOOT_MEMORY_AVAILABLE              1
+# define MULTIBOOT_MEMORY_RESERVED               2
+# define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
+# define MULTIBOOT_MEMORY_NVS                    4
+# define MULTIBOOT_MEMORY_BADRAM                 5
+
+# define MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED 0
+# define MULTIBOOT_FRAMEBUFFER_TYPE_RGB     1
+# define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT     2
+
+# ifndef ASM_FILE
 
 typedef unsigned char           multiboot_uint8_t;
 typedef unsigned short          multiboot_uint16_t;
@@ -297,13 +182,12 @@ struct multiboot_header_tag_relocatable
 
 struct multiboot2_mmap_entry
 {
-    multiboot_uint64_t addr;
-    multiboot_uint64_t len;
-#define MULTIBOOT_MEMORY_AVAILABLE              1
-#define MULTIBOOT_MEMORY_RESERVED               2
-#define MULTIBOOT_MEMORY_ACPI_RECLAIMABLE       3
-#define MULTIBOOT_MEMORY_NVS                    4
-#define MULTIBOOT_MEMORY_BADRAM                 5
+    // This is a splitted uint64_t
+    multiboot_uint32_t addr_low;
+    multiboot_uint32_t addr_high;
+    // This is a splitted uint64_t
+    multiboot_uint32_t len_low;
+    multiboot_uint32_t len_high;
     multiboot_uint32_t type;
     multiboot_uint32_t zero;
 };
@@ -397,9 +281,6 @@ struct multiboot_tag_framebuffer_common
     multiboot_uint32_t framebuffer_width;
     multiboot_uint32_t framebuffer_height;
     multiboot_uint8_t framebuffer_bpp;
-#define MULTIBOOT_FRAMEBUFFER_TYPE_INDEXED 0
-#define MULTIBOOT_FRAMEBUFFER_TYPE_RGB     1
-#define MULTIBOOT_FRAMEBUFFER_TYPE_EGA_TEXT     2
     multiboot_uint8_t framebuffer_type;
     multiboot_uint16_t reserved;
 };
@@ -527,6 +408,8 @@ struct multiboot_tag_load_base_addr
     multiboot_uint32_t load_base_addr;
 };
 
-#endif
+# endif
+
+multiboot2_memory_map_t *get_memory_map_from_grub(struct multiboot_tag *tag);
 
 #endif

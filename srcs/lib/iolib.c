@@ -62,6 +62,5 @@ void serial_write(uint16_t port, const char *string, size_t n) {
    }
 }
 void serial_writestring(uint16_t port, const char *string) {
-
    serial_write(port, string, strlen(string));
 }

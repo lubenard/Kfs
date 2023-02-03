@@ -12,33 +12,45 @@
 
 #include "grub.h"
 #include "../../../lib/iolib.h"
-#include "../../isr/isr.h"
 
-/*multiboot_memory_map_t *get_memory_map_from_grub(multiboot_info_t *mb_mmap) {
-	if (!(mb_mmap->flags & (1 << 6))) {
-		//PANIC("Couldn't get a Memory map !");
-		printk(KERN_ERROR, "Couldn't get a Memory map !");
-		return 0;
-	}
+static const char *memory_status_str[] = {
+        "Available", "Reserved", "ACPI Reclaimable", "NVS", "Bad Ram",
+};
 
-    printk(KERN_INFO, "symbols from multiboot infos are 0x%x, 0x%x", mb_mmap->u.aout_sym, mb_mmap->u.elf_sec);
+multiboot2_memory_map_t *get_memory_map_from_grub(struct multiboot_tag *tag) {
+    multiboot2_memory_map_t *mmap;
+    multiboot2_memory_map_t *ret_entry = 0;
 
-	multiboot_memory_map_t* entry = (multiboot_memory_map_t*)mb_mmap->mmap_addr;
-	multiboot_memory_map_t* ret_entry = 0;
-	while (entry < ((multiboot_memory_map_t*)mb_mmap->mmap_addr + mb_mmap->mmap_length)) {
-		printd(KERN_INFO, "Ram detected @ entry %p : addr_low 0x%x addr_high 0x%x | Length: %u - %u | Size: %x | Type: %d", entry,
-				entry->addr_low, entry->addr_high, entry->len_low, entry->len_high, entry->size, entry->type);
-		// We do not want to detect 'Low Memory', cause it is there that are used vga buffers, etc
-		if (entry->type == 1 && (entry->addr_low != 0 || entry->addr_high != 0)) {
-			printd(KERN_INFO, "Ram ok @ addr_low 0x%x addr_high 0x%x | Length: %u - %u | Size: %x | Type: %d",
-				entry->addr_low, entry->addr_high, entry->len_low, entry->len_high, entry->size, entry->type);
+    printd(KERN_INFO, "Getting memory map:");
 
-			if (!ret_entry && entry->type == MULTIBOOT_MEMORY_AVAILABLE && (entry->addr_low != 0 || entry->addr_high != 0))
-				ret_entry = entry;
-		}
-		entry = (multiboot_memory_map_t*) ((unsigned int) entry + entry->size + sizeof(entry->size));
-	}
-	printd(KERN_INFO, "Ram returned for memory map is [addr_low 0x%x addr_high 0x%x | Length: %d - %d | Size: %x | Type: %d]",
-				ret_entry->addr_low, ret_entry->addr_high, ret_entry->len_low, ret_entry->len_high, ret_entry->size, ret_entry->type);
-	return ret_entry;
-}*/
+    for (mmap = ((struct multiboot_tag_mmap *) tag)->entries;
+        (multiboot_uint8_t *) mmap < (multiboot_uint8_t *) tag + tag->size;
+        mmap = (multiboot2_memory_map_t *) ((unsigned long) mmap + ((struct multiboot_tag_mmap *) tag)->entry_size)) {
+
+        printd(KERN_NORMAL, " Ram detected @ entry %p : addr_low 0x%x addr_high 0x%x | Length: %u - %u | Type: %s | ",
+               mmap,
+               (unsigned) (mmap->addr_low & 0xffffffff),
+               (unsigned) (mmap->addr_high),
+               (unsigned) (mmap->len_low & 0xffffffff),
+               (unsigned) (mmap->len_high),
+               memory_status_str[(unsigned) (mmap->type) - 1]);
+
+        // We do not want to detect 'Low Memory', because it is there that are used vga buffers, etc
+        if ((unsigned) (mmap->type) == MULTIBOOT_MEMORY_AVAILABLE && ((unsigned) (mmap->addr_low & 0xffffffff) != 0 || (unsigned) (mmap->addr_high) != 0)) {
+            printd(KERN_NORMAL, "Ram OK\n");
+
+            if (!ret_entry)
+                ret_entry = mmap;
+
+        } else {
+            printd(KERN_NORMAL, "Ram Not OK\n");
+        }
+
+    }
+    if (ret_entry != 0)
+        printd(KERN_INFO, "Ram returned for memory map is [addr_low 0x%x addr_high 0x%x | Length: %u - %u | Type: %s]",
+           (unsigned) (ret_entry->addr_low & 0xffffffff), ret_entry->addr_high, (unsigned) (ret_entry->len_low & 0xffffffff), ret_entry->len_high, memory_status_str[(unsigned) (ret_entry->type) - 1]);
+    else
+        printk(KERN_ERROR, "COULD NOT GET MEMORY SPACE, ABORT");
+    return ret_entry;
+}
