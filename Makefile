@@ -65,7 +65,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  io/shell/builtins/top.c \
 			  kernel/memory/memory.c \
 			  kernel/memory/memory_infos.c \
-			  kernel/memory/grub/grub.c \
+			  kernel/grub/grub.c \
+			  kernel/debug/debug.c \
 			  kernel/memory/page_directory.c \
 			  kernel/memory/pmm/pmm.c \
 			  kernel/memory/vmm/vmm.c \

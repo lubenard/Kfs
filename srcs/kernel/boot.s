@@ -28,25 +28,25 @@ section .multiboot
         dd LENGTH ; Length
         dd CHECKSUM   ; checksum of above, to prove we are multiboot
 
-;    align 8
-;    entry_address_tag:
-;    	dw 3 ; MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS
-;    	dw 1
-;    	dd (entry_address_tag_end - entry_address_tag)
-;    	dd start
-;    entry_address_tag_end:
-
-;    align 8
-;    framebuffer_tag_start:
-;        dw 5 ; MULTIBOOT_HEADER_TAG_FRAMEBUFFER
-;        dw 1 ; MULTIBOOT_HEADER_TAG_OPTIONAL
-;        dd framebuffer_tag_end - framebuffer_tag_start
-;        dd 1024
-;        dd 768
-;        dd 32
-;    framebuffer_tag_end:
+    align 8
+    entry_address_tag:
+    	dw 3 ; MULTIBOOT_HEADER_TAG_ENTRY_ADDRESS
+    	dw 1
+    	dd (entry_address_tag_end - entry_address_tag)
+    	dd start
+    entry_address_tag_end:
 
     ;align 8
+    ;framebuffer_tag_start:
+    ;    dw 5 ; MULTIBOOT_HEADER_TAG_FRAMEBUFFER
+    ;    dw 1 ; MULTIBOOT_HEADER_TAG_OPTIONAL
+    ;    dd framebuffer_tag_end - framebuffer_tag_start
+    ;    dd 1024
+    ;    dd 768
+    ;    dd 32
+    ;framebuffer_tag_end:
+
+    align 8
     dw 0 ; MULTIBOOT_HEADER_TAG_END
     dw 0
     dd 8
@@ -99,7 +99,7 @@ section .multiboot
 	    ;push ebx
 
 	    ; We need to setup ebp to null to avoid running into gargabe when getting stacktrace
-	    ;xor ebp, ebp       ; Set %ebp to NULL
+	    xor ebp, ebp       ; Set %ebp to NULL
 
 	    ; Enter the high-level kernel. The ABI requires the stack is 16-byte
 	    ; aligned at the time of the call instruction (which afterwards pushes
@@ -108,10 +108,6 @@ section .multiboot
 	    ; stack since (pushed 0 bytes so far) and the alignment is thus
 	    ; preserved and the call is well defined.
 	    ; note, that if you are building on Windows, C functions may have "_" prefix in assembly: _kernel_main
-	    ;extern k_main
-	    ;call k_main
-
-	    ; v2
 
         ;  Reset EFLAGS. */
         push   0

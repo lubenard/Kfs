@@ -38,6 +38,7 @@ void getStackTrace(unsigned int MaxFrames) {
 	for(unsigned int frame = 0; stk && frame < MaxFrames; ++frame) {
 		// Unwind to previous stack frame
 		printk(KERN_ERROR, "%d : 0x%x %s",frame, stk->eip, get_address_symbol((void *)stk->eip));
+
 		stk = stk->ebp;
 	}
 }

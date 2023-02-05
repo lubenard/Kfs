@@ -410,6 +410,7 @@ struct multiboot_tag_load_base_addr
 
 # endif
 
+void get_grub_boot_info(unsigned long addr);
 multiboot2_memory_map_t *get_memory_map_from_grub(struct multiboot_tag *tag);
 
 #endif

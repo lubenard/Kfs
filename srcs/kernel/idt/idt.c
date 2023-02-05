@@ -15,6 +15,8 @@
 #include "../../lib/memlib.h"
 #include "../../io/io.h"
 #include "../isr/irqs/irqs.h"
+#include "../../io/shell/builtins/builtins.h"
+
 
 struct idt_ptr_struct idt_ptr;
 struct idt32 idt_entries[256];
@@ -127,5 +129,7 @@ void init_idt()
 
 	/* Init rtc to get date from bios */
 	init_rtc();
+
+    date(0);
 }
 

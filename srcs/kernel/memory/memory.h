@@ -13,7 +13,7 @@
 #ifndef MEMORY_H
 # define MEMORY_H
 
-# include "grub/grub.h"
+# include "../grub/grub.h"
 # include <stdint.h>
 
 # define INDEX_FROM_BIT(a) (a / (8 * 4))
@@ -48,7 +48,7 @@ typedef struct s_memory_infos {
 	unsigned long used_size;
 } t_memory_infos;
 
-void init_memory(unsigned long addr);
+void init_memory(multiboot2_memory_map_t *map_entry);
 void init_memory_infos();
 
 void map_page(void *addr);

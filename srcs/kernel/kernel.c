@@ -17,7 +17,7 @@
 #include "../drivers/PS2_keyboard/PS2_keyboard.h"
 #include "../io/shell/shell.h"
 #include "memory/memory.h"
-#include "memory/grub/grub.h"
+#include "grub/grub.h"
 #include "../lib/iolib.h"
 #include "../lib/memlib.h"
 #include "memory/vmm/malloc/malloc.h"
@@ -71,8 +71,11 @@ void k_main(unsigned long magic, unsigned long addr) {
 	/* Init kbd management */
 	init_kbd();
 
-	/* Enable memory management. Enable paging */
-	init_memory(addr);
+    // Parse infos received by Multiboot Standart and Grub.
+    // Also start:
+    // - Memory management. Enable paging
+    // - Debugging info.
+    get_grub_boot_info(addr);
 
     init_kernel_struct();
 
@@ -90,9 +93,9 @@ void k_main(unsigned long magic, unsigned long addr) {
 	//init_shell();
 
 	// Voluntary Page fault, do not uncomment
-	/*uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t *ptr = (uint32_t*)0xA0000000;
 	uint32_t do_page_fault = *ptr;
-	(void)do_page_fault;*/
+	(void)do_page_fault;
 	//asm volatile ("int $0xE");
 
 	while (1) {}
