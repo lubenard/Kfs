@@ -18,6 +18,7 @@
 
 //TODO: Remove when unneeded
 #include "../../io/shell/shell.h"
+#include "../debug/debug.h"
 
 /* Assume, as is often the case, that EBP is the first thing pushed. If not, we are in trouble. */
 struct stackframe {
@@ -28,6 +29,9 @@ struct stackframe {
 char* get_address_symbol(void *addr) {
 	// TODO; Impleent when understanding how ELF works
 	(void)addr;
+
+    get_symbol_from_address(addr);
+
 	return "Undefined";
 }
 

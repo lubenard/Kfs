@@ -20,7 +20,7 @@ typedef struct Elf32_Shdr_s {
     uint32_t      sh_type;
     uint32_t      sh_flags;
     uint32_t      sh_addr;
-    uint32_t       sh_offset;
+    uint32_t      sh_offset;
     uint32_t      sh_size;
     uint32_t      sh_link;
     uint32_t      sh_info;
@@ -37,7 +37,7 @@ typedef struct Elf32_Sym_s {
     uint16_t		st_shndx;
 } Elf32_Sym_t;
 
-void init_debugging_infos(struct multiboot_tag *tag);
-
+void init_debugging_infos(multiboot_tag_t *tag);
+void get_symbol_from_address(void *addr);
 
 #endif //KFS_DEBUG_H

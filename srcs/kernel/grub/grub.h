@@ -199,11 +199,11 @@ struct multiboot_color {
     multiboot_uint8_t blue;
 };
 
-struct multiboot_tag
+typedef struct multiboot_tag
 {
     multiboot_uint32_t type;
     multiboot_uint32_t size;
-};
+}       multiboot_tag_t;
 
 struct multiboot_tag_string
 {
