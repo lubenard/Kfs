@@ -33,7 +33,7 @@ void register_kernel_as_process() {
 	process->status = STATUS_RUN;
 	process->ownerId = 0;
 	process->signals = NULL;
-	printk(KERN_INFO, "Process created at %p", process);
+	printd(KERN_INFO, "Kernel Process created at %p, pid %d", process, process->pid);
 	kernel_struct->processes->processes_list = process;
 }
 
@@ -74,7 +74,12 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
 	t_process	*process;
 	void		*start_memory;
 
-	(void)*parent;
+    (void)*parent;
+    if (last_pid + 1 > MAX_PID) {
+        printk(KERN_ERROR, "Cannot create more processes ! Process limit have been reached !");
+        return 0;
+    }
+
     printd(KERN_INFO, "Trying to create process...");
 	if (!(process = malloc(sizeof(t_process)))) {
         printk(KERN_WARNING, "Error while allocating memory for t_process struct");
@@ -90,7 +95,8 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
 	process->stack_size = PAGESIZE;
 	process->status = STATUS_RUN;
 	process->ownerId = ownerId;
-	return process->pid;
+    printk(KERN_INFO, "Process created at %p, id %d", process, process->pid);
+    return process->pid;
 }
 
 void destroy_process(unsigned int pid) {

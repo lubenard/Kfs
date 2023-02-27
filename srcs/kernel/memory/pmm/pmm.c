@@ -71,20 +71,22 @@ void *pmm_next_fit(unsigned int size, int flags) {
 	}
 	while (pmm_infos->pmm_last_index != pmm_infos->pmm_page_number) {
 		if (pmm_array[pmm_infos->pmm_last_index + available_pages] == PMM_BLOCK_FREE) {
-			printd(KERN_INFO, "Bloc a index %d is free, available_pages %d / %d", pmm_infos->pmm_last_index + available_pages, available_pages + 1, wanted_page_number);
+			printd(KERN_INFO, "Bloc a index (%d + %d)=%d/%d is free, available_pages %d / %d", pmm_infos->pmm_last_index, available_pages, pmm_infos->pmm_last_index + available_pages, pmm_infos->pmm_page_number, available_pages + 1, wanted_page_number);
 			available_pages++;
 		} else {
-			available_pages = 0;
-			pmm_infos->pmm_last_index++;
-			if (pmm_infos->pmm_last_index > pmm_infos->pmm_page_number)
-				pmm_infos->pmm_last_index = 0;
-			printd(KERN_INFO, "Reset infos");
+            printd(KERN_INFO, "Bloc a index %d/%d is occupied, reset research", pmm_infos->pmm_last_index + available_pages, pmm_infos->pmm_page_number);
+            available_pages = 0;
+            pmm_infos->pmm_last_index++;
+            if (pmm_infos->pmm_last_index > pmm_infos->pmm_page_number) {
+                pmm_infos->pmm_last_index = 0;
+            }
 		}
 
 		if (available_pages == wanted_page_number) {
 			for (unsigned int j = 0; j < wanted_page_number; j++) {
-				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j + 1, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
-				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
+				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j + 1, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (0x1000 * (j + pmm_infos->pmm_last_index)));
+				printd(KERN_INFO, "%p + (4096 * %d + %d) = %p", pmm_infos->pmm_memory_start, j, pmm_infos->pmm_last_index, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
+				map_page((char*)pmm_infos->pmm_memory_start + (0x1000 * (j + pmm_infos->pmm_last_index)));
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
 			pmm_infos->available_pages_number -= wanted_page_number;

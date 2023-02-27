@@ -74,14 +74,14 @@ void map_page(void *addr) {
 
 	unsigned long pdindex = (unsigned long)addr >> 22;
 	unsigned long ptindex = (unsigned long)addr >> 12 & 0x03FF;
-	printd(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
+	printd(KERN_INFO, "%p -> PD : %d/1024, PT : %d/1024", addr, pdindex, ptindex);
 
 	k = pdindex * 1024;
 	uint32_t *page_table = (uint32_t*)page_directory_start + k;
 
 	if (page_directory[pdindex] & (1 << 0)) {
 		printd(KERN_INFO, "Page directory index present");
-		printd(KERN_INFO, "Page table should be located at %p, origninaly %p", page_table, page_directory[pdindex]);
+		printd(KERN_INFO, "Page table should be located at %p, originally %p", page_table, page_directory[pdindex]);
 		if (page_table[ptindex] & (1 << 0)) {
 			printd(KERN_WARNING, "Map page : ptindex present, page already mapped");
 			return ;

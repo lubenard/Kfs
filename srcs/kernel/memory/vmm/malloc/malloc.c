@@ -113,8 +113,8 @@ t_alloc *should_split(size_t tmp_value, size_t size) {
 }
 
 void	*real_malloc(size_t size) {
-	t_alloc *return_node_ptr = 0;
-	t_alloc *tmp_g_curr_node = 0;
+	t_alloc *return_node_ptr;
+	t_alloc *tmp_g_curr_node;
 	t_alloc *tmp2_g_curr_node = 0;
 
 	if (size == 0)

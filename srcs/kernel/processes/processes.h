@@ -14,6 +14,8 @@
 #ifndef PROCESSES_H
 # define PROCESSES_H
 
+# define MAX_PID 32768
+
 # define SIGHUP 1
 # define SIGINT 2
 # define SIGQUIT 3
