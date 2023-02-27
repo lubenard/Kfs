@@ -14,6 +14,7 @@
 # define DEBUG_H
 
 #include "../../lib/iolib.h"
+#include "../grub/grub.h"
 
 typedef struct Elf32_Shdr_s {
     uint32_t      sh_name;
@@ -38,6 +39,6 @@ typedef struct Elf32_Sym_s {
 } Elf32_Sym_t;
 
 void init_debugging_infos(multiboot_tag_t *tag);
-void get_symbol_from_address(void *addr);
+char *get_symbol_from_address(void *addr);
 
 #endif //KFS_DEBUG_H

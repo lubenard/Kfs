@@ -92,7 +92,8 @@ CFLAGS = -Wall -Wextra -Werror -g3\
 		 -fno-stack-protector \
 		 -nostdlib \
 		 -nodefaultlibs \
-		 -mgeneral-regs-only
+		 -mgeneral-regs-only \
+		 -fno-omit-frame-pointer
 
 all:  $(NAME)
 

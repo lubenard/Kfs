@@ -26,22 +26,19 @@ struct stackframe {
   uint32_t eip;
 };
 
-char* get_address_symbol(void *addr) {
-	// TODO; Impleent when understanding how ELF works
-	(void)addr;
-
-    get_symbol_from_address(addr);
-
-	return "Undefined";
-}
-
 void getStackTrace(unsigned int MaxFrames) {
 	struct stackframe *stk;
 	asm ("movl %%ebp,%0" : "=r"(stk) ::);
 	printk(KERN_ERROR, "Stack trace: from last to first call:");
-	for(unsigned int frame = 0; stk && frame < MaxFrames; ++frame) {
+	for (unsigned int frame = 0; stk && frame < MaxFrames; ++frame) {
 		// Unwind to previous stack frame
-		printk(KERN_ERROR, "%d : 0x%x %s",frame, stk->eip, get_address_symbol((void *)stk->eip));
+        char *symbol = get_symbol_from_address((void *)stk->eip);
+
+        if (symbol != 0) {
+            printk(KERN_ERROR, "%d : 0x%x %s",frame, stk->eip, symbol);
+        } else {
+            printd(KERN_ERROR, "%d : 0x%x %s",frame, stk->eip, (symbol == 0) ? "Undefined" : symbol);
+        }
 
 		stk = stk->ebp;
 	}
