@@ -39,6 +39,7 @@ t_kernel *get_kernel_struct() {
 }
 
 void init_kernel_struct() {
+    printd(KERN_INFO, "init_kernel_struct()");
 	if (!(kernel_struct = malloc(sizeof(t_kernel)))) {
 		return;
 	}
@@ -93,10 +94,11 @@ void k_main(unsigned long magic, unsigned long addr) {
 	//init_shell();
 
 	// Voluntary Page fault, do not uncomment
-	uint32_t *ptr = (uint32_t*)0xA0000000;
-	uint32_t do_page_fault = *ptr;
-	(void)do_page_fault;
+	//uint32_t *ptr = (uint32_t*)0xA0000000;
+	//uint32_t do_page_fault = *ptr;
+	//(void)do_page_fault;
 	//asm volatile ("int $0xE");
 
+    // Mandatory infinite loop to keep the kernel executing
 	while (1) {}
 }

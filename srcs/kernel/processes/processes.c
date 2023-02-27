@@ -26,7 +26,7 @@ void register_kernel_as_process() {
 	if (!(process = malloc(sizeof(t_process)))) {
 		return ;
 	}
-	strcpy(process->name, "Kernel");
+	strcpy(process->name, "kernel");
 	process->pid = ++last_pid;
 	process->stack_ptr = 0;
 	process->stack_size = 0;
@@ -103,10 +103,6 @@ void destroy_process(unsigned int pid) {
 }
 
 void init_processes() {
-
-    uint32_t *ptr = (uint32_t*)0xA0000000;
-    uint32_t do_page_fault = *ptr;
-    (void)do_page_fault;
 
 	t_kernel *kernel_struct = get_kernel_struct();
 	t_processes *processes_infos;

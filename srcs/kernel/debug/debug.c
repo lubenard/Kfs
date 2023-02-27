@@ -69,6 +69,7 @@ void init_debugging_infos(multiboot_tag_t *tag) {
             }
         }
     }
+    printd(KERN_INFO, "Debug info parsed !");
 }
 
 char *get_symbol_from_address(void *addr) {

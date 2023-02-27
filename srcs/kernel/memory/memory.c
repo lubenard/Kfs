@@ -62,13 +62,5 @@ void init_memory(multiboot2_memory_map_t *map_entry) {
         update_memory_infos(map_entry->len_low, (size_t)start_real_memory - (size_t)map_entry->addr_low);
         printk(KERN_INFO, "Memory usage is %d MB %d KB", (get_memory_infos())->used_size / MB, (get_memory_infos()->used_size % MB) / 1024);
     }
-
-	/*
-	// USED FOR TEST
-	map_page((void*)0x400000);
-	// Do not cause page fault
-	uint32_t *ptr1 = (uint32_t*)0x400000;
-	uint32_t not_page_fault = *ptr1;
-	(void)not_page_fault;*/
-
+    printk(KERN_INFO, "Memory is initialised");
 }

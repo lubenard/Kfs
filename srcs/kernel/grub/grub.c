@@ -157,6 +157,7 @@ void get_grub_boot_info(unsigned long addr) {
             }
         }
     }
+    printk(KERN_INFO, "Info from grub have been parsed");
 }
 
 

@@ -83,7 +83,7 @@ void *pmm_next_fit(unsigned int size, int flags) {
 
 		if (available_pages == wanted_page_number) {
 			for (unsigned int j = 0; j < wanted_page_number; j++) {
-				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
+				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j + 1, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
 				map_page((char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
