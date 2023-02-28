@@ -82,11 +82,11 @@ void k_main(unsigned long magic, unsigned long addr) {
 
 	init_processes();
 
-	register_kernel_as_process();
+	//register_kernel_as_process();
 
 	//add_signal_to_pid(1, STATUS_WAITING);
 
-    create_process("Test process", find_process_by_pid(1), 0);
+    create_process("Test process", /*find_process_by_pid(1)*/0, 0);
     //create_process("Test process 2", find_process_by_pid(1), 0);
 
 	//display_boot_message();

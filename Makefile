@@ -75,6 +75,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/vmm/malloc/calloc.c \
 			  kernel/memory/vmm/malloc/realloc.c \
 			  kernel/processes/processes.c \
+			  kernel/processes/scheduler.c \
 			  kernel/processes/signals.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))

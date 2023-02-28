@@ -95,7 +95,9 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
 	process->stack_size = PAGESIZE;
 	process->status = STATUS_RUN;
 	process->ownerId = ownerId;
+    process->priority = 0;
     printk(KERN_INFO, "Process created at %p, id %d", process, process->pid);
+    add_process_to_queue(process);
     return process->pid;
 }
 

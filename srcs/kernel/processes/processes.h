@@ -53,14 +53,25 @@ typedef struct s_process {
 	t_signal_list *signals;
 	unsigned int ownerId;
 
+    int priority;
+
 	// We use a next to use it as linked list
 	// TODO: Optimize ?
 	struct s_process *next;
 }			t_process;
 
+
+typedef struct s_scheduler_queue {
+    t_process *process;
+    struct s_scheduler_queue *next;
+}               t_scheduler_queue;
+
 typedef struct s_processes {
 	t_process *processes_list;
 	t_process *current_process;
+    unsigned long size;
+    t_scheduler_queue *first;
+    t_scheduler_queue *last;
 }				t_processes;
 
 
@@ -69,5 +80,6 @@ unsigned long		create_process(char *name, t_process *parent, unsigned int ownerI
 void		        register_kernel_as_process();
 t_process	        *find_process_by_pid(unsigned long pid);
 void		        add_signal_to_pid(unsigned long pid, unsigned short signal);
+void                add_process_to_queue(t_process *process);
 
 #endif
