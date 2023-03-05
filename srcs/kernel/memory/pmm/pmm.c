@@ -90,7 +90,7 @@ void *pmm_next_fit(unsigned int size, int flags) {
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
 			pmm_infos->available_pages_number -= wanted_page_number;
-			printd(KERN_INFO, "Returning %p with size %d", (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000), size);
+			printd(KERN_INFO, "Returning %p with size %d (%d pages)", (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000), size, wanted_page_number);
 			return (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index * 0x1000);
 		}
 	}
