@@ -13,8 +13,9 @@
 #ifndef BITWISELIB_H
 # define BITWISELIB_H
 
-int setBit(unsigned int data, unsigned int pos);
-int clearBit(unsigned int data, unsigned int pos);
+# define SETBIT(data, pos)   ((data) |=  (1<<(pos)))
+# define CLEARBIT(data, pos) ((data) &= ~(1<<(pos)))
+
 int checkBit(unsigned int data, unsigned int pos);
 int extractBit(int number, int len, int start);
 

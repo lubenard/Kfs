@@ -10,14 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-int setBit(unsigned int data, unsigned int pos) {
-	return (data | (1 << pos));
-}
-
-int clearBit(unsigned int data, unsigned int pos) {
-	return (data & (~(1 << pos)));
-}
-
 int checkBit(unsigned int data, unsigned int pos) {
 	return ((data & (1 << pos)) ? 1 : 0);
 }
