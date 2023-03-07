@@ -56,7 +56,6 @@ section .multiboot
     start:
 	    ; Enable SSE instructions:
 	    ; Sse introduce 70 new instructions.
-	    ; It fixed the bug of invalid opcode with keyboard IRQ
 	    ; See more here https://wiki.osdev.org/SSE
 	    ;mov eax, cr0        ; cr0 cannot be manipulated directly, manipulate eax instead
 	    ;and ax, 0xFFFB      ; clear coprocessor emulation CR0.EM

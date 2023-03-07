@@ -15,7 +15,7 @@ int checkBit(unsigned int data, unsigned int pos) {
 }
 
 // Function to extract len bits from start position
-// and returns the extracted value as integer
-int extractBit(int number, int len, int start) {
-	return (((1 << len) - 1) & (number >> (start - 1)));
+// and returns the extracted value as unsigned integer
+unsigned int extractBit(unsigned int data, unsigned int start, unsigned int len) {
+	return (((1 << len) - 1) & (data >> (start - 1)));
 }

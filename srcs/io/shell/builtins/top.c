@@ -19,13 +19,13 @@
 void top(t_command *command) {
 	(void)command;
 	t_kernel *kernel_struct = get_kernel_struct();
-	t_process *tmp = kernel_struct->processes->processes_list;
+	t_scheduler_queue *tmp = kernel_struct->processes->processes_list;
 
 	while (tmp) {
-		printk(KERN_NORMAL, "Name: %s PID: %d Owner: %d, Status: %d, Signals: %d\n", tmp->name, tmp->pid, tmp->ownerId, tmp->status, tmp->signals->signal);
-		if (tmp->childs) {
+		printk(KERN_NORMAL, "Name: %s PID: %d Owner: %d, Status: %d, Signals: %d\n", tmp->process->name, tmp->process->pid, tmp->process->ownerId, tmp->process->status, tmp->process->signals->signal);
+		/*if (tmp->childs) {
 			printk(KERN_NORMAL, "\tChild found: %s PID: %d Owner: %d\n", tmp->name, tmp->pid, tmp->ownerId);
-		}
+		}*/
 		tmp = tmp->next;
 	}
 }

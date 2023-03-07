@@ -13,7 +13,6 @@
 #include "memory.h"
 #include "../../lib/iolib.h"
 #include "../../lib/memlib.h"
-#include "../grub/grub.h"
 #include "pmm/pmm.h"
 
 # define MB 1048576
@@ -29,12 +28,9 @@ uint32_t get_kernel_size() {
 	return end_kernel_addr - start_kernel_addr;
 }
 
-#define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit)))
-
 void init_memory(multiboot2_memory_map_t *map_entry) {
     uint32_t nframes;
     if (map_entry) {
-        // Getting the size of the memory via grub.
         // nframes is the number of frames (aka blocks of 4096)
         nframes = (map_entry->len_low / 0x1000); // Ox1000 is 4096 in hexa (Size of one page)
         printk(KERN_INFO, "Memory is %d Gb and %d Mb", map_entry->len_low / GB, (map_entry->len_low % GB) / MB);
