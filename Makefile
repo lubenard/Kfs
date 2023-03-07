@@ -25,7 +25,8 @@ SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
 				kernel/idt/idt_asm.s \
 				kernel/isr/isr_asm.s \
-				kernel/memory/paging_asm.s
+				kernel/memory/paging_asm.s \
+				kernel/processes/processes_asm.s
 
 SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \

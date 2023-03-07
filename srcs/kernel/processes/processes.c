@@ -20,7 +20,6 @@
 unsigned int last_pid = 0;
 
 void register_kernel_as_process() {
-	t_kernel *kernel_struct = get_kernel_struct();
 	t_process *process;
 
 	if (!(process = malloc(sizeof(t_process)))) {
@@ -34,16 +33,16 @@ void register_kernel_as_process() {
 	process->ownerId = 0;
 	process->signals = NULL;
 	printd(KERN_INFO, "Kernel Process created at %p, pid %d", process, process->pid);
-	kernel_struct->processes->processes_list = process;
 }
 
 /*
  * Get the correct process structure for given pid
  * This algo is very bad, but functionnal for now
+ * TODO: adapt to scheduler stuctures
  */
 t_process *find_process_by_pid(unsigned long pid) {
-	t_kernel *kernel_struct = get_kernel_struct();
-	t_process *process = kernel_struct->processes->processes_list;
+    t_kernel *kernel_struct = get_kernel_struct();
+	t_process *process = kernel_struct->processes->processes_list->process;
 	t_process *childs = NULL;
 
 	while (process) {
@@ -70,7 +69,7 @@ t_process *find_process_by_pid(unsigned long pid) {
  * Create a process
  * Return the pid of created process
  */
-unsigned long create_process(char *name, t_process *parent, unsigned int ownerId) {
+unsigned long create_process(char *name, t_process *parent, unsigned int ownerId, void *functionStart) {
 	t_process	*process;
 	void		*start_memory;
 
@@ -85,18 +84,27 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
         printk(KERN_WARNING, "Error while allocating memory for t_process struct");
 		return -1;
 	}
-	if ((start_memory = mmap(PAGESIZE, 0)) == 0) {
+    if (!(process->page_directory = malloc(sizeof(t_page_directory)))) {
+        printk(KERN_WARNING, "Error while allocating memory for t_page_directory struct");
+        return -1;
+    }
+    if ((start_memory = mmap(PAGESIZE, USERPAGE)) == 0) {
         printk(KERN_WARNING, "Error while allocating memory for process with mmap");
 		return -1;
 	}
 	strlcpy(process->name, name, 20);
 	process->pid = ++last_pid;
+	process->stack_start = start_memory;
 	process->stack_ptr = start_memory;
 	process->stack_size = PAGESIZE;
 	process->status = STATUS_RUN;
 	process->ownerId = ownerId;
     process->priority = 0;
     printk(KERN_INFO, "Process created at %p, id %d", process, process->pid);
+    copy_kernel_to_process_page_directory(process->page_directory);
+    process->regs.eip = (uint32_t)functionStart;
+    process->regs.eflags = 0x206; // enable interrupt
+    process->regs.cr3 = process->page_directory->page_directory[0];
     add_process_to_queue(process);
     return process->pid;
 }

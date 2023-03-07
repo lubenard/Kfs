@@ -14,33 +14,40 @@
 # define MEMORY_H
 
 # include "../grub/grub.h"
+# include "../processes/processes.h"
 # include <stdint.h>
 
-# define INDEX_FROM_BIT(a) (a / (8 * 4))
-# define OFFSET_FROM_BIT(a) (a % (8 * 4))
-
-/* The magic field should contain this. */
-# define MULTIBOOT_HEADER_MAGIC                  0x1BADB002
-
-/* This should be in %eax. */
-# define MULTIBOOT_BOOTLOADER_MAGIC              0x2BADB002
-
-# define PAGE_SIZE 4096
-
-/*
- * This is bitfield:
- * See more here :
- * https://stackoverflow.com/questions/3186008/in-c-what-does-a-colon-mean-inside-a-declaration
+/**
+ * This is the structure of the page directory as a enum.
+ * Bitfield has been considered, but suffer from major issues
+ * (non-portability and compiler dependent implementation mainly)
  */
-/*typedef struct page {
-	uint32_t present    : 1;   // Page present in memory
-	uint32_t rw         : 1;   // Read-only if clear, readwrite if set
-	uint32_t user       : 1;   // Supervisor level only if clear
-	uint32_t accessed   : 1;   // Has the page been accessed since last refresh?
-	uint32_t dirty      : 1;   // Has the page been written to since last refresh?
-	uint32_t unused     : 7;   // Amalgamation of unused and reserved bits
-	uint32_t frame      : 20;  // Frame address (shifted right 12 bits)
-} page_t; */
+enum e_page_directory_flags {
+    PD_PRESENT,
+    PD_RW,
+    PD_USER,
+    PD_WRITE_THROUGH,
+    PD_CACHE_DISABLE,
+    PD_ACCESSED,
+    PD_AVL,
+    PD_PAGESIZE,
+    PD_AVAILABLE2,
+    PD_ADDR = 12
+};
+
+enum e_page_table_flags {
+    PT_PRESENT,
+    PT_RW,
+    PT_USER,
+    PT_WRITE_THROUGH,
+    PT_CACHE_DISABLE,
+    PT_ACCESSED,
+    PT_DIRTY,
+    PT_PAT,
+    PT_GLOBAL,
+    PT_AVAILABLE,
+    PT_ADDR = 12
+};
 
 typedef struct s_memory_infos {
 	// Thoses values are in bytes;
@@ -51,8 +58,9 @@ typedef struct s_memory_infos {
 void init_memory(multiboot2_memory_map_t *map_entry);
 void init_memory_infos();
 
-void map_page(void *addr);
-void unmap_page(void *addr);
+void map_page(void *addr, void *page_directory);
+void unmap_page(void *addr, void *page_directory);
+void copy_kernel_to_process_page_directory(t_page_directory *process_page_directory);
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
 int check_mapping(void *addr);
 

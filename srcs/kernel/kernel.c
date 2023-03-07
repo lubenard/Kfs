@@ -50,6 +50,28 @@ void display_boot_message() {
 	"| | | | -_| |  _| . |     | -_|\n|_____|___|_|___|___|_|_|_|___|\n\n");
 }
 
+int test_function1() {
+    //int i = 0;
+
+    //while (i != 10) {
+        terminal_writestr("Hello from function test 1");
+        //sleep(2);
+    //    i++;
+    //}
+    return 0;
+}
+
+int test_function2() {
+    int i = 0;
+
+    while (i != 10) {
+        terminal_writestr("Hello from function test 2");
+        //sleep(2);
+        i++;
+    }
+    return 0;
+}
+
 /*
  * First kernel called function
  */
@@ -86,8 +108,8 @@ void k_main(unsigned long magic, unsigned long addr) {
 
 	//add_signal_to_pid(1, STATUS_WAITING);
 
-    create_process("Test process", /*find_process_by_pid(1)*/0, 0);
-    //create_process("Test process 2", find_process_by_pid(1), 0);
+    create_process("Test process", /*find_process_by_pid(1)*/0, 0, &test_function1);
+    //create_process("Test process 2", /*find_process_by_pid(1)*/0, 0, &test_function2);
 
 	//display_boot_message();
 	/* Init shell management */

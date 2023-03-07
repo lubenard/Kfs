@@ -13,6 +13,10 @@
 #ifndef VMM_H
 # define VMM_H
 
+# define USERPAGE 0
+# define KERNELPAGE 1
+
+
 void munmap(void *ptr, unsigned int size);
 void *mmap(unsigned int size, int flags);
 
