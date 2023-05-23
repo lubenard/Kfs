@@ -15,7 +15,7 @@ void context_switch(t_process *process) {
     if (process->regs.cr3 != 0) {
         printd(KERN_INFO, "regs.cr3 of process '%s' is not null. Loading page directory for this process.", process->name);
         printd(KERN_INFO, "Switching for page table at addr %p", process->regs.cr3);
-        asm volatile("mov %0, %%cr3" :: "r"(process->regs.cr3));
+        //asm volatile("mov %0, %%cr3" :: "r"(process->regs.cr3));
     }
     //switch_regs(&process->regs);
 }

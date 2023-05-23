@@ -62,7 +62,6 @@ void map_page(void *addr, void *page_directory);
 void unmap_page(void *addr, void *page_directory);
 void copy_kernel_to_process_page_directory(t_page_directory *process_page_directory);
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
-int check_mapping(void *addr);
 
 
 void update_memory_infos(unsigned long size, unsigned long used_size);

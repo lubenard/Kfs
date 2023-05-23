@@ -14,17 +14,22 @@
 #include "../../lib/iolib.h"
 #include "../../lib/bitwiselib.h"
 #include "vmm/malloc/malloc.h"
+#include "../../lib/memlib.h"
 
 uint32_t page_directory[1024] __attribute__((aligned(4096)));
-void *page_directory_start;
 
 static inline void flush_tlb_addr(void *addr) {
 	asm volatile("invlpg (%0)" ::"r" (addr) : "memory");
 }
 
+/**
+ * unmap a page on a given page directory
+ * @param addr address to unmap
+ * @param custom_page_directory (optionnal) if not null, this page directory will be choosen instead of kernel one
+ */
 void unmap_page(void *addr, void *custom_page_directory) {
 	int k;
-    (void)custom_page_directory;
+    uint32_t *mapping_page_directory;
 	// Check if pointer is aligned on 4096
 	if (((uintptr_t)addr % 4096) != 0) {
 		printk(KERN_WARNING, "Pointer is not aligned !");
@@ -34,11 +39,15 @@ void unmap_page(void *addr, void *custom_page_directory) {
 	unsigned long ptindex = (unsigned long)addr >> 12 & 0x03FF;
 	//printk(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
 
+    mapping_page_directory = (custom_page_directory != 0) ? custom_page_directory : page_directory;
+
 	k = pdindex * 1024;
-	if (checkBit(page_directory[pdindex], PD_PRESENT)) {
+	if (checkBit(mapping_page_directory[pdindex], PD_PRESENT)) {
 		//printk(KERN_INFO, "pdindex present");
-		uint32_t *page_table_addr = (void*)((page_directory[pdindex] >> 8) << 8);
-		//printk(KERN_INFO, "page_addr is %x, origninaly %x", page_table_addr, page_directory[pdindex]);
+
+        // Extract 'addr' field from the page_directory
+		uint32_t *page_table_addr = (void*)((mapping_page_directory[pdindex] >> 8) << 8);
+		//printk(KERN_INFO, "page_addr is %x, origninaly %x", page_table_addr, mapping_page_directory[pdindex]);
 		if (checkBit(page_table_addr[ptindex], PT_PRESENT)) {
 			printd(KERN_INFO, "ptindex present");
 			flush_tlb_addr((void*)((page_table_addr[ptindex] >> 8) << 8));
@@ -52,6 +61,9 @@ void unmap_page(void *addr, void *custom_page_directory) {
 		printd(KERN_WARNING, "pdindex NOT present");
 }
 
+/**
+ * Used for Debug
+ */
 void displayPD() {
     int i = 0;
     //for (i = 0; i < 1024; i++) {
@@ -67,6 +79,11 @@ void displayPD() {
     //}
 }
 
+/**
+ * map a page on a given page directory
+ * @param addr address to map
+ * @param custom_page_directory (optionnal) if not null, this page directory will be choosen instead of kernel one
+ */
 void map_page(void *addr, void *custom_page_directory) {
 	int k;
 	uint32_t *mapping_page_directory;
@@ -83,7 +100,7 @@ void map_page(void *addr, void *custom_page_directory) {
 	printd(KERN_INFO, "%p -> PD : %d/1024, PT : %d/1024", addr, pdindex, ptindex);
 
 	k = pdindex * 1024;
-	uint32_t *page_table = (uint32_t*)page_directory_start + k;
+	uint32_t *page_table = (uint32_t*) (((mapping_page_directory[0]) >> 8) << 8) + k;
 
 	if (checkBit(mapping_page_directory[pdindex], PD_PRESENT)) {
 		printd(KERN_INFO, "Page directory index present");
@@ -97,7 +114,7 @@ void map_page(void *addr, void *custom_page_directory) {
 			flush_tlb_addr((void *)((k + ptindex) * 0x1000));
 		}
 	} else {
-		printd(KERN_INFO, "Page directory index NOT present, k = %d", k);
+		printd(KERN_INFO, "Page directory index NOT present, k = %d, flushing tlb at %p", k, ((k + ptindex) * 0x1000));
 		flush_tlb_addr((void*)((k + ptindex) * 0x1000));
 		for (unsigned int i = 0; i < 1024; i++) {
 			page_table[i] = 0x00000000;
@@ -110,84 +127,69 @@ void map_page(void *addr, void *custom_page_directory) {
     //displayPD();
 }
 
-int check_mapping(void *addr) {
-	int k;
-	unsigned long pdindex = (unsigned long)addr >> 22;
-	unsigned long ptindex = (unsigned long)addr >> 12 & 0x03FF;
-	printd(KERN_INFO, "%p -> PD : %d, PT : %d", addr, pdindex, ptindex);
-
-	k = pdindex * 1024;
-	uint32_t *page_table = (uint32_t*)page_directory_start + k;
-
-	if (checkBit(page_directory[pdindex], PD_PRESENT)) {
-		if (page_table[ptindex] & (1 << 0))
-			return 1;
-		else
-			return 0;
-	} else
-		return 0;
-}
-
 /*
  * Copy a page directory
  * */
-uint32_t* clone_table(uint32_t *src_page_dir, uint32_t *dst_page_dir, int page_dir_idx) {
+uint32_t clone_table(uint32_t *src_page_dir, t_page_directory *process_page_dir, int page_dir_idx) {
     uint32_t* table = (uint32_t *)malloc(sizeof(uint32_t) * 1024);
-    (void)dst_page_dir;
-    (void)page_dir_idx;
+    //(void)page_dir_idx;
+    printd(KERN_INFO, "------- start clone table --------");
     for (int i = 0; i < 1024; i++) {
-        //if(!extractBit(table[i], PT_ADDR, 20))
-        //    continue;
+        if (!extractBit(src_page_dir[i], PT_ADDR, 20)) {
+            printd(KERN_INFO, "src_page_dir[%d] is %d - No addr field - Skipping", i, src_page_dir[i]);
+            continue;
+        }
         // Source frame's virtual address
-        //uint32_t src_virtual_address = (page_dir_idx << 22) | (i << 12) | (0);
+        uint32_t src_virtual_address = (page_dir_idx << 22) | (i << 12) | (0);
         // Destination frame's virtual address
         //uint32_t dst_virtual_address = src_virtual_address;
         // Temporary virtual address in current virtual address space
-        //uint32_t tmp_virtual_address = 0;
-        //printd(KERN_INFO, "Source virtual address for index %d is %p", page_dir_idx, src_virtual_address);
+        printd(KERN_INFO, "page_dir_idx is %d (i = %d)", page_dir_idx, i);
 
         // Allocate a frame in destination page table
-        //allocate_page(dst_page_dir, dst_virtual_address, 0, 0, 1);
-        // Now I want tmp_virtual_address and dst_virtual_address both points to the same frame
-        //allocate_page(src_page_dir, tmp_virtual_address, dst_page_dir, 0, 1);
+        printd(KERN_INFO, "Mapping %p for process page table", src_virtual_address);
+        map_page((void*)src_virtual_address, process_page_dir->page_directory);
         if (checkBit(src_page_dir[i], PT_PRESENT))  SETBIT(table[i], PT_PRESENT);
         if (checkBit(src_page_dir[i], PT_RW))       SETBIT(table[i], PT_RW);
         if (checkBit(src_page_dir[i], PT_USER))     SETBIT(table[i], PT_USER);
         if (checkBit(src_page_dir[i], PT_ACCESSED)) SETBIT(table[i], PT_ACCESSED);
         if (checkBit(src_page_dir[i], PT_DIRTY))    SETBIT(table[i], PT_DIRTY);
-        //memcpy((void*)tmp_virtual_address, (void*)src_virtual_address, PAGE_SIZE);
+        printd(KERN_INFO, "In theory, we should copy from %p to %p", src_virtual_address, src_virtual_address + 0x1000);
+        //memcpy((void*)tmp_virtual_address, (void*)src_virtual_address, 16384);
         // Unlink frame
-        //free_page(src_page_dir, tmp_virtual_address, 0);
-        //printd(KERN_INFO, "Copied table at index %d is %p", page_dir_idx, table[i]);
+        //unmap_page(src_page_dir, tmp_virtual_address, 0);
+        printd(KERN_INFO, "Copied table at index %d is %p, src is %p", page_dir_idx, table[i], src_page_dir[i]);
     }
-    return table;
+    printd(KERN_INFO, "----- end clone table --------");
+    return (uint32_t)table;
 }
 
 /**
  * Similar to init_pd_and_map_kernel, but used for process creation
  */
 void copy_kernel_to_process_page_directory(t_page_directory *process_page_directory) {
-   	int i = 0;
-   	while (i != 1024) {
-		printd(KERN_INFO, "Kernel Page directory is %p, process page directory is %p", page_directory[i], process_page_directory->page_directory[i]);
+   	for (int i = 0; i < 1024; i++) {
+        if (!extractBit(page_directory[i], PT_ADDR, 20)) {
+            printd(KERN_INFO, "page_directory[%d] is %d - No addr field - Skipping", i, page_directory[i]);
+            continue;
+        }
+        printd(KERN_INFO, "Kernel Page directory is %p, process page directory is %p", page_directory[i], process_page_directory->page_directory[i]);
         if (page_directory[i] == process_page_directory->page_directory[i]) {
-		//if (checkBit(page_directprocess_page_directoryory[i], 2) == 0) {
             printd(KERN_INFO, "Linking for page %d", i);
             process_page_directory->page_directory[i] = page_directory[i];
         } else {
             printd(KERN_INFO, "Copying page %d", i);
-            //uint32_t phys;
-            /*process_page_directory->page_directory[i] = */clone_table(page_directory, process_page_directory->page_directory, i);
-            //process_page_directory->page_directory[i] = phys | 0x07;
+            process_page_directory->page_directory[i] = clone_table(page_directory, process_page_directory, i);
+            process_page_directory->page_directory[i] = process_page_directory->page_directory[i] | 0x07;
+            printd(KERN_INFO, "After copy, page_directory[%d] is %p", i, process_page_directory->page_directory[i]);
         }
-       	i++;
    	}
 }
 
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	int i;
+    printd(KERN_INFO, "page_table = %p, page_directory is %p");
 	uint32_t *page_table = start_addr;
-	page_directory_start = start_addr;
 
 	// Check if pointer is aligned on 4096
 	if (((uintptr_t)start_addr % 4096) != 0) {
@@ -212,7 +214,7 @@ void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {
 	 * We map from 0x0 to 0x400000
 	 */
 	for (i = 0; i < 1024; i++) {
-		if (i == 0 || i == 1023) { printd(KERN_INFO, "First page table: i = %d, addr = %p, addr is %p", i, &(page_table[i]), (i * 0x1000)); }
+		if (i == 0 || i == 1023) { printd(KERN_INFO, "Page table: i = %d, addr = %p, addr is %p", i, &(page_table[i]), (i * 0x1000)); }
 		page_table[i] = (i * 0x1000) | 3; // attributes: supervisor level, read/write, present. 3 is 11 is binary
 	}
 
