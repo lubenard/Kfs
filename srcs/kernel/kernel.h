@@ -7,6 +7,7 @@
 #include "memory/memory.h"
 
 typedef struct s_kernel {
+    uint32_t *kernel_page_directory;
 	t_memory_infos *memory;
     t_processes *processes;
 }               t_kernel;

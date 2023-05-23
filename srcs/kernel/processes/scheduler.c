@@ -53,6 +53,7 @@ void add_process_to_queue(t_process *process) {
     t_processes *processes_infos = get_kernel_struct()->processes;
     t_scheduler_queue *process_node;
 
+    printd(KERN_INFO, "Adding process %d to queue", process->pid);
     if (!(process_node = malloc(sizeof(t_scheduler_queue))))
         return ;
     process_node->process = process;

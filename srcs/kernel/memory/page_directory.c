@@ -15,6 +15,7 @@
 #include "../../lib/bitwiselib.h"
 #include "vmm/malloc/malloc.h"
 #include "../../lib/memlib.h"
+#include "../kernel.h"
 
 uint32_t page_directory[1024] __attribute__((aligned(4096)));
 
@@ -167,14 +168,15 @@ uint32_t clone_table(uint32_t *src_page_dir, t_page_directory *process_page_dir,
 /**
  * Similar to init_pd_and_map_kernel, but used for process creation
  */
-void copy_kernel_to_process_page_directory(t_page_directory *process_page_directory) {
+void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_directory *process_page_directory) {
+    printd(KERN_INFO, "src_page_directory[0] is %p", src_page_directory[0]);
    	for (int i = 0; i < 1024; i++) {
         if (!extractBit(page_directory[i], PT_ADDR, 20)) {
             printd(KERN_INFO, "page_directory[%d] is %d - No addr field - Skipping", i, page_directory[i]);
             continue;
         }
-        printd(KERN_INFO, "Kernel Page directory is %p, process page directory is %p", page_directory[i], process_page_directory->page_directory[i]);
-        if (page_directory[i] == process_page_directory->page_directory[i]) {
+        printd(KERN_INFO, "Kernel Page directory is %p, process page directory is %p", page_directory[i], src_page_directory[i]);
+        if (page_directory[i] == src_page_directory[i]) {
             printd(KERN_INFO, "Linking for page %d", i);
             process_page_directory->page_directory[i] = page_directory[i];
         } else {
@@ -184,6 +186,12 @@ void copy_kernel_to_process_page_directory(t_page_directory *process_page_direct
             printd(KERN_INFO, "After copy, page_directory[%d] is %p", i, process_page_directory->page_directory[i]);
         }
    	}
+}
+
+
+void set_page_dir_into_kernel_struct() {
+    get_kernel_struct()->kernel_page_directory = page_directory;
+    printd(KERN_INFO, "Registered as %p in kernel struct", get_kernel_struct()->kernel_page_directory[0]);
 }
 
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes) {

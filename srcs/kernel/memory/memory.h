@@ -60,9 +60,9 @@ void init_memory_infos();
 
 void map_page(void *addr, void *page_directory);
 void unmap_page(void *addr, void *page_directory);
-void copy_kernel_to_process_page_directory(t_page_directory *process_page_directory);
+void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_directory *process_page_directory);
 void init_pd_and_map_kernel(void *start_addr, uint32_t nframes);
-
+void set_page_dir_into_kernel_struct();
 
 void update_memory_infos(unsigned long size, unsigned long used_size);
 t_memory_infos *get_memory_infos();

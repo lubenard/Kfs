@@ -101,7 +101,7 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
 	process->ownerId = ownerId;
     process->priority = 0;
     printk(KERN_INFO, "Process created at %p, id %d", process, process->pid);
-    copy_kernel_to_process_page_directory(process->page_directory);
+    copy_kernel_to_process_page_directory(get_kernel_struct()->kernel_page_directory, process->page_directory);
     process->regs.eip = (uint32_t)functionStart;
     process->regs.eflags = 0x206; // enable interrupt
     process->regs.cr3 = process->page_directory->page_directory[0];

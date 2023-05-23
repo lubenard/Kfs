@@ -43,6 +43,7 @@ void init_kernel_struct() {
 	if (!(kernel_struct = malloc(sizeof(t_kernel)))) {
 		return;
 	}
+    set_page_dir_into_kernel_struct();
 }
 
 void display_boot_message() {
@@ -100,6 +101,7 @@ void k_main(unsigned long magic, unsigned long addr) {
     // - Debugging info.
     get_grub_boot_info(addr);
 
+    // Init kernel structure, allowing kernel to get important datas for working.
     init_kernel_struct();
 
 	init_processes();
