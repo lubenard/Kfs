@@ -14,8 +14,7 @@ void context_switch(t_process *process) {
     if (process->regs.cr3 != 0) {
         printd(KERN_INFO, "regs.cr3 of process '%s' is not null. Loading page directory for this process.", process->name);
         printd(KERN_INFO, "Switching for page table at addr %p (or %p)", process->regs.cr3, process->page_directory->page_directory);
-
-        enable_paging(/*get_kernel_struct()->kernel_page_directory*/process->page_directory->page_directory);
+        enable_paging(process->page_directory->page_directory);
     }
     //switch_regs(&process->regs);
 }
@@ -26,10 +25,10 @@ void scheduler_loop() {
         processes_infos->current_process = processes_infos->first;
         printd(KERN_INFO, "Current process is %s", processes_infos->current_process->process->name);
         //processes_infos->current_process->process->status = STATUS_RUN;
-        // TODO: Implement context switch around here
         context_switch(processes_infos->current_process->process);
         uint32_t current_tick = get_tick();
         uint32_t counter_tick = get_tick();
+        printd(KERN_INFO, "counter_tick is %d, current_tick is %d", counter_tick, current_tick);
         while (current_tick + 100 != counter_tick) {
             //printd(KERN_INFO, "Counting tick for %s %d/%d", processes_infos->first->process->name, current_tick + 100, counter_tick);
             counter_tick = get_tick();

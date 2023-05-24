@@ -14,5 +14,6 @@
 # define SYSCALLS_H
 
 void sleep(unsigned int seconds);
+void test_syscalls();
 
 #endif

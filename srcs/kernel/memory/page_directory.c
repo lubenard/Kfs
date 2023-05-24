@@ -190,8 +190,8 @@ void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_
             printd(KERN_INFO, "After copy, page_directory[%d] is %p", i, process_page_directory->page_directory[i]);
         }
    	}
-    displayPD(src_page_directory);
-    displayPD(process_page_directory->page_directory);
+    //displayPD(src_page_directory);
+    //displayPD(process_page_directory->page_directory);
 }
 
 

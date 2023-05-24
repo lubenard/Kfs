@@ -21,8 +21,7 @@
 struct idt_ptr_struct idt_ptr;
 struct idt32 idt_entries[256];
 
-static void idt_set_gate(int8_t num, int32_t base, int16_t sel, int8_t flags)
-{
+static void idt_set_gate(int8_t num, int32_t base, int16_t sel, int8_t flags) {
 	idt_entries[num].base_low = base & 0xFFFF;
 	idt_entries[num].base_mid = (base >> 16) & 0xFFFF;
 
@@ -31,11 +30,10 @@ static void idt_set_gate(int8_t num, int32_t base, int16_t sel, int8_t flags)
 	idt_entries[num].zero = 0;
 	// We must uncomment the OR below when we get to using user-mode.
 	// It sets the interrupt gate's privilege level to 3.
-	idt_entries[num].flags = flags /* | 0x60 */;
+	idt_entries[num].flags = flags | 0x60;
 }
 
-void init_idt()
-{
+void init_idt() {
 	idt_ptr.limit = sizeof(struct idt32) * 256 - 1;
 	idt_ptr.base  = (int32_t)&idt_entries;
 
@@ -121,6 +119,8 @@ void init_idt()
 	idt_set_gate(45, (int32_t)irq13, 0x08, 0x8E);
 	idt_set_gate(46, (int32_t)irq14, 0x08, 0x8E);
 	idt_set_gate(47, (int32_t)irq15, 0x08, 0x8E);
+
+    idt_set_gate(80, (int32_t)syscalls, 0x08, 0x8E);
 
 	printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
 

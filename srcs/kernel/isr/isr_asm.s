@@ -92,6 +92,9 @@ IRQ 15,47
 ; Import handlers from isr.c
 extern isr_handler
 extern irq_handler
+extern syscalls_handler
+
+global syscalls
 
 isr_common_stub:
    pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
@@ -134,6 +137,35 @@ irq_common_stub:
    mov gs, ax
 
    call irq_handler     ; Call handler
+
+                        ; After call of the handler function, we want to
+                        ; restore the state of registers
+   pop ebx              ; reload the original data segment descriptor
+   mov ds, bx
+   mov es, bx
+   mov fs, bx
+   mov gs, bx
+
+   popa                 ; Pops edi,esi,ebp... (Remove them from the stack)
+   add esp, 8           ; Cleans up the pushed error code and pushed ISR number
+   sti
+   iret                 ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+
+; This is a stub to handle sycalls.
+; This call syscalls_handler in our C code
+syscalls:
+   pusha                ; Pushes edi, esi, ebp, esp, ebx, edx, ecx, eax
+
+   mov ax, ds           ; Lower 16-bits of eax = ds.
+   push eax             ; save the data segment descriptor
+
+   mov ax, 0x10         ; load the kernel data segment descriptor
+   mov ds, ax
+   mov es, ax
+   mov fs, ax
+   mov gs, ax
+
+   call syscalls_handler     ; Call handler
 
                         ; After call of the handler function, we want to
                         ; restore the state of registers

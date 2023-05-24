@@ -18,6 +18,7 @@ flush_tlb:
 	mov cr3, eax
 	ret
 
+; Remember ! PD Pointer MUST be aligned on 4K addr !
 enable_paging:
 	mov eax, [esp+4]
 	mov cr3, eax

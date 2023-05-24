@@ -21,6 +21,8 @@
 #include "../lib/iolib.h"
 #include "../lib/memlib.h"
 #include "memory/vmm/malloc/malloc.h"
+#include "syscalls/syscalls.h"
+#include "isr/irqs/irqs.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -118,10 +120,10 @@ void k_main(unsigned long magic, unsigned long addr) {
 	//init_shell();
 
 	// Voluntary Page fault, do not uncomment
-	//uint32_t *ptr = (uint32_t*)0xA0000000;
-	//uint32_t do_page_fault = *ptr;
-	//(void)do_page_fault;
-	//asm volatile ("int $0xE");
+	/*uint32_t *ptr = (uint32_t*)0xA0000000;
+	uint32_t do_page_fault = *ptr;
+	(void)do_page_fault;
+	asm volatile ("int $0xE");*/
 
     // Mandatory infinite loop to keep the kernel executing
 	while (1) {}

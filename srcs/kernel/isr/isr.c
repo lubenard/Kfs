@@ -114,19 +114,20 @@ void print_faulty_address() {
 	printk(KERN_NORMAL, "\nError happened at 0x%x\n", faulting_address);
 }
 
-void page_fault_handler(registers_t regs) {
+void page_fault_handler(registers_t *regs) {
 
-	if (!(regs.err_code & 0x1))
+	if (!(regs->err_code & 0x1))
 		printk(KERN_ERROR, "Page not present !"); // Page not present
-	if (regs.err_code & 0x2)
+	if (regs->err_code & 0x2)
 		printk(KERN_ERROR, "Read-only page !"); // Write operation?
-	if (regs.err_code & 0x4)
+	if (regs->err_code & 0x4)
 		printk(KERN_ERROR, "User-mode !"); // Processor was in user-mode?
-	if (regs.err_code & 0x8)
+	if (regs->err_code & 0x8)
 		printk(KERN_ERROR, "Bits reserved !"); // Overwritten CPU-reserved bits of page entry?
-	print_faulty_address();
+    printk(KERN_NORMAL, "\nError happened at %p\n", regs->eip);
+    //print_faulty_address();
 	// Will not be needed for EVERY page fault once process are implemented
-	PANIC(regs, interrupt_message[regs.int_no]);
+	PANIC(*regs, interrupt_message[regs->int_no]);
 }
 
 /*
@@ -144,12 +145,13 @@ void isr_handler(registers_t regs) {
 		|| (regs.int_no >= 11 && regs.int_no <= 13)
 		|| regs.int_no == 16 || regs.int_no == 17
 		|| regs.int_no == 18) {
-			print_faulty_address();
+            printk(KERN_NORMAL, "\nError happened at %p\n", regs.eip);
+            //print_faulty_address();
 		}
 
 	// 14 -> Page fault error code
 	if (regs.int_no == 14)
-		page_fault_handler(regs);
+		page_fault_handler(&regs);
 	// Should be only FATAL errors
 	if (regs.int_no == 0x8 || regs.int_no == 0x12) {
 		PANIC(regs, interrupt_message[regs.int_no]);
@@ -233,4 +235,14 @@ void irq_handler(registers_t regs) {
 	//printd(KERN_INFO, "Send reset signal to master");
 	// Send reset signal to master.
 	outb(0x20, 0x20);
+}
+
+/*
+ * This gets called from our ASM interrupt handler
+ */
+void syscalls_handler(registers_t regs) {
+
+    //void (*handler)(registers_t r);
+
+    printd(KERN_INFO, "Hey bitch 0x%x", regs.eax);
 }
