@@ -147,12 +147,12 @@ void	*real_malloc(size_t size) {
 	return ((char *)return_node_ptr + STRUCT_SIZE + 1);
 }
 
+/**
+ * Highest function to ask for memory to kernel. Will return a pointer with available memory of (at least) 'size'
+ */
 void	*malloc(size_t size) {
-	void *return_ptr;
-
-	printd(KERN_INFO, "Asked malloc with size %d", size);
-	return_ptr = real_malloc(size);
-	return return_ptr;
+    printd(KERN_INFO, "Asked malloc with size %d", size);
+	return real_malloc(size);
 }
 
 int get_var_size(void *var) {

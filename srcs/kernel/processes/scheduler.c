@@ -11,11 +11,11 @@ void put_process_end_list(t_scheduler_queue *process) {
 }
 
 void context_switch(t_process *process) {
-    (void)process;
     if (process->regs.cr3 != 0) {
         printd(KERN_INFO, "regs.cr3 of process '%s' is not null. Loading page directory for this process.", process->name);
-        printd(KERN_INFO, "Switching for page table at addr %p", process->regs.cr3);
-        //asm volatile("mov %0, %%cr3" :: "r"(process->regs.cr3));
+        printd(KERN_INFO, "Switching for page table at addr %p (or %p)", process->regs.cr3, process->page_directory->page_directory);
+
+        enable_paging(/*get_kernel_struct()->kernel_page_directory*/process->page_directory->page_directory);
     }
     //switch_regs(&process->regs);
 }

@@ -19,7 +19,6 @@ char *pmm_array = 0;
 t_pmm *pmm_infos;
 
 // Free block '.', occupied block 'x', shared block '#'
-
 void check_mapping_pmm(void *pmm_array, unsigned int page_number) {
 	if ((char *)pmm_array + page_number > (char*)0x3FF000) {
 		printd(KERN_INFO, "PMM is not in a mapped area (%p), should map it first.", pmm_array);

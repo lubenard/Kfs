@@ -84,7 +84,8 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
         printk(KERN_WARNING, "Error while allocating memory for t_process struct");
 		return -1;
 	}
-    if (!(process->page_directory = malloc(sizeof(t_page_directory)))) {
+
+    if ((process->page_directory = mmap(4096, USERPAGE)) == 0) {
         printk(KERN_WARNING, "Error while allocating memory for t_page_directory struct");
         return -1;
     }

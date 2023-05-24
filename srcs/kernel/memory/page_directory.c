@@ -63,21 +63,24 @@ void unmap_page(void *addr, void *custom_page_directory) {
 }
 
 /**
- * Used for Debug
+ * Used for Debug - Display the Page directory and Pages tables if existing
  */
-void displayPD() {
-    int i = 0;
-    //for (i = 0; i < 1024; i++) {
-        if (page_directory[i] != 0 && page_directory[i] != 0x2) {
-            printd(KERN_INFO, "page_directory[%d] = %p", i, page_directory[i]);
-            printd(KERN_INFO, "Page table (located at %p), contains as first value", ((uint32_t *)page_directory[i]));
-            printd(KERN_INFO, "Page table first element : %p", page_directory[i]);
+void displayPD(uint32_t *page_dir) {
+    printd(KERN_INFO, "------------ Displaying page directory stored at %p ------------", &(page_dir[0]));
+    for (int i = 0; i < 1024; i++) {
+        printd(KERN_INFO, "page_directory[%d] = %p", i, page_directory[i]);
+        if (page_dir[i] != 0 && page_dir[i] != 0x2) {
 
-            /*for (int j = 0; j < 1024; j++) {
-                if (((uint32_t *)page_directory[i])[j] != 0 && ((uint32_t *)page_directory[i])[j] != 0x2) { printd(KERN_INFO, "Page table [%d] = %p", j ,((uint32_t *)page_directory[i])[j]); }
-            }*/
+            printd(KERN_INFO, "Page table is contained at %p", (page_dir[i] >> 8) << 8);
+
+            uint32_t *page_table = (uint32_t*)((page_dir[i] >> 8) << 8);
+
+            for (int j = 0; j < 1024; j++) {
+                printd(KERN_INFO, "page_table[%d] = %p", j , page_table[j]);
+            }
         }
-    //}
+    }
+    printd(KERN_INFO, "------------ End page directory stored at %p ------------", &(page_dir[0]));
 }
 
 /**
@@ -169,7 +172,8 @@ uint32_t clone_table(uint32_t *src_page_dir, t_page_directory *process_page_dir,
  * Similar to init_pd_and_map_kernel, but used for process creation
  */
 void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_directory *process_page_directory) {
-    printd(KERN_INFO, "src_page_directory[0] is %p", src_page_directory[0]);
+    printd(KERN_INFO, "src_page_directory[0] is %p (stored at %p)", src_page_directory[0], &src_page_directory);
+    printd(KERN_INFO, "process_page_directory[0] is %p (stored at %p)", process_page_directory->page_directory[0], &(process_page_directory->page_directory));
    	for (int i = 0; i < 1024; i++) {
         if (!extractBit(page_directory[i], PT_ADDR, 20)) {
             printd(KERN_INFO, "page_directory[%d] is %d - No addr field - Skipping", i, page_directory[i]);
@@ -178,7 +182,7 @@ void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_
         printd(KERN_INFO, "Kernel Page directory is %p, process page directory is %p", page_directory[i], src_page_directory[i]);
         if (page_directory[i] == src_page_directory[i]) {
             printd(KERN_INFO, "Linking for page %d", i);
-            process_page_directory->page_directory[i] = page_directory[i];
+            process_page_directory->page_directory[i] = (uint32_t)page_directory[i];
         } else {
             printd(KERN_INFO, "Copying page %d", i);
             process_page_directory->page_directory[i] = clone_table(page_directory, process_page_directory, i);
@@ -186,6 +190,8 @@ void copy_kernel_to_process_page_directory(uint32_t *src_page_directory, t_page_
             printd(KERN_INFO, "After copy, page_directory[%d] is %p", i, process_page_directory->page_directory[i]);
         }
    	}
+    displayPD(src_page_directory);
+    displayPD(process_page_directory->page_directory);
 }
 
 
