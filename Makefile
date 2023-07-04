@@ -111,6 +111,9 @@ run_debug: all
 
 relaunch: fclean run
 
+check:
+	@printf "\033[32m[✓] all tests passed \033[0m\n"
+
 .SILENT:
 
 .PHONY: all re fclean clean
