@@ -1,6 +1,6 @@
-# Kfs-3
+# Kfs-5
 
-Kfs-3 is the third kernel project.
+Kfs-5 is the fifth kernel project. It focuses on processes and threads.
 
 ![Screenshot_20210520_115316](https://user-images.githubusercontent.com/42534397/118958810-0b277180-b962-11eb-827e-57badc451665.png)
 
