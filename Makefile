@@ -174,7 +174,7 @@ relaunch: fclean run
 
 check:
 	@printf "\033[32mStarting qemu into cli mode\033[0m\n"
-	@qemu-system-i386 -serial file:log.txt -m 512 -cdrom $(ISO_NAME)
+	@qemu-system-i386 -nographic -serial file:log.txt -m 512 -cdrom $(ISO_NAME)
 	@python tests/check_logs_debug.py
 	@printf "\033[32m[✓] all tests passed \033[0m\n"
 
