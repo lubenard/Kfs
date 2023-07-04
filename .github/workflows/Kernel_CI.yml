@@ -13,6 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: sudo apt update && sudo apt -y install nasm clang gcc-multilib mtools grub-common qemu-system-x86 xorriso
     - name: Check dependencies
       run: ./scripts/checkTools.sh
     - name: make
