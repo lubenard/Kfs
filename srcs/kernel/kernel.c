@@ -23,6 +23,7 @@
 #include "memory/vmm/malloc/malloc.h"
 #include "syscalls/syscalls.h"
 #include "isr/irqs/irqs.h"
+#include "../tests/tests.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -97,7 +98,7 @@ void k_main(unsigned long magic, unsigned long addr) {
 	/* Init kbd management */
 	init_kbd();
 
-    // Parse infos received by Multiboot Standart and Grub.
+    // Parse infos received by Multiboot Standard and Grub.
     // Also start:
     // - Memory management. Enable paging
     // - Debugging info.
@@ -124,6 +125,11 @@ void k_main(unsigned long magic, unsigned long addr) {
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;
 	asm volatile ("int $0xE");*/
+
+    if (LAUNCH_TESTS == 1) {
+        launch_kernel_tests();
+        return;
+    }
 
     // Mandatory infinite loop to keep the kernel executing
 	while (1) {}

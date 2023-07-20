@@ -20,6 +20,7 @@ ISO_NAME = kfs-5.iso
 SRCDIR = srcs
 
 DEBUG_LOG = 0
+IS_CI = 0
 
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
@@ -41,6 +42,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/iolib.c \
 			  lib/intlib.c \
 			  lib/strlib.c \
+			  lib/strarraylib.c \
 			  lib/bitwiselib.c \
 			  lib/printk/printk.c \
 			  lib/printk/parse.c \
@@ -78,7 +80,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/vmm/malloc/realloc.c \
 			  kernel/processes/processes.c \
 			  kernel/processes/scheduler.c \
-			  kernel/processes/signals.c
+			  kernel/processes/signals.c \
+			  tests/tests.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
@@ -142,7 +145,9 @@ re: fclean all
 # just delete what is needed
 recompile_run:
 	@printf "Recompiling Header... Debug = $(DEBUG_LOG)\n"
+	@printf "Recompiling Header... Is_CI = $(IS_CI)\n"
 	@sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG $(DEBUG_LOG)/' srcs/lib/printk/include/printk.h
+	@sed -i 's/LAUNCH_TESTS [0-1]/LAUNCH_TESTS $(IS_CI)/' srcs/tests/tests.h
 	@rm -f $(NAME)
 	@rm -f srcs/lib/printk/printk.o
 	@make
@@ -177,6 +182,13 @@ check:
 	@qemu-system-i386 -nographic -serial file:log.txt -m 512 -cdrom $(ISO_NAME)
 	@python tests/check_logs_debug.py
 	@printf "\033[32m[✓] all tests passed \033[0m\n"
+
+compile_test: all
+	@make -C tests
+	$(CC) -g3 tests/main.c tests/test_libft.a libft.a -o testing_libft
+
+test: compile_test
+	./testing_libft
 
 .SILENT:
 
