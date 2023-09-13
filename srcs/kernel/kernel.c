@@ -23,7 +23,7 @@
 #include "memory/vmm/malloc/malloc.h"
 #include "syscalls/syscalls.h"
 #include "isr/irqs/irqs.h"
-#include "../tests/tests.h"
+#include "../../tests/tests.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)

@@ -21,7 +21,7 @@
 ** @return return 1 if the character is matching, 0 if not
 */
 
-int		ft_isalnum(int c)
+int	    isalnum(int c)
 {
     if ((c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c >= 97 && c <= 122))
         return (1);
@@ -35,7 +35,7 @@ int		ft_isalnum(int c)
 ** @return return 1 if the character is matching, 0 if not
 */
 
-int		ft_isascii(int c)
+int		isascii(int c)
 {
     if (c >= 0 && c <= 127)
         return (1);
@@ -48,7 +48,7 @@ int		ft_isascii(int c)
 ** @return return 1 if the character is matching, 0 if not
 */
 
-int		ft_isdigit(int c)
+int		isdigit(int c)
 {
     if (c >= 48 && c <= 57)
         return (1);
@@ -81,4 +81,18 @@ int		ft_toupper(int c)
     if (c >= 97 && c <= 122)
         return (c - 32);
     return (c);
+}
+
+/*
+** Check if the character c is:
+** - lowercase alpha (between 'a' and 'z')
+** - uppercase alpha (between 'A' and 'Z')
+** @param int c: the character we want to check
+** @return return 1 if the character is matching, 0 if not
+*/
+int		isalpha(int c)
+{
+    if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
+        return (1);
+    return (0);
 }

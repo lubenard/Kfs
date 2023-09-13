@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <malloc.h>
+#include "strlib.h"
+
 /*
 ** Look for a pattern into a char **
 ** @param char **tab: the char ** we want to explore
@@ -26,7 +29,7 @@ int		tabchr(char **tab, int pattern)
         return (0);
     while (tab[i])
     {
-        if (ft_strchri(tab[i++], pattern))
+        if (strchri(tab[i++], pattern))
             return (1);
     }
     return (0);

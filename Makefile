@@ -20,7 +20,7 @@ ISO_NAME = kfs-5.iso
 SRCDIR = srcs
 
 DEBUG_LOG = 0
-IS_CI = 0
+IS_TEST = 0
 
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
@@ -42,6 +42,7 @@ SRC_FILES_C = kernel/kernel.c \
 			  lib/iolib.c \
 			  lib/intlib.c \
 			  lib/strlib.c \
+			  lib/charlib.c \
 			  lib/strarraylib.c \
 			  lib/bitwiselib.c \
 			  lib/printk/printk.c \
@@ -80,8 +81,8 @@ SRC_FILES_C = kernel/kernel.c \
 			  kernel/memory/vmm/malloc/realloc.c \
 			  kernel/processes/processes.c \
 			  kernel/processes/scheduler.c \
-			  kernel/processes/signals.c \
-			  tests/tests.c
+			  kernel/processes/signals.c #\
+			  #tests/tests.c
 
 SRCS_C = $(addprefix $(SRCDIR)/, $(SRC_FILES_C))
 SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
@@ -89,7 +90,7 @@ SRCS_ASM = $(addprefix $(SRCDIR)/, $(SRC_FILES_ASM))
 OBJ_C = $(SRCS_C:.c=.o)
 OBJ_ASM = $(SRCS_ASM:.s=.o)
 
-CFLAGS = -Wall -Wextra -Werror -g3\
+CFLAGS = -Wall -Wextra -Werror \
 		 -m32 --target=i686-elf-clang \
 		 -fno-builtin \
 		 -fno-exceptions \
@@ -100,6 +101,14 @@ CFLAGS = -Wall -Wextra -Werror -g3\
 		 -nodefaultlibs \
 		 -mgeneral-regs-only \
 		 -fno-omit-frame-pointer
+
+ifeq ($(DEBUG_LOG),1)
+		CFLAGS += -g3
+	endif
+
+ifeq ($(IS_TEST),1)
+	CFLAGS += -DLAUNCH_TESTS=1
+endif
 
 all:  $(NAME)
 
@@ -145,9 +154,8 @@ re: fclean all
 # just delete what is needed
 recompile_run:
 	@printf "Recompiling Header... Debug = $(DEBUG_LOG)\n"
-	@printf "Recompiling Header... Is_CI = $(IS_CI)\n"
+	@printf "Recompiling Header... IS_TESTS = $(IS_TESTS)\n"
 	@sed -i 's/DEBUG_LOG [0-1]/DEBUG_LOG $(DEBUG_LOG)/' srcs/lib/printk/include/printk.h
-	@sed -i 's/LAUNCH_TESTS [0-1]/LAUNCH_TESTS $(IS_CI)/' srcs/tests/tests.h
 	@rm -f $(NAME)
 	@rm -f srcs/lib/printk/printk.o
 	@make

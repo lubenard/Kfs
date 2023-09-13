@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "stddef.h"
+#include "strlib.h"
+
 /*
 ** Compute the size of a int
 ** Example: 123 -> 3
@@ -91,7 +94,7 @@ char			*ft_itoa(int n)
     nbr = n;
     i = 0;
     neg = (nbr < 0) ? -1 : 0;
-    if (!(result = ft_strnew(ft_len(n) - neg)))
+    if (!(result = strnew(ft_len(n) - neg)))
         return (NULL);
     if (nbr < 0)
     {
@@ -109,15 +112,13 @@ char			*ft_itoa(int n)
 }
 
 /*
-** Similar to ft_itoa, but take a unsigned int as paramter
-** Convert a number into a string
-** Example: 123-> "123"
-** The string is allocated, we need to FREE it after use
-** @param unisgned int n: The number we want to Convert
-** @return the converted integer into a string
+** Compute the size of a int
+** Example: 123 -> 3
+** @param int n: the number we want to Compute
+** @return the size of the integer
 */
 
-inline static int	ft_len(unsigned long n)
+inline static int	nbrLen(unsigned long n)
 {
     int i;
 
@@ -138,6 +139,13 @@ char				*nzero(char *str)
     return (str);
 }
 
+/** Similar to ft_itoa, but take a unsigned int as paramter
+        ** Convert a number into a string
+        ** Example: 123-> "123"
+** The string is allocated, we need to FREE it after use
+** @param unisgned int n: The number we want to Convert
+** @return the converted integer into a string
+*/
 char				*ft_itoa_uint(unsigned int n)
 {
     unsigned int	nbr;
@@ -146,7 +154,7 @@ char				*ft_itoa_uint(unsigned int n)
 
     nbr = n;
     i = 0;
-    if (!(result = ft_strnew((size_t)ft_len(nbr))))
+    if (!(result = strnew((size_t)nbrLen(nbr))))
         return (NULL);
     if (n == 0)
         return (nzero(result));
@@ -191,7 +199,7 @@ char				*ft_itoa_ulong(unsigned long long n)
 
     nbr = n;
     i = 0;
-    if (!(result = ft_strnew((size_t)ft_len_ulong(nbr))))
+    if (!(result = strnew((size_t)ft_len_ulong(nbr))))
         return (NULL);
     if (n == 0)
     {

@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "memlib.h"
+#include "strlib.h"
+#include "../kernel/memory/vmm/malloc/malloc.h"
 
 /**
  * Return the next 'aligned' address on b.
@@ -149,7 +151,7 @@ void	*ft_memmove(void *s1, void const *s2, size_t n)
         }
     }
     else
-        ft_memcpy(s1, s2, n);
+        memcpy(s1, s2, n);
     return (s1);
 }
 
@@ -166,7 +168,7 @@ void	*ft_memalloc(size_t n)
 
     if (!(dest = (void *)malloc(n)))
         return (NULL);
-    ft_bzero(dest, n);
+    bzero(dest, n);
     return (dest);
 }
 
@@ -197,7 +199,7 @@ void	*ft_memchr(void const *s, int c, size_t n)
 }
 
 /*
-** Take a adress of datas and free it
+** Take an adress of datas and free it
 ** @param void **ap: The datas we want to erase
 */
 

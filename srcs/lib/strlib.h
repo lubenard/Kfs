@@ -13,7 +13,9 @@
 #ifndef STRLIB_H
 # define STRLIB_H
 
+#ifndef LAUNCH_TESTS
 # include "stddef.h"
+#endif
 
 size_t	strlen(const char *str);
 int		isalpha(int c);
@@ -22,6 +24,8 @@ void	bzero(void *s, size_t n);
 int		isprint(int c);
 char	*strupper(char *str);
 int		strcmp(char const *s1, char const *s2);
+char	*strnew(size_t n);
+char	*ft_strstr(char const *str, char const *to_find);
 int		strncmp(const char *s1, const char *s2, size_t n);
 int		atoi(char const *str);
 char	*strcpy(char *dest, char const *src);

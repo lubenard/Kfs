@@ -12,6 +12,8 @@
 
 #include "../kernel/memory/vmm/malloc/malloc.h"
 #include "stddef.h"
+#include "intlib.h"
+#include "charlib.h"
 
 /*
 ** Compute the length of a string
@@ -24,23 +26,9 @@ size_t strlen(const char *str)
 	size_t len = 0;
     if (!str)
         return (0);
-	while (str[len])
+    while (str[len])
 		len++;
 	return len;
-}
-
-/*
-** Check if the character c is:
-** - lowercase alpha (between 'a' and 'z')
-** - uppercase alpha (between 'A' and 'Z')
-** @param int c: the character we want to check
-** @return return 1 if the character is matching, 0 if not
-*/
-int		isalpha(int c)
-{
-	if ((c >= 65 && c <= 90) || (c >= 97 && c <= 122))
-		return (1);
-	return (0);
 }
 
 /*
@@ -212,7 +200,7 @@ long	ft_atoi_long(char const *str)
     while (str[i] >= '0' && str[i] <= '9')
     {
         output = output * 10 + str[i] - 48;
-        if (mult == 1 && output > MAX_INT64)
+        if (mult == 1 && output > (long)(MAX_INT64))
             return (-1);
         else if (mult == -1 && output > (long)(MAX_INT64))
             return (0);
@@ -263,7 +251,7 @@ char	*strlcpy(char *dest, char *src, int size)
 ** @param size_t n: the size of the new string
 ** @return the string newly created
 */
-char	*ft_strnew(size_t n)
+char	*strnew(size_t n)
 {
 	char	*dest;
 
@@ -342,7 +330,7 @@ char			**ft_strsplit(char const *s, char c)
 	{
 		i = return_i(s, i, c);
 		k = 0;
-		if (!(ret[j] = ft_strnew(countchar(s, i, c) + 1)))
+		if (!(ret[j] = strnew(countchar(s, i, c) + 1)))
 			return (0);
 		while (s[i] && s[i] != c)
 			ret[j][k++] = s[i++];
@@ -353,7 +341,7 @@ char			**ft_strsplit(char const *s, char c)
 }
 
 /*
-** Similar to ft_isalnum, but for a string
+** Similar to isalnum, but for a string
 ** Check if the string str is:
 ** - numerical (between 0 and 9)
 ** - lowercase alpha (between 'a' and 'z')
@@ -361,13 +349,13 @@ char			**ft_strsplit(char const *s, char c)
 ** @param strings str: the string we want to check
 ** @return return 1 if the string is matching, 0 if not
 */
-int			ft_strisalnum(char *str)
+int			strisalnum(char *str)
 {
     int i;
 
     i = 0;
     while (str[i])
-        if (!ft_isalnum(str[i++]))
+        if (!isalnum(str[i++]))
             return (0);
     return (1);
 }
@@ -386,7 +374,7 @@ int			ft_strisalpha(char *str)
 
     i = 0;
     while (str[i])
-        if (!ft_isalpha(str[i++]))
+        if (!isalpha(str[i++]))
             return (0);
     return (1);
 }
@@ -404,7 +392,7 @@ int			ft_strisascii(char *str)
 
     i = 0;
     while (str[i])
-        if (!ft_isascii(str[i++]))
+        if (!isascii(str[i++]))
             return (0);
     return (1);
 }
@@ -442,7 +430,7 @@ int		ft_strisdigit(char *str)
 
     i = 0;
     while (str[i])
-        if (!ft_isdigit(str[i++]))
+        if (!isdigit(str[i++]))
             return (0);
     return (1);
 }
@@ -460,10 +448,10 @@ int		ft_strisnumeric(char *str)
     i = 1;
     if (!str)
         return (0);
-    if (!(ft_isdigit(str[0]) || str[0] == '+' || str[0] == '-'))
+    if (!(isdigit(str[0]) || str[0] == '+' || str[0] == '-'))
         return (0);
     while (str[i])
-        if (!ft_isdigit(str[i++]))
+        if (!isdigit(str[i++]))
             return (0);
     return (1);
 }
@@ -794,8 +782,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
         return (0);
     i = 0;
     e = 0;
-    if (!(ret = (char *)malloc(sizeof(char) * (ft_strlen(s1) + \
-						ft_strlen(s2)) + 1)))
+    if (!(ret = (char *)malloc(sizeof(char) * (strlen(s1) + \
+						strlen(s2)) + 1)))
         return (0);
     while (s1[i])
     {
@@ -828,7 +816,7 @@ size_t	ft_strlcat(char *dest, char const *src, size_t n)
     unsigned int buff;
     unsigned int srclen;
 
-    buff = ft_strlen(dest);
+    buff = strlen(dest);
     i = 0;
     srclen = 0;
     while (src[i] && buff + i + 1 < n)
@@ -837,7 +825,7 @@ size_t	ft_strlcat(char *dest, char const *src, size_t n)
         i++;
     }
     dest[buff + i] = '\0';
-    srclen = ft_strlen(src);
+    srclen = strlen(src);
     if (n < buff)
         return (srclen + n);
     return (buff + srclen);
@@ -882,7 +870,7 @@ char	*ft_strncat(char *dest, const char *src, size_t n)
     int		len;
 
     i = 0;
-    len = ft_strlen(dest);
+    len = strlen(dest);
     while (src[i] && i < n)
     {
         dest[len + i] = src[i];
