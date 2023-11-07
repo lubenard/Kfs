@@ -58,10 +58,11 @@ int test_function1() {
     //int i = 0;
 
     //while (i != 10) {
-        terminal_writestr("Hello from function test 1");
+        //terminal_writestr("Hello from function test 1");
         //sleep(2);
     //    i++;
     //}
+    test_syscalls();
     return 0;
 }
 
@@ -121,7 +122,7 @@ void k_main(unsigned long magic, unsigned long addr) {
 	//init_shell();
 
 	// Voluntary Page fault, do not uncomment
-	/*uint32_t *ptr = (uint32_t*)0xA0000000;
+	/*uint32_t *ptr = (uint32_t*)0xA0000000;0x001012d8
 	uint32_t do_page_fault = *ptr;
 	(void)do_page_fault;
 	asm volatile ("int $0xE");*/

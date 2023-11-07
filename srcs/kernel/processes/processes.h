@@ -43,16 +43,16 @@ typedef struct s_page_directory {
 
 typedef struct s_process_registers {
     uint32_t eax;
-    uint32_t ecx;
-    uint32_t edx;
-    uint32_t ebx;
-    uint32_t esp;
-    uint32_t ebp;
-    uint32_t esi;
-    uint32_t edi;
-    uint32_t eflags;
-    uint32_t cr3;
-    uint32_t eip;
+    uint32_t ecx; // 4 Offset
+    uint32_t edx; // 8 Offset
+    uint32_t ebx; // 12 Offset
+    uint32_t esp; // 16 Offset
+    uint32_t ebp; // 20 Offset
+    uint32_t esi; // 24 Offset
+    uint32_t edi; // 28 Offset
+    uint32_t eflags; // 32 Offset
+    uint32_t cr3; // 36 Offset
+    uint32_t eip; // 40 Offset
 }               t_process_registers;
 
 typedef struct s_process {

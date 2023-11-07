@@ -14,8 +14,8 @@ logsToSearch = ["GDT has been initialised at 0x800", "PIT has been initialised",
 
 for item in logsToSearch:
     if item in lines:
-        print("'{}' found in logs\n".format(item))
+        print("'{}' found in logs".format(item))
     else:
-        print("'{}' NOT found in logs\n".format(item))
+        print("'{}' NOT found in logs".format(item))
         exit(1)
 exit(0)

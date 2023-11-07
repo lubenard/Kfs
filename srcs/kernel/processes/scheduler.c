@@ -11,12 +11,16 @@ void put_process_end_list(t_scheduler_queue *process) {
 }
 
 void context_switch(t_process *process) {
+    printd(KERN_INFO, "before: process->regs is %p (or %p ?)", process->regs, &process->regs);
     if (process->regs.cr3 != 0) {
         printd(KERN_INFO, "regs.cr3 of process '%s' is not null. Loading page directory for this process.", process->name);
         printd(KERN_INFO, "Switching for page table at addr %p (or %p)", process->regs.cr3, process->page_directory->page_directory);
         enable_paging(process->page_directory->page_directory);
+        printd(KERN_INFO, "Enabled paging for %s", process->name);
     }
-    //switch_regs(&process->regs);
+    printd(KERN_INFO, "process->regs is %p (or %p ?)", process->regs, &process->regs);
+    printd(KERN_INFO, "retry compute %p", (char *) process + 64);
+    switch_regs((t_process_registers *)((char *) process + 64));
 }
 
 void scheduler_loop() {

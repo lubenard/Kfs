@@ -65,6 +65,22 @@ t_process *find_process_by_pid(unsigned long pid) {
 	return NULL;
 }
 
+void show_process_registers(t_process *process) {
+    printd(KERN_INFO, "---- Displaying registers for: %s (%d) -----", process->name, process->pid);
+    printd(KERN_INFO, "- eax: %p", process->regs.eax);
+    printd(KERN_INFO, "- ecx: %p", process->regs.ecx);
+    printd(KERN_INFO, "- edx: %p", process->regs.edx);
+    printd(KERN_INFO, "- ebx: %p", process->regs.ebx);
+    printd(KERN_INFO, "- esp: %p", process->regs.esp);
+    printd(KERN_INFO, "- ebp: %p", process->regs.ebp);
+    printd(KERN_INFO, "- esi: %p", process->regs.esi);
+    printd(KERN_INFO, "- edi: %p", process->regs.edi);
+    printd(KERN_INFO, "- eflags: %p", process->regs.eflags);
+    printd(KERN_INFO, "- cr3: %p", process->regs.cr3);
+    printd(KERN_INFO, "- eip: %p", process->regs.eip);
+    
+}
+
 /*
  * Create a process
  * Return the pid of created process
@@ -101,11 +117,17 @@ unsigned long create_process(char *name, t_process *parent, unsigned int ownerId
 	process->status = STATUS_RUN;
 	process->ownerId = ownerId;
     process->priority = 0;
-    printk(KERN_INFO, "Process created at %p, id %d", process, process->pid);
+    printk(KERN_INFO, "Process created at %p, id %d, memory page from %p to %p", process, process->pid, start_memory, (char*)start_memory + PAGESIZE);
     copy_kernel_to_process_page_directory(get_kernel_struct()->kernel_page_directory, process->page_directory);
+
+    // Used for testing in struct !!
+    //process->regs.ecx = 0xdeadbeef;
+    process->regs.esp = (uint32_t)start_memory;
+    process->regs.ebp = (uint32_t)start_memory;
     process->regs.eip = (uint32_t)functionStart;
     process->regs.eflags = 0x206; // enable interrupt
     process->regs.cr3 = process->page_directory->page_directory[0];
+    show_process_registers(process);
     add_process_to_queue(process);
     return process->pid;
 }

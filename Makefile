@@ -198,6 +198,21 @@ compile_test: all
 test: compile_test
 	./testing_libft
 
+help:
+	@printf "\033[32m -\033[0m all: Compile iso\n"
+	@printf "\033[32m -\033[0m clean: clean .o files\n"
+	@printf "\033[32m -\033[0m fclean: clean .o files & delete iso\n"
+	@printf "\033[32m -\033[0m re: launch clean & all\n"
+	@printf "\033[32m -\033[0m run: build & run the project into qemu\n"
+	@printf "\033[32m -\033[0m run_max_memory: build & run the project into qemu with 4GB of ram\n"
+	@printf "\033[32m -\033[0m run_debug: build & run the project into qemu with debug flags\n"
+	@printf "\033[32m -\033[0m run_debug_gdb: build & run the project into qemu with debug flags and gdb\n"
+	@printf "\033[32m -\033[0m relaunch: launch fclean & run\n"
+	@printf "\033[32m -\033[0m check: launch checks based on logs\n"
+	@printf "\033[32m -\033[0m compile_tests: compile tests\n"
+	@printf "\033[32m -\033[0m test: launch tests\n"
+	@printf "\033[32m -\033[0m help: print this help\n"
+
 .SILENT:
 
 .PHONY: all re fclean clean

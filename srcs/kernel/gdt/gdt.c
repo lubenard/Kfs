@@ -16,7 +16,8 @@
 
 GDTEntry_t gdt_entries[7];
 
-/* Set the value of one GDT entry.
+/**
+ * Set the value of one GDT entry.
  * @param num the entry we fill (between 0 and 4)
  */
 static void gdt_set_gate(uint32_t num, uint32_t base, uint32_t limit, uint8_t access, uint8_t gran)
@@ -40,8 +41,11 @@ void init_gdt()
 {
 	GDTDescriptor_t gdt_ptr;
 
+    // Disable interruptions
+    asm volatile ("cli");
+
 	// Size is 5 because we have 5 entries
-	gdt_ptr.size = (sizeof(GDTEntry_t) * 5) - 1;
+	gdt_ptr.size = (sizeof(GDTEntry_t) * 7) - 1;
 	// Offset if the adress of the first entry;
 	gdt_ptr.offset = (uint32_t)GDT_BASE;
 
@@ -55,7 +59,7 @@ void init_gdt()
 	gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF); // Kernel Data segment
 
 	// 0x96 -> 1001 0110 in binary: -> Ring 0, Data segment
-	// For more info about how acces byte is defined, have a look here:
+	// For more info about how access byte is defined, have a look here:
 	// https://wiki.osdev.org/Global_Descriptor_Table
 	gdt_set_gate(3, 0, 0xFFFFFFFF, 0x96, 0xCF); // Kernel stack segment
 
@@ -68,10 +72,12 @@ void init_gdt()
 	// 0xF6 -> 1111 0110 in binary: -> Ring 3, Data segment
 	gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF6, 0xCF); // User stack segment
 
-	memcpy((char *)gdt_ptr.offset, (char *)gdt_entries, sizeof(GDTEntry_t) * 5);
+	memcpy((char *)gdt_ptr.offset, (char *)gdt_entries, sizeof(GDTEntry_t) * 7);
 
 	// Load new created GDT
 	gdt_flush((uint32_t)&gdt_ptr);
 
-	printk(KERN_INFO, "GDT has been initialised at %p", gdt_ptr.offset);
+    // Re-enable interruptions
+    asm volatile ("sti");
+	printk(KERN_INFO, "GDT has been initialised at %p with %d entries", gdt_ptr.offset, gdt_ptr.size);
 }

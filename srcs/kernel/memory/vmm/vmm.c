@@ -14,14 +14,9 @@
 #include "../pmm/pmm.h"
 
 void munmap(void *ptr, unsigned int size) {
-	(void)ptr;
-	(void)size;
 	pmm_unset_pages(ptr, size);
-	return ;
 }
 
 void *mmap(unsigned int size, int flags) {
-	(void)size;
-	(void)flags;
 	return pmm_next_fit(size, flags);
 }
