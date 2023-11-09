@@ -17,6 +17,7 @@ void munmap(void *ptr, unsigned int size) {
 	pmm_unset_pages(ptr, size);
 }
 
-void *mmap(unsigned int size, int flags) {
-	return pmm_next_fit(size, flags);
+// TODO: use flags and get CR3 instead
+void *mmap(unsigned int size, int flags, void *custom_page_directory) {
+	return pmm_next_fit(size, flags, custom_page_directory);
 }

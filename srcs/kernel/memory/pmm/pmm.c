@@ -59,7 +59,7 @@ char get_block_status(unsigned int index) {
 	return pmm_array[index];
 }
 
-void *pmm_next_fit(unsigned int size, int flags) {
+void *pmm_next_fit(unsigned int size, int flags, void *custom_page_directory) {
 	(void)flags;
 	unsigned wanted_page_number = (size / 4096);
 	unsigned int available_pages = 0;
@@ -85,7 +85,7 @@ void *pmm_next_fit(unsigned int size, int flags) {
 			for (unsigned int j = 0; j < wanted_page_number; j++) {
 				printd(KERN_INFO, "Mapping page %d/%d addr: %p", j + 1, wanted_page_number, (char*)pmm_infos->pmm_memory_start + (0x1000 * (j + pmm_infos->pmm_last_index)));
 				printd(KERN_INFO, "%p + (4096 * %d + %d) = %p", pmm_infos->pmm_memory_start, j, pmm_infos->pmm_last_index, (char*)pmm_infos->pmm_memory_start + (pmm_infos->pmm_last_index + (0x1000 * j)));
-				map_page((char*)pmm_infos->pmm_memory_start + (0x1000 * (j + pmm_infos->pmm_last_index)), 0);
+				map_page((char*)pmm_infos->pmm_memory_start + (0x1000 * (j + pmm_infos->pmm_last_index)), custom_page_directory);
 				set_block_status(pmm_infos->pmm_last_index + j, PMM_BLOCK_OCCUPIED);
 			}
 			pmm_infos->available_pages_number -= wanted_page_number;

@@ -20,7 +20,7 @@
 void *create_pmm_array(void *start_addr, unsigned int page_number);
 void set_block_status(unsigned int index, char new_block_status);
 char get_block_status(unsigned int index);
-void *pmm_next_fit(unsigned int size, int flags);
+void *pmm_next_fit(unsigned int size, int flags, void *custom_page_directory);
 void pmm_unset_pages(void *ptr, unsigned int size);
 
 typedef struct s_pmm {

@@ -45,7 +45,7 @@ void init_gdt()
     asm volatile ("cli");
 
 	// Size is 5 because we have 5 entries
-	gdt_ptr.size = (sizeof(GDTEntry_t) * 7) - 1;
+	gdt_ptr.size = (sizeof(GDTEntry_t) * 5) - 1;
 	// Offset if the adress of the first entry;
 	gdt_ptr.offset = (uint32_t)GDT_BASE;
 
@@ -61,16 +61,16 @@ void init_gdt()
 	// 0x96 -> 1001 0110 in binary: -> Ring 0, Data segment
 	// For more info about how access byte is defined, have a look here:
 	// https://wiki.osdev.org/Global_Descriptor_Table
-	gdt_set_gate(3, 0, 0xFFFFFFFF, 0x96, 0xCF); // Kernel stack segment
+	//gdt_set_gate(3, 0, 0xFFFFFFFF, 0x96, 0xCF); // Kernel stack segment
 
 	// 0xFA -> 1111 1010 in binary: -> Ring 3, (11 in binary), Code segment
-	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User code segment
+	gdt_set_gate(3, 0, 0xFFFFFFFF, 0xFA, 0xCF); // User code segment
 
 	// 0xF2 -> 1111 0010 in binary: -> Ring 3, (11 in binary), Data segment
-	gdt_set_gate(5, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User data segment
+	gdt_set_gate(4, 0, 0xFFFFFFFF, 0xF2, 0xCF); // User data segment
 
 	// 0xF6 -> 1111 0110 in binary: -> Ring 3, Data segment
-	gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF6, 0xCF); // User stack segment
+	//gdt_set_gate(6, 0, 0xFFFFFFFF, 0xF6, 0xCF); // User stack segment
 
 	memcpy((char *)gdt_ptr.offset, (char *)gdt_entries, sizeof(GDTEntry_t) * 7);
 

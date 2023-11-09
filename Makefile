@@ -182,6 +182,7 @@ run_debug_gdb:
 	@xdotool key ctrl+shift+t
 	@xdotool type "qemu-system-i386 -serial file:log.txt -s -S -d int -m 4096 -cdrom $(ISO_NAME)"
 	@xdotool key Return
+	@xdotool key ctrl+Left
 
 relaunch: fclean run
 

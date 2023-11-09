@@ -18,6 +18,6 @@
 
 
 void munmap(void *ptr, unsigned int size);
-void *mmap(unsigned int size, int flags);
+void *mmap(unsigned int size, int flags, void *custom_pd);
 
 #endif

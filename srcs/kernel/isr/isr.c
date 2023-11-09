@@ -135,8 +135,8 @@ void page_fault_handler(registers_t *regs) {
  */
 void isr_handler(registers_t regs) {
 	if (regs.int_no < 25)
-		printk(KERN_ERROR, "Received interrupt: %d: %s", regs.int_no,
-		interrupt_message[regs.int_no]);
+		printk(KERN_ERROR, "Received interrupt: %d: %s: code: %x", regs.int_no,
+		interrupt_message[regs.int_no], regs.err_code);
 	else
 		printk(KERN_ERROR, "Received interrupt: %d", regs.int_no);
 

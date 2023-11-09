@@ -13,7 +13,7 @@
 [GLOBAL gdt_flush]    ; Allows the C code to call gdt_flush().
 
 gdt_flush:
-	mov eax, [esp+4]  ; Get the pointer to the GDT, passed as a parameter.
+	mov eax, [esp + 4]  ; Get the pointer to the GDT, passed as a parameter.
 					  ; esp points to argc, and argc being a 'int', we jump 4 bytes
 					  ; later to go on argv[0]
 	lgdt [eax]        ; Load the new GDT pointer given as parameter

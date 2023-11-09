@@ -96,7 +96,8 @@ void map_page(void *addr, void *custom_page_directory) {
 		printk(KERN_ERROR, "Pointer is not aligned !");
 		return ;
 	}
-
+    if (custom_page_directory != 0)
+        printd(KERN_WARNING, "Allocating on pd %p", custom_page_directory);
     mapping_page_directory = (custom_page_directory != 0) ? custom_page_directory : page_directory;
 
 	unsigned long pdindex = (unsigned long)addr >> 22;
@@ -114,7 +115,11 @@ void map_page(void *addr, void *custom_page_directory) {
 			return ;
 		} else {
 			printd(KERN_INFO, "Page table at %d not present, mapping from %p to %p", ptindex, (k + ptindex) * 0x1000, ((k + ptindex) * 0x1000) + 0x1000);
-			page_table[ptindex] = (k + ptindex) * 0x1000 | 3;
+            if (custom_page_directory != 0) {
+                printd(KERN_INFO, "Setting page as user page");
+                page_table[ptindex] = (k + ptindex) * 0x1000 | 7;
+            } else
+                page_table[ptindex] = (k + ptindex) * 0x1000 | 3;
 			flush_tlb_addr((void *)((k + ptindex) * 0x1000));
 		}
 	} else {
@@ -123,10 +128,10 @@ void map_page(void *addr, void *custom_page_directory) {
 		for (unsigned int i = 0; i < 1024; i++) {
 			page_table[i] = 0x00000000;
 		}
-		page_table[ptindex] = ((k + ptindex) * 0x1000) | 3;
+		page_table[ptindex] = ((k + ptindex) * 0x1000) | 7;
 		printd(KERN_INFO, "added page_directory[%d] + mapped page table at addr %p", pdindex, page_table);
 		flush_tlb_addr(page_table);
-		page_directory[pdindex] = ((unsigned int)page_table) | 3;
+		page_directory[pdindex] = ((unsigned int)page_table) | 7;
 	}
     //displayPD();
 }
