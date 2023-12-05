@@ -55,14 +55,18 @@ void display_boot_message() {
 }
 
 int test_function1() {
-    //int i = 0;
+    /*uint16_t *screen = (uint16_t *) 0xB8000;
 
-    //while (i != 10) {
-        //terminal_writestr("Hello from function test 1");
+
+    int i = 0;
+
+    while (i != 80) {
+        screen[i] = '!';
+         //terminal_writestr("Hello from function test 1");
         //sleep(2);
-    //    i++;
-    //}
-    test_syscalls();
+        i++;
+    }
+    test_syscalls();*/
     return 0;
 }
 
@@ -89,6 +93,8 @@ void k_main(unsigned long magic, unsigned long addr) {
 
 	/* Initialize terminal interface */
 	terminal_initialize();
+
+    printd(KERN_INFO, "Screen & COM port init");
 
 	/* Initialize GDT (Global descriptor table) */
 	init_gdt();
