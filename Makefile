@@ -24,6 +24,7 @@ IS_TEST = 0
 
 SRC_FILES_ASM = kernel/boot.s \
 				kernel/gdt/gdt_asm.s \
+				drivers/cpu/cpu_asm.s \
 				kernel/idt/idt_asm.s \
 				kernel/isr/isr_asm.s \
 				kernel/memory/paging_asm.s \
@@ -33,6 +34,7 @@ SRC_FILES_ASM = kernel/boot.s \
 SRC_FILES_C = kernel/kernel.c \
 			  drivers/vga/vga.c \
 			  drivers/PS2_keyboard/PS2_keyboard.c \
+			  drivers/cpu/cpu.c \
 			  kernel/gdt/gdt.c \
 			  kernel/idt/idt.c \
 			  kernel/isr/isr.c \

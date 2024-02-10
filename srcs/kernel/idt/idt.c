@@ -14,9 +14,6 @@
 #include "../../lib/iolib.h"
 #include "../../lib/memlib.h"
 #include "../../io/io.h"
-#include "../isr/irqs/irqs.h"
-#include "../../io/shell/builtins/builtins.h"
-
 
 struct idt_ptr_struct idt_ptr;
 struct idt32 idt_entries[256];
@@ -123,13 +120,5 @@ void init_idt() {
     idt_set_gate(80, (int32_t)syscalls, 0x08, 0x8E);
 
 	printk(KERN_INFO, "IDT has been initialised at %p", &idt_ptr);
-
-	// Init pit to get ticks
-	init_pit();
-
-	/* Init rtc to get date from bios */
-	init_rtc();
-
-    date(0);
 }
 

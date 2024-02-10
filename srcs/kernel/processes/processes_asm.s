@@ -12,18 +12,8 @@
 
 GLOBAL switch_regs
 
-extern printd
-
-message:
-        db      'Ecx is %p', 0
-
 switch_regs:
     cli
-    ; Debug message
-    ;push dword [eax + 4]
-    ;push message
-    ;push 0x1
-    ;call  printd
 
     ; Move general registers
     mov ecx, [eax + 4]
@@ -34,8 +24,10 @@ switch_regs:
     mov edi, [eax + 28]
     ; Right now, eax, ebp, esp are not restored yet
 
+    ; 0x23 is the User Data Segment
     push 0x23
-    push esp
+    ; Esp is the stack pointer
+    push dword [eax + 16]
 
     ; Push new eflags on the stack
     push dword [eax + 32]

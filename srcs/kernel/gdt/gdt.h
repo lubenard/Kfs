@@ -72,6 +72,7 @@ typedef struct GDTDescriptor GDTDescriptor_t;
 /* Asm function */
 extern void gdt_flush(uint32_t);
 extern void tss_flush();
+extern void check_kernel_long_mode();
 
 /* Prototype to init GDT */
 void init_gdt();

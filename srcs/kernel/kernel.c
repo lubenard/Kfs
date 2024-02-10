@@ -24,6 +24,8 @@
 #include "syscalls/syscalls.h"
 #include "isr/irqs/irqs.h"
 #include "../../tests/tests.h"
+#include "../io/shell/builtins/builtins.h"
+#include "../drivers/cpu/cpu.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -65,8 +67,8 @@ int test_function1() {
          //terminal_writestr("Hello from function test 1");
         //sleep(2);
         i++;
-    }
-    test_syscalls();*/
+    }*/
+    test_syscalls();
     return 0;
 }
 
@@ -96,11 +98,21 @@ void k_main(unsigned long magic, unsigned long addr) {
 
     printd(KERN_INFO, "Screen & COM port init");
 
+    check_cpu_features();
+
 	/* Initialize GDT (Global descriptor table) */
 	init_gdt();
 
 	/* Initialize IDT (Interruptor descriptor table) */
 	init_idt();
+
+    // Init pit to get ticks
+    init_pit();
+
+    /* Init rtc to get date from bios */
+    init_rtc();
+
+    date(0);
 
 	/* Init kbd management */
 	init_kbd();

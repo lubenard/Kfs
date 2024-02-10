@@ -44,7 +44,7 @@ static void setup_tss(uint32_t num, uint16_t ss0, uint32_t esp0) {
     uint32_t limit = base + sizeof(tss_entry);
 
     // Now, add our TSS descriptor's address to the GDT.
-    gdt_set_gate(num, base, limit, 0xE9, 0x00);
+    gdt_set_gate(num, base, limit, 0x89, 0x40);
 
     // Ensure the descriptor is initially zero.
     memset(&tss_entry, 0, sizeof(tss_entry));
@@ -62,9 +62,7 @@ static void setup_tss(uint32_t num, uint16_t ss0, uint32_t esp0) {
     tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;
 }
 
-
-void init_gdt()
-{
+void init_gdt() {
 	GDTDescriptor_t gdt_ptr;
 
     // Disable interruptions
